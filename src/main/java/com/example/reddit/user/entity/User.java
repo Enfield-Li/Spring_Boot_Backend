@@ -1,8 +1,14 @@
 package com.example.reddit.user.entity;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import com.example.reddit.post.entity.Post;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -16,6 +22,7 @@ public class User {
   @GeneratedValue(strategy = IDENTITY)
   private Long id;
 
+  @Column(name = "created_at")
   @CreatedDate
   private Instant createdAt;
 
@@ -28,6 +35,17 @@ public class User {
   @Embedded
   private Password password;
 
+  @Column(name = "post_amounts")
   @ColumnDefault(value = "0")
   private Long postAmounts;
+
+  @OneToMany(
+    mappedBy = "user",
+    cascade = ALL,
+    orphanRemoval = true,
+    targetEntity = Post.class,
+    fetch = EAGER
+  )
+  @JsonIgnoreProperties(value = "user")
+  private List<Post> post = new ArrayList<>();
 }
