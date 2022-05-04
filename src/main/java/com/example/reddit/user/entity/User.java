@@ -10,10 +10,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+@Getter
+@Setter
+@ToString(exclude = "post")
 @Entity
 @DynamicInsert
 public class User {
@@ -23,7 +31,7 @@ public class User {
   private Long id;
 
   @Column(name = "created_at")
-  @CreatedDate
+  @CreationTimestamp
   private Instant createdAt;
 
   @Column(nullable = false, unique = true)
@@ -46,16 +54,14 @@ public class User {
     targetEntity = Post.class,
     fetch = EAGER
   )
-  @JsonIgnoreProperties(value = "user")
+  @JsonIgnoreProperties("user")
   private List<Post> post = new ArrayList<>();
+
+  public User() {}
 
   public User(String username, String email, Password password) {
     this.username = username;
     this.email = email;
     this.password = password;
-  }
-
-  public void setPost(List<Post> post) {
-    this.post = post;
   }
 }

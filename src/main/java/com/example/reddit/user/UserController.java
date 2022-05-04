@@ -24,18 +24,15 @@ class UserController {
   UserRepository userRepository;
 
   @GetMapping
-  public ResponseEntity<List<User>> getAll() {
-    try {
-      List<User> items = new ArrayList<User>();
+  public List<User> getAll() {
+    List<User> users = userRepository.findAll();
 
-      userRepository.findAll().forEach(items::add);
-
-      if (items.isEmpty()) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-
-      return new ResponseEntity<>(items, HttpStatus.OK);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    System.out.println(users.toString());
+    return users;
+    // try {
+    // } catch (Exception e) {
+    //   throw new IllegalStateException("Internal Error");
+    // }
   }
 
   @GetMapping("{id}")

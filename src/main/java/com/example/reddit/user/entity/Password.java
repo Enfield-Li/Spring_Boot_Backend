@@ -25,4 +25,8 @@ public class Password {
   ) {
     return passwordEncoder.matches(rawPassword, password);
   }
+
+  public static Password encode(String rawPassword, Class<PasswordEncoder> class1) {
+    return null;
+  }
 }
