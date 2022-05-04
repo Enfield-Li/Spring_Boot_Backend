@@ -25,14 +25,14 @@ class UserController {
 
   @GetMapping
   public List<User> getAll() {
-    List<User> users = userRepository.findAll();
+    try {
+      List<User> users = userRepository.findAll();
 
-    System.out.println(users.toString());
-    return users;
-    // try {
-    // } catch (Exception e) {
-    //   throw new IllegalStateException("Internal Error");
-    // }
+      System.out.println(users.toString());
+      return users;
+    } catch (Exception e) {
+      throw new IllegalStateException("Internal Error");
+    }
   }
 
   @GetMapping("{id}")
