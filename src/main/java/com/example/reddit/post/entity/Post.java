@@ -7,11 +7,19 @@ import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 import javax.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+@Getter
+@Setter
+@ToString(exclude = "user")
 @Entity
 @DynamicInsert
 public class Post {
@@ -21,11 +29,11 @@ public class Post {
   private Long id;
 
   @Column(name = "created_at")
-  @CreatedDate
+  @CreationTimestamp
   private Instant createdAt;
 
   @Column(name = "updated_at")
-  @LastModifiedDate
+  @UpdateTimestamp
   private Instant updatedAt;
 
   @Column(nullable = false)
@@ -54,7 +62,7 @@ public class Post {
 
   @ManyToOne(fetch = EAGER)
   @JoinColumn(name = "user_id")
-  @JsonIgnoreProperties(value = "post")
+  @JsonIgnoreProperties("post")
   private User user;
 
   public Post() {}
@@ -63,8 +71,9 @@ public class Post {
     this.title = title;
   }
 
-  public Post(String title, String content) {
+  public Post(String title, String content, User user) {
     this.title = title;
     this.content = content;
+    this.user = user;
   }
 }
