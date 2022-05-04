@@ -9,9 +9,9 @@ public class Password {
   @Column(nullable = false)
   private String password;
 
-  private Password() {}
+  public Password() {}
 
-  private Password(String password) {
+  public Password(String password) {
     this.password = password;
   }
 

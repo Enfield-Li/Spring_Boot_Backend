@@ -48,4 +48,14 @@ public class User {
   )
   @JsonIgnoreProperties(value = "user")
   private List<Post> post = new ArrayList<>();
+
+  public User(String username, String email, Password password) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+  }
+
+  public void setPost(List<Post> post) {
+    this.post = post;
+  }
 }
