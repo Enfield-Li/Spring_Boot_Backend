@@ -11,6 +11,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class RedditApplication {
@@ -37,5 +40,18 @@ public class RedditApplication {
     // List<Post> user2Posts = Arrays.asList(post3);
     // user2.setPost(user2Posts);
     // userRepo.saveAll(Arrays.asList(user1, user2));
+  }
+
+  @Bean
+  public WebMvcConfigurer corsConfigurer() {
+    return new WebMvcConfigurer() {
+      @Override
+      public void addCorsMappings(CorsRegistry registry) {
+        registry
+          .addMapping("/greeting-javaconfig")
+          .allowedOrigins("http://localhost:3118")
+          .allowedOrigins("http://localhost:3119");
+      }
+    };
   }
 }
