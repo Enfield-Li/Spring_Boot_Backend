@@ -12,6 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -48,10 +50,16 @@ public class RedditApplication {
       @Override
       public void addCorsMappings(CorsRegistry registry) {
         registry
-          .addMapping("/greeting-javaconfig")
+          .addMapping("/**")
           .allowedOrigins("http://localhost:3118")
-          .allowedOrigins("http://localhost:3119");
+          .allowedOrigins("http://localhost:3119")
+          .allowCredentials(true);
       }
     };
+  }
+
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
   }
 }

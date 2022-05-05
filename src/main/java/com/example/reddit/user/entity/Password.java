@@ -1,8 +1,11 @@
 package com.example.reddit.user.entity;
 
 import javax.persistence.*;
+import lombok.Data;
+import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+@Data
 @Embeddable
 public class Password {
 

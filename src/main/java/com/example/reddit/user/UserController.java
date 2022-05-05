@@ -1,6 +1,7 @@
 package com.example.reddit.user;
 
 import com.example.reddit.user.dto.request.CreateUserDto;
+import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,7 +43,7 @@ class UserController {
   // }
 
   @GetMapping("{id}")
-  public void login(@PathVariable("id") Long id, HttpSession session) {}
+  public void findOne(@PathVariable("id") Long id, HttpSession session) {}
 
   @PostMapping("/register")
   public UserRO register(
@@ -50,6 +51,11 @@ class UserController {
     HttpSession session
   ) {
     return userService.createUser(createUserDto, session);
+  }
+
+  @PutMapping("/login")
+  public UserRO login(LoginUserDto loginUserDto, HttpSession session) {
+    return userService.login(loginUserDto, session);
   }
 
   @GetMapping("/me")
