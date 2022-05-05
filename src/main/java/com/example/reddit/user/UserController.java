@@ -1,10 +1,14 @@
 package com.example.reddit.user;
 
+import com.example.reddit.user.dto.CreateUserDto;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,54 +41,30 @@ class UserController {
   }
 
   @GetMapping("{id}")
-  public ResponseEntity<User> getById(@PathVariable("id") Long id) {
-    Optional<User> existingItemOptional = userRepository.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+  public Object getById(
+    @PathVariable("id") Long id,
+    HttpSession session
+  ) {
+    System.out.println(session.getAttribute("userId"));
+    return session.getAttribute("userId");
   }
 
   @PostMapping
-  public ResponseEntity<User> create(@RequestBody User item) {
-    try {
-      User savedItem = userRepository.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
-    } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
-    }
+  public User create(
+    @Valid @RequestBody CreateUserDto createUserDto,
+    HttpSession session
+  ) {
+    User user = userRepository.findByUsername(createUserDto.getUsername());
+
+    session.setAttribute("userId", user.getId());
+    System.out.println(session.getAttribute("userId"));
+
+    return user;
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<User> update(
-    @PathVariable("id") Long id,
-    @RequestBody User item
-  ) {
-    Optional<User> existingItemOptional = userRepository.findById(id);
-    if (existingItemOptional.isPresent()) {
-      User existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        userRepository.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-  }
+  public void update(@PathVariable("id") Long id, @RequestBody User item) {}
 
   @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      userRepository.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
-  }
+  public void delete(@PathVariable("id") Long id) {}
 }
