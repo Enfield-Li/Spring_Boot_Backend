@@ -1,9 +1,14 @@
 package com.example.reddit.post;
 
 import com.example.reddit.post.entity.Post;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Post")
 @RestController
 @RequestMapping("/post")
 class PostController {
@@ -26,6 +32,27 @@ class PostController {
   @GetMapping
   public List<Post> getAll() {
     return postRepository.findAll();
+  }
+
+  @GetMapping("setsession")
+  public void setSession(
+    HttpSession session,
+    HttpServletRequest request,
+    HttpServletResponse response
+  ) {
+    Random rand = new Random();
+
+    // Obtain a number between [0 - 49].
+    Integer num = rand.nextInt(50);
+
+    // request.getSession().setAttribute("userId", 11);
+    session.setAttribute("userId", num);
+  }
+
+  @GetMapping("getsession")
+  public void getSession(HttpSession session, HttpServletRequest request) {
+    // System.out.println(request.getSession().getAttribute("userId"));
+    System.out.println(session.getAttribute("userId"));
   }
 
   @GetMapping("{id}")

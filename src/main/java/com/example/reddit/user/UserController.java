@@ -1,6 +1,7 @@
 package com.example.reddit.user;
 
 import com.example.reddit.user.entity.User;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "user")
 @RestController
 @RequestMapping("/user")
 class UserController {
@@ -28,7 +30,6 @@ class UserController {
     try {
       List<User> users = userRepository.findAll();
 
-      System.out.println(users.toString());
       return users;
     } catch (Exception e) {
       throw new IllegalStateException("Internal Error");
