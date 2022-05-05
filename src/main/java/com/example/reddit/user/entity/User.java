@@ -45,7 +45,7 @@ public class User {
 
   @Column(name = "post_amounts")
   @ColumnDefault(value = "0")
-  private Long postAmounts;
+  private Integer postAmounts;
 
   @OneToMany(
     mappedBy = "user",

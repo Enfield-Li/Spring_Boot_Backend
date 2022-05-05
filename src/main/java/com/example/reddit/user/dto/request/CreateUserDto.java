@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto;
+package com.example.reddit.user.dto.request;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;

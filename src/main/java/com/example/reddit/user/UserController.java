@@ -1,6 +1,7 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.CreateUserDto;
+import com.example.reddit.user.dto.request.CreateUserDto;
+import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -27,39 +28,37 @@ import org.springframework.web.bind.annotation.RestController;
 class UserController {
 
   @Autowired
-  UserRepository userRepository;
+  UserService userService;
 
-  @GetMapping
-  public List<User> getAll() {
-    try {
-      List<User> users = userRepository.findAll();
+  // @GetMapping
+  // public List<User> getAll() {
+  //   try {
+  //     List<User> users = userService.findAll();
 
-      return users;
-    } catch (Exception e) {
-      throw new IllegalStateException("Internal Error");
-    }
-  }
+  //     return users;
+  //   } catch (Exception e) {
+  //     throw new IllegalStateException("Internal Error");
+  //   }
+  // }
 
   @GetMapping("{id}")
-  public Object getById(
-    @PathVariable("id") Long id,
-    HttpSession session
-  ) {
-    System.out.println(session.getAttribute("userId"));
-    return session.getAttribute("userId");
-  }
+  public void login(@PathVariable("id") Long id, HttpSession session) {}
 
-  @PostMapping
-  public User create(
+  @PostMapping("/register")
+  public UserRO register(
     @Valid @RequestBody CreateUserDto createUserDto,
     HttpSession session
   ) {
-    User user = userRepository.findByUsername(createUserDto.getUsername());
+    return userService.createUser(createUserDto, session);
+  }
 
-    session.setAttribute("userId", user.getId());
-    System.out.println(session.getAttribute("userId"));
+  @GetMapping("/me")
+  public UserRO loginUser(HttpSession session) {
+    Long userId = (Long) session.getAttribute("userId");
 
-    return user;
+    if (userId == null) return null;
+
+    return userService.me(userId);
   }
 
   @PutMapping("{id}")
