@@ -63,4 +63,8 @@ public class PostService {
   public List<Post> fetchPaginatedPost() {
     return postRepository.findAll();
   }
+
+  public Post fetchSinglePost(Long id) {
+    return postRepository.findById(id).orElseThrow();
+  }
 }
