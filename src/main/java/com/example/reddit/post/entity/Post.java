@@ -36,7 +36,7 @@ public class Post {
   @UpdateTimestamp
   private Instant updatedAt;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String title;
 
   @Column(nullable = true)
@@ -59,6 +59,9 @@ public class Post {
 
   @ColumnDefault(value = "0")
   private Integer commentAmounts;
+
+  @Column(name = "user_id", insertable = false, updatable = false)
+  private Long userId;
 
   @ManyToOne(fetch = EAGER)
   @JoinColumn(name = "user_id")

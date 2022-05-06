@@ -5,6 +5,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.post.entity.Post;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class User {
   private String email;
 
   @Embedded
+  @JsonIgnore
   private Password password;
 
   @Column(name = "post_amounts")

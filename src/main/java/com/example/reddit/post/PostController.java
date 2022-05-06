@@ -1,6 +1,7 @@
 package com.example.reddit.post;
 
 import com.example.reddit.post.dto.request.CreatePostDto;
+import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/post")
 class PostController {
 
-  PostService postService;
+  private final PostService postService;
 
   @Autowired
   PostController(PostService postService) {
@@ -35,29 +36,8 @@ class PostController {
   }
 
   @GetMapping
-  public List<Post> getAll() {
-    return null;
-  }
-
-  @GetMapping("setsession")
-  public void setSession(
-    HttpSession session,
-    HttpServletRequest request,
-    HttpServletResponse response
-  ) {
-    Random rand = new Random();
-
-    // Obtain a number between [0 - 49].
-    Integer num = rand.nextInt(50);
-
-    // request.getSession().setAttribute("userId", 11);
-    session.setAttribute("userId", 44);
-  }
-
-  @GetMapping("getsession")
-  public void getSession(HttpSession session, HttpServletRequest request) {
-    // System.out.println(request.getSession().getAttribute("userId"));
-    System.out.println(session.getAttribute("userId"));
+  public List<Post> getAll(HttpSession session) {
+    return postService.fetchPaginatedPost();
   }
 
   @GetMapping("{id}")
@@ -82,15 +62,41 @@ class PostController {
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<Post> update(
+  public Post update(
     @PathVariable("id") Long id,
-    @RequestBody Post item
+    @RequestBody UpdatePostDto dto,
+    HttpSession session
   ) {
-    return null;
+    Long userId = (Long) session.getAttribute("userId");
+
+    if (userId == null) return null;
+
+    return postService.editPost(id, dto, userId);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     return null;
+  }
+
+  @GetMapping("setsession")
+  public void setSession(
+    HttpSession session,
+    HttpServletRequest request,
+    HttpServletResponse response
+  ) {
+    Random rand = new Random();
+
+    // Obtain a number between [0 - 49].
+    Integer num = rand.nextInt(50);
+
+    // request.getSession().setAttribute("userId", 11);
+    session.setAttribute("userId", 44);
+  }
+
+  @GetMapping("getsession")
+  public void getSession(HttpSession session, HttpServletRequest request) {
+    // System.out.println(request.getSession().getAttribute("userId"));
+    System.out.println(session.getAttribute("userId"));
   }
 }
