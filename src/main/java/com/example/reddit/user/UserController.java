@@ -44,7 +44,6 @@ class UserController {
   @GetMapping("/me")
   public ResUser loginUser(HttpSession session) {
     Long userId = (Long) session.getAttribute("userId");
-    System.out.println(userId);
 
     if (userId == null) return null;
 
