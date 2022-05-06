@@ -1,5 +1,6 @@
 package com.example.reddit.post;
 
+import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.entity.Post;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -26,12 +27,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/post")
 class PostController {
 
+  PostService postService;
+
   @Autowired
-  PostRepository postRepository;
+  PostController(PostService postService) {
+    this.postService = postService;
+  }
 
   @GetMapping
   public List<Post> getAll() {
-    return postRepository.findAll();
+    return null;
   }
 
   @GetMapping("setsession")
@@ -46,7 +51,7 @@ class PostController {
     Integer num = rand.nextInt(50);
 
     // request.getSession().setAttribute("userId", 11);
-    session.setAttribute("userId", num);
+    session.setAttribute("userId", 44);
   }
 
   @GetMapping("getsession")
@@ -57,20 +62,20 @@ class PostController {
 
   @GetMapping("{id}")
   public ResponseEntity<Post> getById(@PathVariable("id") Long id) {
-    Optional<Post> existingItemOptional = postRepository.findById(id);
-
-    if (existingItemOptional.isPresent()) {
-      return new ResponseEntity<>(existingItemOptional.get(), HttpStatus.OK);
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @PostMapping
-  public ResponseEntity<Post> create(@RequestBody Post item) {
+  public ResponseEntity<Post> create(
+    @RequestBody CreatePostDto dto,
+    HttpSession session
+  ) {
     try {
-      Post savedItem = postRepository.save(item);
-      return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
+      Post post = postService.createPost(
+        dto,
+        (Long) session.getAttribute("userId")
+      );
+      return new ResponseEntity<>(post, HttpStatus.CREATED);
     } catch (Exception e) {
       return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
     }
@@ -81,29 +86,11 @@ class PostController {
     @PathVariable("id") Long id,
     @RequestBody Post item
   ) {
-    Optional<Post> existingItemOptional = postRepository.findById(id);
-    if (existingItemOptional.isPresent()) {
-      Post existingItem = existingItemOptional.get();
-      System.out.println(
-        "TODO for developer - update logic is unique to entity and must be implemented manually."
-      );
-      //existingItem.setSomeField(item.getSomeField());
-      return new ResponseEntity<>(
-        postRepository.save(existingItem),
-        HttpStatus.OK
-      );
-    } else {
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
+    return null;
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    try {
-      postRepository.deleteById(id);
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    } catch (Exception e) {
-      return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
-    }
+    return null;
   }
 }

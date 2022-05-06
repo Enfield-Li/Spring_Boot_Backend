@@ -64,6 +64,8 @@ public class UserService {
       return new UserRO(this.buildErrorRO("password"));
     }
 
+    session.setAttribute("userId", user.getId());
+
     return new UserRO(this.buildResUser(user, null));
   }
 
@@ -104,7 +106,7 @@ public class UserService {
   }
 
   public ResUser fetchUserInfo(Long id, Long meId) {
-    return new ResUser();
+    return null;
   }
 
   private ResUser buildResUser(User user, Long meId) {

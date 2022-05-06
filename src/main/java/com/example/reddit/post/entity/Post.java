@@ -76,4 +76,8 @@ public class Post {
     this.content = content;
     this.user = user;
   }
+
+  public static Post of(String title, String content, User user) {
+    return new Post(title, content, user);
+  }
 }
