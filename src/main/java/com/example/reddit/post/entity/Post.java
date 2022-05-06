@@ -1,11 +1,16 @@
 package com.example.reddit.post.entity;
 
+import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,6 +72,16 @@ public class Post {
   @JoinColumn(name = "user_id")
   @JsonIgnoreProperties("post")
   private User user;
+
+  @OneToMany(
+    mappedBy = "user",
+    cascade = ALL,
+    orphanRemoval = true,
+    targetEntity = Interactions.class,
+    fetch = LAZY
+  )
+  @JsonIgnoreProperties("user")
+  private List<Interactions> interactions = new ArrayList<>();
 
   public Post() {}
 
