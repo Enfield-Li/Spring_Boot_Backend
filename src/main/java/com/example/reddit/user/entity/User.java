@@ -40,8 +40,8 @@ public class User {
   @Column(nullable = false, unique = true)
   private String email;
 
-  @Column(nullable = false)
-  private String password;
+  @Embedded
+  private Password password;
 
   @Column(name = "post_amounts")
   @ColumnDefault(value = "0")
@@ -59,7 +59,7 @@ public class User {
 
   public User() {}
 
-  public User(String username, String email, String password) {
+  public User(String username, String email, Password password) {
     this.username = username;
     this.email = email;
     this.password = password;

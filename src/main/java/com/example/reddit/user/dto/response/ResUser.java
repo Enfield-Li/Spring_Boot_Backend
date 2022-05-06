@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class ResUser {
 
   private Long id;
@@ -15,4 +15,14 @@ public class ResUser {
   private String email;
   private Instant createdAt;
   private Integer postAmounts;
+
+  public static ResUser of(
+    Long id,
+    String username,
+    String email,
+    Instant createdAt,
+    Integer postAmounts
+  ) {
+    return new ResUser(id, username, email, createdAt, postAmounts);
+  }
 }

@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -28,72 +30,94 @@ public class UserService {
 
   public UserRO login(LoginUserDto loginUserDto, HttpSession session) {
     String usernameOrEmail = loginUserDto.getUsernameOrEmail();
-    String password = loginUserDto.getPassword();
 
     User user;
     if (usernameOrEmail.contains("@")) {
-      user = userRepository.findByEmail(usernameOrEmail);
+      user =
+        userRepository
+          .findByEmail(usernameOrEmail)
+          .orElseThrow(
+            () ->
+              new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid email"
+              )
+          );
     } else {
-      user = userRepository.findByUsername(usernameOrEmail);
+      user =
+        userRepository
+          .findByUsername(usernameOrEmail)
+          .orElseThrow(
+            () ->
+              new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Invalid username"
+              )
+          );
     }
 
-    // System.out.println(user.getPassword().toString());
-    // System.out.println(
-    //   user.getPassword().matchPassword("123456", this.passwordEncoder)
-    // );
-
-    ResUserError resUserError = new ResUserError();
-    if (password != user.getPassword().toString()) {
-      resUserError.setField("password");
-      resUserError.setMessage("Invalid password");
-      return new UserRO(resUserError);
+    if (
+      !user
+        .getPassword()
+        .matchPassword(loginUserDto.getPassword(), this.passwordEncoder)
+    ) {
+      return new UserRO(this.buildErrorRO("password"));
     }
 
-    ResUser resUser = new ResUser(
-      user.getId(),
-      user.getUsername(),
-      user.getEmail(),
-      user.getCreatedAt(),
-      user.getPostAmounts()
-    );
-
-    return new UserRO(resUser);
+    return new UserRO(this.buildResUser(user, null));
   }
 
   public UserRO createUser(CreateUserDto createUserDto, HttpSession session) {
     try {
+      Password password = Password.encode(
+        createUserDto.getPassword(),
+        this.passwordEncoder
+      );
+
       User newUser = new User(
         createUserDto.getUsername(),
         createUserDto.getEmail(),
-        createUserDto.getPassword()
+        password
       );
 
       User user = userRepository.save(newUser);
       session.setAttribute("userId", user.getId());
-    } catch (Exception e) {
-      //TODO: handle exception
-    }
 
-    return new UserRO();
+      return new UserRO(this.buildResUser(user, user.getId()));
+    } catch (Exception e) {
+      throw new ResponseStatusException(
+        HttpStatus.BAD_REQUEST,
+        "Invalid username or email"
+      );
+    }
   }
 
-  public UserRO me(Long id) {
+  public ResUser me(Long id) {
     User user = userRepository
       .findById(id)
-      .orElseThrow(() -> new IllegalStateException("User does not exist!"));
+      .orElseThrow(
+        () ->
+          new ResponseStatusException(HttpStatus.NOT_FOUND, "User Not Found")
+      );
 
-    ResUser resUser = new ResUser(
-      user.getId(),
-      user.getUsername(),
-      user.getEmail(),
-      user.getCreatedAt(),
-      user.getPostAmounts()
-    );
-
-    return new UserRO(resUser);
+    return this.buildResUser(user, id);
   }
 
   public ResUser fetchUserInfo(Long id, Long meId) {
     return new ResUser();
+  }
+
+  private ResUser buildResUser(User user, Long meId) {
+    return ResUser.of(
+      user.getId(),
+      user.getUsername(),
+      meId == null ? null : user.getEmail(),
+      user.getCreatedAt(),
+      user.getPostAmounts()
+    );
+  }
+
+  private ResUserError buildErrorRO(String field) {
+    return ResUserError.of(field);
   }
 }

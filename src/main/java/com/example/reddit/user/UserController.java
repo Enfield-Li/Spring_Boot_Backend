@@ -2,6 +2,7 @@ package com.example.reddit.user;
 
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
+import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -59,7 +60,7 @@ class UserController {
   }
 
   @GetMapping("/me")
-  public UserRO loginUser(HttpSession session) {
+  public ResUser loginUser(HttpSession session) {
     Long userId = (Long) session.getAttribute("userId");
 
     if (userId == null) return null;

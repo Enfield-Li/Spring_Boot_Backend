@@ -2,7 +2,6 @@ package com.example.reddit.user.entity;
 
 import javax.persistence.*;
 import lombok.Data;
-import lombok.ToString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Data
@@ -12,13 +11,16 @@ public class Password {
   @Column(nullable = false)
   private String password;
 
-  public Password() {}
+  protected Password() {}
 
-  public Password(String password) {
+  private Password(String password) {
     this.password = password;
   }
 
-  public Password encode(String rawPassword, PasswordEncoder passwordEncoder) {
+  public static Password encode(
+    String rawPassword,
+    PasswordEncoder passwordEncoder
+  ) {
     return new Password(passwordEncoder.encode(rawPassword));
   }
 
