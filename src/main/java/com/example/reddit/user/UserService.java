@@ -36,30 +36,16 @@ public class UserService {
       user =
         userRepository
           .findByEmail(usernameOrEmail)
-          .orElseThrow(
-            () ->
-              new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Invalid email"
-              )
-          );
+          .orElseThrow(() -> new Error());
     } else {
       user =
         userRepository
           .findByUsername(usernameOrEmail)
-          .orElseThrow(
-            () ->
-              new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "Invalid username"
-              )
-          );
+          .orElseThrow(() -> new Error());
     }
 
     if (
-      !user
-        .getPassword()
-        .matchPassword(dto.getPassword(), this.passwordEncoder)
+      !user.getPassword().matchPassword(dto.getPassword(), this.passwordEncoder)
     ) {
       return new UserRO(this.buildErrorRO("password"));
     }
@@ -76,11 +62,7 @@ public class UserService {
         this.passwordEncoder
       );
 
-      User newUser = User.of(
-        dto.getUsername(),
-        dto.getEmail(),
-        password
-      );
+      User newUser = User.of(dto.getUsername(), dto.getEmail(), password);
 
       User user = userRepository.save(newUser);
       session.setAttribute("userId", user.getId());

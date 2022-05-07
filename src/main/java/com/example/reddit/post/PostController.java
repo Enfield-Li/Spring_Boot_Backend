@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Post")
 @RestController
-@RequestMapping("/post")
+@RequestMapping("post")
 class PostController {
 
   private final PostService postService;
@@ -33,12 +33,12 @@ class PostController {
     return postService.fetchPaginatedPost();
   }
 
-  @GetMapping("{id}")
+  @GetMapping("single-post/{id}")
   public Post getById(@PathVariable("id") Long id) {
     return postService.fetchSinglePost(id);
   }
 
-  @PostMapping
+  @PostMapping("create-post")
   public ResponseEntity<Post> create(
     @RequestBody CreatePostDto dto,
     HttpSession session
@@ -54,7 +54,7 @@ class PostController {
     }
   }
 
-  @PutMapping("{id}")
+  @PutMapping("edit/{id}")
   public Post update(
     @PathVariable("id") Long id,
     @RequestBody UpdatePostDto dto,
@@ -67,29 +67,23 @@ class PostController {
     return postService.editPost(id, dto, userId);
   }
 
-  @DeleteMapping("{id}")
+  @DeleteMapping("delete/{id}")
   public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
     return null;
   }
 
-  @GetMapping("setsession")
-  public void setSession(
-    HttpSession session,
-    HttpServletRequest request,
-    HttpServletResponse response
-  ) {
-    Random rand = new Random();
-
-    // Obtain a number between [0 - 49].
-    Integer num = rand.nextInt(50);
-
-    // request.getSession().setAttribute("userId", 11);
-    session.setAttribute("userId", 44);
+  @GetMapping("search-post")
+  public ResponseEntity<List<Post>> searchPosts(@PathVariable("id") Long id) {
+    return null;
   }
 
-  @GetMapping("getsession")
-  public void getSession(HttpSession session, HttpServletRequest request) {
-    // System.out.println(request.getSession().getAttribute("userId"));
-    System.out.println(session.getAttribute("userId"));
+  @GetMapping("paginated-posts")
+  public ResponseEntity<List<Post>> getPaginatedPosts() {
+    return null;
+  }
+
+  @GetMapping("paginated-posts/top")
+  public ResponseEntity<List<Post>> getPaginatedPostsByTop() {
+    return null;
   }
 }

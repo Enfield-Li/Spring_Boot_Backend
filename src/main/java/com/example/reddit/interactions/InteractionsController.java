@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,12 +32,22 @@ class InteractionsController {
     this.interactionService = interactionService;
   }
 
-  @GetMapping
-  public ResponseEntity<List<Interactions>> getAll() {
+  @PatchMapping("setNotificationChecked")
+  public ResponseEntity<Boolean> setNotificationChecked() {
     return null;
   }
 
-  @GetMapping("{id}")
+  @PatchMapping("setInteractionRead")
+  public ResponseEntity<Boolean> setInteractionRead() {
+    return null;
+  }
+
+  @PatchMapping("setAllInteractionRead")
+  public ResponseEntity<Boolean> setAllInteractionRead() {
+    return null;
+  }
+
+  @GetMapping("interact/post/{id}")
   @Parameter(
     name = "value",
     schema = @Schema(type = "boolean", allowableValues = { "true", "false" })
@@ -62,21 +73,21 @@ class InteractionsController {
     return interactionService.interact(id, userId);
   }
 
-  @PostMapping
-  public ResponseEntity<Interactions> create(@RequestBody Interactions item) {
+  @GetMapping("interactives")
+  public ResponseEntity<Boolean> create(@RequestBody Interactions item) {
     return null;
   }
 
   @PutMapping("{id}")
-  public ResponseEntity<Interactions> update(
+  public ResponseEntity<Boolean> update(
     @PathVariable("id") Long id,
     @RequestBody Interactions item
   ) {
     return null;
   }
 
-  @DeleteMapping("{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
+  @GetMapping("interact/comment/{id}")
+  public ResponseEntity<Boolean> delete(@PathVariable("id") Long id) {
     return null;
   }
 }
