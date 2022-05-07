@@ -1,5 +1,6 @@
 package com.example.reddit.user;
 
+import com.example.reddit.user.dto.interfaces.UserInfo;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
@@ -22,8 +23,24 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("user")
 class UserController {
 
+  private final UserService userService;
+  private final UserRepository userRepository;
+
   @Autowired
-  UserService userService;
+  UserController(UserService userService, UserRepository userRepository) {
+    this.userRepository = userRepository;
+    this.userService = userService;
+  }
+
+  @GetMapping("test1")
+  public List<User> test1() {
+    return userRepository.findAll();
+  }
+
+  @GetMapping("test2/{id}")
+  public UserInfo test2(@PathVariable("id") Long id) {
+    return userRepository.findByid(id).orElseThrow();
+  }
 
   @PostMapping("register")
   public UserRO register(
