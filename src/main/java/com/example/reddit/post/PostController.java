@@ -1,5 +1,6 @@
 package com.example.reddit.post;
 
+import com.example.reddit.post.dto.query.PostWithInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
@@ -22,10 +23,22 @@ import org.springframework.web.bind.annotation.*;
 class PostController {
 
   private final PostService postService;
+  private final PostRepository postRepository;
 
   @Autowired
-  PostController(PostService postService) {
+  PostController(PostService postService, PostRepository postRepository) {
     this.postService = postService;
+    this.postRepository = postRepository;
+  }
+
+  @GetMapping("test")
+  public Object test() {
+    return postRepository.getPostWithInteractions(1L, 1L);
+  }
+
+  @GetMapping("test2")
+  public Post test2() {
+    return postRepository.findById(1L).orElseThrow();
   }
 
   @GetMapping

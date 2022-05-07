@@ -51,6 +51,7 @@ public class User {
   @ColumnDefault(value = "0")
   private Integer postAmounts;
 
+  @JsonIgnore
   @OneToMany(
     mappedBy = "user",
     cascade = ALL,
@@ -58,9 +59,9 @@ public class User {
     targetEntity = Post.class,
     fetch = EAGER
   )
-  @JsonIgnoreProperties("user")
   private List<Post> post = new ArrayList<>();
 
+  @JsonIgnore
   @OneToMany(
     mappedBy = "user",
     cascade = ALL,
@@ -68,7 +69,6 @@ public class User {
     targetEntity = Interactions.class,
     fetch = LAZY
   )
-  @JsonIgnoreProperties("user")
   private List<Interactions> interactions = new ArrayList<>();
 
   public User() {}

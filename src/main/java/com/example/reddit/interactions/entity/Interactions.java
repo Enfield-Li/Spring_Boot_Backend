@@ -1,16 +1,13 @@
 package com.example.reddit.interactions.entity;
 
+import static javax.persistence.FetchType.LAZY;
+
 import com.example.reddit.post.entity.Post;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
 import javax.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
@@ -70,12 +67,12 @@ public class Interactions {
   private Boolean checked;
 
   @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
   private User user;
 
   @JsonIgnore
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "post_id", insertable = false, updatable = false)
   private Post post;
 
