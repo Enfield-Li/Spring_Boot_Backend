@@ -15,6 +15,7 @@ public class RedditApplication {
     );
 
     PersonRepository personRepo = configContext.getBean(PersonRepository.class);
-    System.out.println(personRepo.findByLastName("1").getAddress().getCity());
+    // System.out.println(personRepo.findByLastName("1").getAddress().getCity());
+    System.out.println(personRepo.findByLastName("1").getId());
   }
 }
