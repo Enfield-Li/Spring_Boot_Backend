@@ -22,7 +22,24 @@ import org.hibernate.annotations.UpdateTimestamp;
 public class Interactions {
 
   @EmbeddedId
+  @JsonIgnore
   private CompositeKeys CompositeKeys;
+
+  @Column(
+    name = "user_id",
+    nullable = false,
+    insertable = false,
+    updatable = false
+  )
+  private Long userId;
+
+  @Column(
+    name = "post_id",
+    nullable = false,
+    insertable = false,
+    updatable = false
+  )
+  private Long postId;
 
   @Column(name = "created_at")
   @CreationTimestamp
@@ -63,7 +80,7 @@ public class Interactions {
   private Post post;
 
   public Interactions() {}
-  
+
   public static Interactions of(
     CompositeKeys compositeKeys,
     Boolean voteStatus

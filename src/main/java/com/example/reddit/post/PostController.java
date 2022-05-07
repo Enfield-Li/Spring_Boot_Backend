@@ -78,12 +78,12 @@ class PostController {
   }
 
   @GetMapping("paginated-posts")
-  public ResponseEntity<List<Post>> getPaginatedPosts() {
-    return null;
+  public List<Post> getPaginatedPosts() {
+    return postService.fetchPaginatedPost();
   }
 
   @GetMapping("paginated-posts/top")
-  public ResponseEntity<List<Post>> getPaginatedPostsByTop() {
-    return null;
+  public List<Post> getPaginatedPostsByTop() {
+    return postService.fetchPaginatedPost();
   }
 }

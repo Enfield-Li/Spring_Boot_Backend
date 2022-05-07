@@ -28,6 +28,14 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
+  public void newUser(String username, String pass, String email) {
+    Password password = Password.encode(pass, this.passwordEncoder);
+
+    User newUser = User.of(username, email, password);
+
+    userRepository.save(newUser);
+  }
+
   public UserRO login(LoginUserDto dto, HttpSession session) {
     String usernameOrEmail = dto.getUsernameOrEmail();
 

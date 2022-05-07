@@ -17,11 +17,11 @@ public class InteractionService {
     this.interactionsRepository = interactionsRepository;
   }
 
-  public Boolean interact(Long postId, Long userId) {
+  public Boolean interact(Long postId, Long userId, Boolean value) {
     try {
       Interactions interaction = Interactions.of(
         CompositeKeys.of(userId, postId),
-        true
+        value
       );
 
       interactionsRepository.save(interaction);

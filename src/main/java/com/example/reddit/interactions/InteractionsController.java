@@ -27,9 +27,20 @@ import org.springframework.web.bind.annotation.RestController;
 class InteractionsController {
 
   InteractionService interactionService;
+  InteractionsRepository interactionsRepository;
 
-  InteractionsController(InteractionService interactionService) {
+  @Autowired
+  InteractionsController(
+    InteractionService interactionService,
+    InteractionsRepository interactionsRepository
+  ) {
     this.interactionService = interactionService;
+    this.interactionsRepository = interactionsRepository;
+  }
+
+  @GetMapping("test")
+  public List<Interactions> getAll() {
+    return interactionsRepository.findAll();
   }
 
   @PatchMapping("setNotificationChecked")
@@ -70,7 +81,7 @@ class InteractionsController {
     System.out.println(userId);
     if (userId == null) return null;
 
-    return interactionService.interact(id, userId);
+    return interactionService.interact(id, userId, value);
   }
 
   @GetMapping("interactives")
