@@ -1,7 +1,5 @@
 package com.example.reddit;
 
-import java.util.Arrays;
-import java.util.List;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -15,5 +13,8 @@ public class RedditApplication {
       RedditApplication.class,
       args
     );
+
+    PersonRepository personRepo = configContext.getBean(PersonRepository.class);
+    System.out.println(personRepo.findByLastName("1").getAddress().getCity());
   }
 }
