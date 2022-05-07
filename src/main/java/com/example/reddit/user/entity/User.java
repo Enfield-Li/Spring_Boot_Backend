@@ -78,4 +78,8 @@ public class User {
     this.email = email;
     this.password = password;
   }
+
+  public static User of(String username, String email, Password password) {
+    return new User(username, email, password);
+  }
 }

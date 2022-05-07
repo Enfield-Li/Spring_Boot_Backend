@@ -19,8 +19,6 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Getter
 @Setter
@@ -80,7 +78,7 @@ public class Post {
     targetEntity = Interactions.class,
     fetch = LAZY
   )
-  @JsonIgnoreProperties("user")
+  @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();
 
   public Post() {}

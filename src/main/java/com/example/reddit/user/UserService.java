@@ -28,8 +28,8 @@ public class UserService {
     this.passwordEncoder = passwordEncoder;
   }
 
-  public UserRO login(LoginUserDto loginUserDto, HttpSession session) {
-    String usernameOrEmail = loginUserDto.getUsernameOrEmail();
+  public UserRO login(LoginUserDto dto, HttpSession session) {
+    String usernameOrEmail = dto.getUsernameOrEmail();
 
     User user;
     if (usernameOrEmail.contains("@")) {
@@ -59,7 +59,7 @@ public class UserService {
     if (
       !user
         .getPassword()
-        .matchPassword(loginUserDto.getPassword(), this.passwordEncoder)
+        .matchPassword(dto.getPassword(), this.passwordEncoder)
     ) {
       return new UserRO(this.buildErrorRO("password"));
     }
@@ -69,16 +69,16 @@ public class UserService {
     return new UserRO(this.buildResUser(user, null));
   }
 
-  public UserRO createUser(CreateUserDto createUserDto, HttpSession session) {
+  public UserRO createUser(CreateUserDto dto, HttpSession session) {
     try {
       Password password = Password.encode(
-        createUserDto.getPassword(),
+        dto.getPassword(),
         this.passwordEncoder
       );
 
-      User newUser = new User(
-        createUserDto.getUsername(),
-        createUserDto.getEmail(),
+      User newUser = User.of(
+        dto.getUsername(),
+        dto.getEmail(),
         password
       );
 

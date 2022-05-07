@@ -8,6 +8,7 @@ import java.time.Instant;
 import javax.persistence.*;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
@@ -43,12 +44,12 @@ public class Interactions {
   @Column(name = "confused_status")
   private Boolean confusedStatus;
 
-  @ColumnDefault(value = "false")
   @Column(name = "have_read")
+  @ColumnDefault(value = "false")
   private Boolean read;
 
-  @ColumnDefault(value = "false")
   @Column(name = "have_checked")
+  @ColumnDefault(value = "false")
   private Boolean checked;
 
   @JsonIgnore
@@ -60,4 +61,18 @@ public class Interactions {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "post_id", insertable = false, updatable = false)
   private Post post;
+
+  public Interactions() {}
+  
+  public static Interactions of(
+    CompositeKeys compositeKeys,
+    Boolean voteStatus
+  ) {
+    return new Interactions(compositeKeys, voteStatus);
+  }
+
+  private Interactions(CompositeKeys compositeKeys, Boolean voteStatus) {
+    this.CompositeKeys = compositeKeys;
+    this.voteStatus = voteStatus;
+  }
 }
