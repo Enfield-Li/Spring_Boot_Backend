@@ -1,6 +1,6 @@
-package com.example.reddit;
+package com.example.reddit.person.dto;
 
-interface PersonSummary {
+public interface PersonSummary {
   String getFirstName();
   String getLastName();
 

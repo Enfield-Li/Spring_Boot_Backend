@@ -1,4 +1,4 @@
-package com.example.reddit;
+package com.example.reddit.person.dto;
 
 import javax.persistence.Embeddable;
 
