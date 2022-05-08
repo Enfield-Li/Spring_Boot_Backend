@@ -23,13 +23,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("user")
 class UserController {
 
-  private final UserService userService;
   private final UserRepository userRepository;
 
   @Autowired
-  UserController(UserService userService, UserRepository userRepository) {
+  UserController(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.userService = userService;
   }
 
   @GetMapping("test1")
@@ -41,44 +39,4 @@ class UserController {
   public UserInfo test2(@PathVariable("id") Long id) {
     return userRepository.findByid(id).orElseThrow();
   }
-
-  @PostMapping("register")
-  public UserRO register(
-    @Valid @RequestBody CreateUserDto createUserDto,
-    HttpSession session
-  ) {
-    return userService.createUser(createUserDto, session);
-  }
-
-  @GetMapping("profile/{id}")
-  public void findOne(@PathVariable("id") Long id, HttpSession session) {}
-
-  @GetMapping("userInfo/{id}")
-  public void findUserProfile(
-    @PathVariable("id") Long id,
-    HttpSession session
-  ) {}
-
-  @PutMapping("login")
-  public UserRO login(LoginUserDto loginUserDto, HttpSession session) {
-    return userService.login(loginUserDto, session);
-  }
-
-  @GetMapping("me")
-  public ResUser loginUser(HttpSession session) {
-    Long userId = (Long) session.getAttribute("userId");
-
-    if (userId == null) return null;
-
-    return userService.me(userId);
-  }
-
-  @PatchMapping("update-user/{id}")
-  public void updateUser(@PathVariable("id") Long id, HttpSession session) {}
-
-  @GetMapping("logout")
-  public void logoutUser() {}
-
-  @DeleteMapping("{id}")
-  public void delete(@PathVariable("id") Long id) {}
 }

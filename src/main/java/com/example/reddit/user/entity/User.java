@@ -5,8 +5,7 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.post.entity.Post;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -50,26 +49,6 @@ public class User {
   @Column(name = "post_amounts")
   @ColumnDefault(value = "0")
   private Integer postAmounts;
-
-  @JsonIgnore
-  @OneToMany(
-    mappedBy = "user",
-    cascade = ALL,
-    orphanRemoval = true,
-    targetEntity = Post.class,
-    fetch = EAGER
-  )
-  private List<Post> post = new ArrayList<>();
-
-  @JsonIgnore
-  @OneToMany(
-    mappedBy = "user",
-    cascade = ALL,
-    orphanRemoval = true,
-    targetEntity = Interactions.class,
-    fetch = LAZY
-  )
-  private List<Interactions> interactions = new ArrayList<>();
 
   public User() {}
 
