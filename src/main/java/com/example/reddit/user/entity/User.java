@@ -5,7 +5,6 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -26,6 +25,20 @@ import org.springframework.data.annotation.LastModifiedDate;
 @ToString(exclude = "post")
 @Entity
 @DynamicInsert
+@NamedNativeQuery(
+  query = "SELECT u.id, u.username FROM user u;",
+  resultSetMapping = "UserPInfo",
+  name = "getUserPInfo"
+)
+@SqlResultSetMapping(
+  name = "UserPInfo",
+  classes = {
+    @ConstructorResult(
+      targetClass = com.example.reddit.user.entity.UserPartialInfo.class,
+      columns = { @ColumnResult(name = "id"), @ColumnResult(name = "username") }
+    ),
+  }
+)
 public class User {
 
   @Id
