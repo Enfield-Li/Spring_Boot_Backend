@@ -1,4 +1,4 @@
-package com.example.reddit.post.dto.query;
+package com.example.reddit.post.dto.classes;
 
 public class User {
 

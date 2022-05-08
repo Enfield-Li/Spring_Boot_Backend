@@ -1,6 +1,7 @@
 package com.example.reddit.post;
 
-import com.example.reddit.post.dto.query.PostWithInteractions;
+import com.example.reddit.post.dto.classes.PostInfo;
+import com.example.reddit.post.dto.interfaces.PostWithAuthorAndInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
@@ -9,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,21 +27,33 @@ class PostController {
 
   private final PostService postService;
   private final PostRepository postRepository;
+  private final EntityManager em;
 
   @Autowired
-  PostController(PostService postService, PostRepository postRepository) {
+  PostController(
+    PostService postService,
+    PostRepository postRepository,
+    EntityManager em
+  ) {
     this.postService = postService;
     this.postRepository = postRepository;
+    this.em = em;
   }
 
   @GetMapping("test")
-  public Object test() {
-    return postRepository.getPostWithInteractions(1L, 1L);
+  public Post test() {
+    return postRepository.getPostWithInteractions();
+    // Query query = em.createNativeQuery(
+    //   "SELECT p.id AS postId, p.title AS postTitle FROM post p WHERE p.id = 1",
+    //   "getPostWithAuthorInfo"
+    // );
+    // System.out.println(query.getSingleResult());
+    // return (PostWithAuthor) query.getSingleResult();
   }
 
   @GetMapping("test2")
-  public Post test2() {
-    return postRepository.findById(1L).orElseThrow();
+  public PostInfo getOne() {
+    return postRepository.getPostInfo();
   }
 
   @GetMapping

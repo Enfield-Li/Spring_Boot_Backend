@@ -6,6 +6,7 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
+import com.example.reddit.post.dto.classes.PostInfo;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -25,6 +26,20 @@ import org.hibernate.annotations.UpdateTimestamp;
 @ToString(exclude = "user")
 @Entity
 @DynamicInsert
+@NamedNativeQuery(
+  name = "Post.getPostInfo",
+  query = "SELECT p.id as id, p.title as title FROM post p WHERE p.id = 1;",
+  resultSetMapping = "PostInfo"
+)
+@SqlResultSetMapping(
+  name = "PostInfo",
+  classes = {
+    @ConstructorResult(
+      targetClass = PostInfo.class,
+      columns = { @ColumnResult(name = "id"), @ColumnResult(name = "title") }
+    ),
+  }
+)
 public class Post {
 
   @Id
@@ -72,11 +87,11 @@ public class Post {
   private User user;
 
   @OneToMany(
-    mappedBy = "user",
+    mappedBy = "post",
     cascade = ALL,
     orphanRemoval = true,
     targetEntity = Interactions.class,
-    fetch = LAZY
+    fetch = EAGER
   )
   @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();

@@ -57,7 +57,7 @@ public class User {
     cascade = ALL,
     orphanRemoval = true,
     targetEntity = Post.class,
-    fetch = EAGER
+    fetch = LAZY
   )
   private List<Post> post = new ArrayList<>();
 
