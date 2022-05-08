@@ -7,8 +7,6 @@ public class PostInfo {
   private Long id;
   private String title;
 
-  //   private User user;
-
   public PostInfo() {}
 
   public PostInfo(Long id, String title) {

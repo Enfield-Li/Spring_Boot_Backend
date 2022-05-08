@@ -1,6 +1,7 @@
 package com.example.reddit.post;
 
 import com.example.reddit.post.dto.classes.PostInfo;
+import com.example.reddit.post.dto.classes.PostTitle;
 import com.example.reddit.post.dto.interfaces.PostWithAuthorAndInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
@@ -52,8 +53,8 @@ class PostController {
   }
 
   @GetMapping("test2")
-  public PostInfo getOne() {
-    return postRepository.getPostInfo();
+  public PostTitle getOne() {
+    return postRepository.getPostTitle();
   }
 
   @GetMapping
