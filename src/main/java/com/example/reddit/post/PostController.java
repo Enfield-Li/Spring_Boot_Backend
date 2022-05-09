@@ -45,14 +45,14 @@ class PostController {
   }
 
   @GetMapping("test")
-  public Post test() {
-    return postRepository.getPostWithInteractions();
-    // Query query = em.createNativeQuery(
-    //   "SELECT p.id AS postId, p.title AS postTitle FROM post p WHERE p.id = 1",
-    //   "getPostWithAuthorInfo"
-    // );
-    // System.out.println(query.getSingleResult());
-    // return (PostWithAuthor) query.getSingleResult();
+  public PostWithUserInteractions test() {
+    Query q = em.createNativeQuery(
+      "SELECT p.id, p.title, u.username, i.vote_status AS voteStatus FROM post p JOIN user u on p.user_id = u.id JOIN interactions i on p.id = i.post_id AND u.id = i.user_id WHERE p.id = 1 AND u.id = 1;",
+      "PostTitle"
+    );
+    // PostWithUserInteractions res = (PostWithUserInteractions) q.getSingleResult();
+    // return res;
+    return (PostWithUserInteractions) q.getSingleResult();
   }
 
   @GetMapping("test2")
