@@ -31,12 +31,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @DynamicInsert
 @NamedNativeQuery(
-  name = "Post.getPostTitle",
+  name = "Post.getPostTitle", // repository name
   query = "SELECT p.id, p.title, u.username, i.vote_status AS voteStatus FROM post p JOIN user u on p.user_id = u.id JOIN interactions i on p.id = i.post_id AND u.id = i.user_id WHERE p.id = 1 AND u.id = 1;",
-  resultSetMapping = "PostTitle"
+  resultSetMapping = "PostTitle" 
 )
 @SqlResultSetMapping(
-  name = "PostTitle",
+  name = "PostTitle", // em creation name
   classes = {
     @ConstructorResult(
       targetClass = PostWithUserInteractions.class,
