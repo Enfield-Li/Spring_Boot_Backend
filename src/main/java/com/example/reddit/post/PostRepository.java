@@ -1,6 +1,7 @@
 package com.example.reddit.post;
 
 import com.example.reddit.post.dto.classes.PostInfo;
+import com.example.reddit.post.dto.classes.PostMoreInfo;
 import com.example.reddit.post.dto.classes.PostTitle;
 import com.example.reddit.post.dto.interfaces.PostWithAuthorAndInteractions;
 import com.example.reddit.post.entity.Post;
@@ -24,7 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
   );
 
   @Query(nativeQuery = true)
-  PostTitle getPostTitle();
+  PostInfo getPostTitle();
 
   @Query(
     value = "SELECT p.id, p.created_at, p.updated_at, p.title, p.content, p.user_id," +

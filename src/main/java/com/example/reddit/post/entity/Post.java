@@ -7,6 +7,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.post.dto.classes.PostInfo;
+import com.example.reddit.post.dto.classes.PostMoreInfo;
 import com.example.reddit.post.dto.classes.PostTitle;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -29,15 +30,18 @@ import org.hibernate.annotations.UpdateTimestamp;
 @DynamicInsert
 @NamedNativeQuery(
   name = "Post.getPostTitle",
-  query = "SELECT p.id as id, p.title as title FROM post p WHERE p.id = 1;",
+  query = "SELECT p.id AS id, p.title AS title FROM post p WHERE p.id = 1;",
   resultSetMapping = "PostTitle"
 )
 @SqlResultSetMapping(
   name = "PostTitle",
   classes = {
     @ConstructorResult(
-      targetClass = PostTitle.class,
-      columns = {   @ColumnResult(name = "title") }
+      targetClass = PostInfo.class,
+      columns = {
+        @ColumnResult(name = "id", type = java.lang.Long.class),
+        @ColumnResult(name = "title"),
+      }
     ),
   }
 )
