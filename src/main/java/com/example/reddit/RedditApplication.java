@@ -50,6 +50,6 @@ public class RedditApplication {
   public OpenAPI customOpenAPI() {
     return new OpenAPI()
       .components(new Components())
-      .info(new Info().title("Spring API").description("用的 Spring"));
+      .info(new Info().title("Spring API").description("使用 Spring 搭建"));
   }
 }

@@ -37,30 +37,30 @@ public class UserService {
   }
 
   public UserRO login(LoginUserDto dto, HttpSession session) {
-    String usernameOrEmail = dto.getUsernameOrEmail();
+    try {
+      User user;
+      String usernameOrEmail = dto.getUsernameOrEmail();
 
-    User user;
-    if (usernameOrEmail.contains("@")) {
-      user =
-        userRepository
-          .findByEmail(usernameOrEmail)
-          .orElseThrow(() -> new Error());
-    } else {
-      user =
-        userRepository
-          .findByUsername(usernameOrEmail)
-          .orElseThrow(() -> new Error());
+      if (usernameOrEmail.contains("@")) {
+        user = userRepository.findByEmail(usernameOrEmail).orElseThrow();
+      } else {
+        user = userRepository.findByUsername(usernameOrEmail).orElseThrow();
+      }
+
+      if (
+        !user
+          .getPassword()
+          .matchPassword(dto.getPassword(), this.passwordEncoder)
+      ) {
+        return new UserRO(this.buildErrorRO("password"));
+      }
+
+      session.setAttribute("userId", user.getId());
+
+      return new UserRO(this.buildResUser(user, null));
+    } catch (Exception e) {
+      return new UserRO(this.buildErrorRO("usernameOrEmail"));
     }
-
-    if (
-      !user.getPassword().matchPassword(dto.getPassword(), this.passwordEncoder)
-    ) {
-      return new UserRO(this.buildErrorRO("password"));
-    }
-
-    session.setAttribute("userId", user.getId());
-
-    return new UserRO(this.buildResUser(user, null));
   }
 
   public UserRO createUser(CreateUserDto dto, HttpSession session) {

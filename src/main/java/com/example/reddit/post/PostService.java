@@ -7,7 +7,9 @@ import com.example.reddit.user.UserRepository;
 import com.example.reddit.user.entity.User;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +27,22 @@ public class PostService {
 
   @Transactional
   public Post createPost(CreatePostDto dto, Long userId) {
-    User author = userRepository.findById(userId).orElseThrow();
+    try {
+      User author = userRepository.findById(userId).orElseThrow();
 
-    // Author post amount + 1
-    author.setPostAmounts(author.getPostAmounts() + 1);
+      // Author post amount + 1
+      author.setPostAmounts(author.getPostAmounts() + 1);
 
-    Post post = Post.of(dto.getTitle(), dto.getContent(), author);
-    postRepository.save(post);
+      Post post = Post.of(dto.getTitle(), dto.getContent(), author);
+      postRepository.save(post);
 
-    return post;
+      return post;
+    } catch (Exception e) {
+      // System.out.println("*******************************");
+      // System.out.println(e.getCause());
+      // System.out.println("*******************************");
+      throw e;
+    }
   }
 
   @Transactional

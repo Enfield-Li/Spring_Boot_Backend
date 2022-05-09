@@ -19,7 +19,9 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -71,7 +73,7 @@ class PostController {
   }
 
   @PostMapping("create-post")
-  public ResponseEntity<Post> create(
+  public ResponseEntity create(
     @RequestBody CreatePostDto dto,
     HttpSession session
   ) {
@@ -80,9 +82,15 @@ class PostController {
         dto,
         (Long) session.getAttribute("userId")
       );
-      return new ResponseEntity<>(post, HttpStatus.CREATED);
+      return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    } catch (DataIntegrityViolationException e) {
+      return ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
+        .body("Oops, post title already taken!");
     } catch (Exception e) {
-      return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
+      return ResponseEntity
+        .status(HttpStatus.UNAUTHORIZED)
+        .body("You'll have to login first :)");
     }
   }
 
