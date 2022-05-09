@@ -6,6 +6,7 @@ import com.example.reddit.post.entity.Post;
 import com.example.reddit.user.UserRepository;
 import com.example.reddit.user.entity.User;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,36 +38,46 @@ public class PostService {
       postRepository.save(post);
 
       return post;
-    } catch (Exception e) {
-      // System.out.println("*******************************");
-      // System.out.println(e.getCause());
-      // System.out.println("*******************************");
-      throw e;
+    } catch (NoSuchElementException e) {
+      return null;
     }
   }
 
   @Transactional
   public Post editPost(Long postId, UpdatePostDto dto, Long userId) {
-    Post post = postRepository.findById(postId).orElseThrow();
+    try {
+      Post post = postRepository.findById(postId).orElseThrow();
 
-    if (dto.getContent() != null) {
-      post.setContent(dto.getContent());
-    } else if (dto.getTitle() != null) {
-      post.setTitle(dto.getTitle());
+      if (dto.getContent() != null) {
+        post.setContent(dto.getContent());
+      } else if (dto.getTitle() != null) {
+        post.setTitle(dto.getTitle());
+      }
+
+      return post;
+    } catch (NoSuchElementException e) {
+      return null;
     }
-
-    return post;
   }
 
   @Transactional
   public Boolean deletePost(Long postId, Long userId) {
-    Post post = postRepository.findById(postId).orElseThrow();
+    try {
+      Post post = postRepository.findById(postId).orElseThrow();
 
-    // If it wasn't the author, do nothing
-    if (post.getUserId() != userId) return null;
+      // If it wasn't the author, do nothing
+      if (post.getUserId().equals(userId)) return true;
 
-    postRepository.delete(post);
-    return true;
+      postRepository.delete(post);
+
+      // Author post amount - 1
+      User author = userRepository.findById(post.getUserId()).orElseThrow();
+      author.setPostAmounts(author.getPostAmounts() - 1);
+
+      return true;
+    } catch (NoSuchElementException e) {
+      return false;
+    }
   }
 
   public List<Post> fetchPaginatedPost() {

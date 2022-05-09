@@ -78,10 +78,15 @@ class PostController {
     HttpSession session
   ) {
     try {
-      Post post = postService.createPost(
-        dto,
-        (Long) session.getAttribute("userId")
-      );
+      Long userId = (Long) session.getAttribute("userId");
+      if (userId == null) {
+        return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body("You'll have to login first :)");
+      }
+
+      Post post = postService.createPost(dto, userId);
+
       return ResponseEntity.status(HttpStatus.CREATED).body(post);
     } catch (DataIntegrityViolationException e) {
       return ResponseEntity
@@ -89,27 +94,57 @@ class PostController {
         .body("Oops, post title already taken!");
     } catch (Exception e) {
       return ResponseEntity
-        .status(HttpStatus.UNAUTHORIZED)
-        .body("You'll have to login first :)");
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
     }
   }
 
   @PutMapping("edit/{id}")
-  public Post update(
+  public ResponseEntity update(
     @PathVariable("id") Long id,
     @RequestBody UpdatePostDto dto,
     HttpSession session
   ) {
-    Long userId = (Long) session.getAttribute("userId");
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      if (userId == null) {
+        return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body("You'll have to login first :)");
+      }
 
-    if (userId == null) return null;
+      Post post = postService.editPost(id, dto, userId);
 
-    return postService.editPost(id, dto, userId);
+      return ResponseEntity.status(HttpStatus.CREATED).body(post);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @DeleteMapping("delete/{id}")
-  public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
-    return null;
+  public ResponseEntity delete(
+    @PathVariable("id") Long id,
+    HttpSession session
+  ) {
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      if (userId == null) {
+        return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body("You'll have to login first :)");
+      }
+
+      Boolean deleted = postService.deletePost(id, userId);
+      if (!deleted) throw new Exception();
+
+      return ResponseEntity.status(HttpStatus.CREATED).body(deleted);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @GetMapping("search-post")

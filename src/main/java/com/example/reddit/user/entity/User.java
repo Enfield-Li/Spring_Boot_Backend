@@ -7,6 +7,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.post.entity.Post;
+import com.example.reddit.user.dto.response.UserProfile;
+import com.example.reddit.user.dto.response.UserProfileWithInteractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -27,6 +29,66 @@ import org.springframework.data.annotation.LastModifiedDate;
 @ToString(exclude = "post")
 @Entity
 @DynamicInsert
+@SqlResultSetMapping(
+  name = "userProfileWithoutInteractions", // em creation name
+  classes = {
+    @ConstructorResult(
+      targetClass = UserProfile.class,
+      columns = {
+        @ColumnResult(name = "id", type = Long.class),
+        @ColumnResult(name = "userCreatedAt", type = Instant.class),
+        @ColumnResult(name = "email"),
+        @ColumnResult(name = "post_amounts"),
+        @ColumnResult(name = "username"),
+        @ColumnResult(name = "postId", type = Long.class),
+        @ColumnResult(name = "postCreatedAt", type = Instant.class),
+        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "title"),
+        @ColumnResult(name = "content"),
+        @ColumnResult(name = "view_Count"),
+        @ColumnResult(name = "vote_points"),
+        @ColumnResult(name = "like_points"),
+        @ColumnResult(name = "confused_points"),
+        @ColumnResult(name = "laugh_points"),
+        @ColumnResult(name = "comment_amounts"),
+      }
+    ),
+  }
+)
+@SqlResultSetMapping(
+  name = "userProfileWithInteractions", // em creation name
+  classes = {
+    @ConstructorResult(
+      targetClass = UserProfileWithInteractions.class,
+      columns = {
+        @ColumnResult(name = "id", type = Long.class),
+        @ColumnResult(name = "userCreatedAt", type = Instant.class),
+        @ColumnResult(name = "email"),
+        @ColumnResult(name = "post_amounts"),
+        @ColumnResult(name = "username"),
+        @ColumnResult(name = "postId", type = Long.class),
+        @ColumnResult(name = "postCreatedAt", type = Instant.class),
+        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "title"),
+        @ColumnResult(name = "content"),
+        @ColumnResult(name = "view_Count"),
+        @ColumnResult(name = "vote_points"),
+        @ColumnResult(name = "like_points"),
+        @ColumnResult(name = "confused_points"),
+        @ColumnResult(name = "laugh_points"),
+        @ColumnResult(name = "comment_amounts"),
+        @ColumnResult(name = "interactionCreatedAt", type = Instant.class),
+        @ColumnResult(name = "interactionUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "vote_status"),
+        @ColumnResult(name = "like_status"),
+        @ColumnResult(name = "laugh_status"),
+        @ColumnResult(name = "confused_status"),
+        @ColumnResult(name = "have_read"),
+        @ColumnResult(name = "have_checked"),
+      }
+    ),
+  }
+)
 public class User {
 
   @Id
