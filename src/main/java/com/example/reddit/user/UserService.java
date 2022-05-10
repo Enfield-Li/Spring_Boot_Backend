@@ -1,5 +1,7 @@
 package com.example.reddit.user;
 
+import com.example.reddit.user.dto.db.UserAtZero;
+import com.example.reddit.user.dto.db.UserMapper;
 import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.db.UserProfileWithInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
@@ -22,6 +24,7 @@ import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -137,6 +140,22 @@ public class UserService {
 
   public ResUser fetchUserInfo(Long id, Long meId) {
     return null;
+  }
+
+  public UserAtZero fetchOneUserProfile() {
+    Query queryResWithoutInteraction = em
+      .createNativeQuery(
+        queryStrWithoutInteraction,
+        "userProfileWithoutInteractions"
+      )
+      .setParameter("userId", 1);
+
+    List<UserProfile> userProfileList = (List<UserProfile>) queryResWithoutInteraction.getResultList();
+
+    UserMapper mapper = Mappers.getMapper(UserMapper.class);
+    UserAtZero res = mapper.userProfileToUserAtZero(userProfileList.get(0));
+
+    return res;
   }
 
   @SuppressWarnings("unchecked")

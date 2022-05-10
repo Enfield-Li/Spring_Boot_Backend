@@ -34,35 +34,17 @@ public class RedditApplication {
     // userService.newUser("user1", "user1", "user1@gmail.com");
     // userService.newUser("user2", "user2", "user2@gmail.com");
 
-    // SimpleSourceDestinationMapper mapper = Mappers.getMapper(
-    //   SimpleSourceDestinationMapper.class
-    // );
+    // EmployeeMapper mapper = Mappers.getMapper(EmployeeMapper.class);
 
-    // SimpleSource simpleSource = new SimpleSource();
-    // simpleSource.setName("SourceName");
-    // simpleSource.setDescription("SourceDescription");
+    // Employee entity = new Employee();
+    // entity.setId(1);
+    // entity.setName("user1");
+    // entity.setDivisionId(2);
+    // entity.setDivisionName("divisionName");
 
-    // SimpleDestination destination = mapper.sourceToDestination(simpleSource);
-    // System.out.println(destination.toString());
+    // EmployeeDTO dto = mapper.employeeToEmployeeDTO(entity);
 
-    // SimpleDestination destination2 = new SimpleDestination();
-    // destination2.setName("DestinationName");
-    // destination2.setDescription("DestinationDescription");
-
-    // SimpleSource source = mapper.destinationToSource(destination2);
-    // System.out.println(source.toString());
-
-    EmployeeMapper mapper = Mappers.getMapper(EmployeeMapper.class);
-
-    Employee entity = new Employee();
-    entity.setId(1);
-    entity.setName("user1");
-    entity.setDivisionId(2);
-    entity.setDivisionName("divisionName");
-
-    EmployeeDTO dto = mapper.employeeToEmployeeDTO(entity);
-
-    System.out.println(dto.getDivision().toString());
+    // System.out.println(dto.getDivision().toString());
   }
 
   @Bean

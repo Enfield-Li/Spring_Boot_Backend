@@ -1,5 +1,6 @@
 package com.example.reddit.user;
 
+import com.example.reddit.user.dto.db.UserAtZero;
 import com.example.reddit.user.dto.db.UserInfo;
 import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.request.CreateUserDto;
@@ -37,8 +38,8 @@ class UserController {
   }
 
   @GetMapping("test1")
-  public List<User> test1() {
-    return userRepository.findAll();
+  public UserAtZero test1() {
+    return userService.fetchOneUserProfile();
   }
 
   @GetMapping("test2/{id}")
