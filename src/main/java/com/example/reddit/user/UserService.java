@@ -74,9 +74,15 @@ public class UserService {
 
       // Check if user exist
       if (usernameOrEmail.contains("@")) {
-        user = userRepository.findByEmail(usernameOrEmail).orElseThrow();
+        user =
+          userRepository
+            .findByEmail(usernameOrEmail)
+            .orElseThrow(NoSuchElementException::new);
       } else {
-        user = userRepository.findByUsername(usernameOrEmail).orElseThrow();
+        user =
+          userRepository
+            .findByUsername(usernameOrEmail)
+            .orElseThrow(NoSuchElementException::new);
       }
 
       // Check password
@@ -119,7 +125,9 @@ public class UserService {
 
   public ResUser me(Long id) {
     try {
-      User user = userRepository.findById(id).orElseThrow();
+      User user = userRepository
+        .findById(id)
+        .orElseThrow(NoSuchElementException::new);
 
       return this.buildResUser(user, id);
     } catch (NoSuchElementException e) {

@@ -11,6 +11,7 @@ import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -42,7 +43,7 @@ class UserController {
 
   @GetMapping("test2/{id}")
   public UserInfo test2(@PathVariable("id") Long id) {
-    return userRepository.findByid(id).orElseThrow();
+    return userRepository.findByid(id).orElseThrow(NoSuchElementException::new);
   }
 
   @PostMapping("register")

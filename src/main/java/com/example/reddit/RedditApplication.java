@@ -1,9 +1,14 @@
 package com.example.reddit;
 
+import com.example.reddit.mapper.SimpleDestination;
+import com.example.reddit.mapper.SimpleSource;
+import com.example.reddit.mapper.SimpleSourceDestinationMapper;
 import com.example.reddit.user.UserService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -25,6 +30,24 @@ public class RedditApplication {
     // UserService userService = configContext.getBean(UserService.class);
     // userService.newUser("user1", "user1", "user1@gmail.com");
     // userService.newUser("user2", "user2", "user2@gmail.com");
+
+    SimpleSourceDestinationMapper mapper = Mappers.getMapper(
+      SimpleSourceDestinationMapper.class
+    );
+
+    SimpleSource simpleSource = new SimpleSource();
+    simpleSource.setName("SourceName");
+    simpleSource.setDescription("SourceDescription");
+
+    SimpleDestination destination = mapper.sourceToDestination(simpleSource);
+    System.out.println(destination.toString());
+
+    SimpleDestination destination2 = new SimpleDestination();
+    destination2.setName("DestinationName");
+    destination2.setDescription("DestinationDescription");
+
+    SimpleSource source = mapper.destinationToSource(destination2);
+    System.out.println(source.toString());
   }
 
   @Bean

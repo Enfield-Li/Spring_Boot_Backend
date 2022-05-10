@@ -29,7 +29,9 @@ public class PostService {
   @Transactional
   public Post createPost(CreatePostDto dto, Long userId) {
     try {
-      User author = userRepository.findById(userId).orElseThrow();
+      User author = userRepository
+        .findById(userId)
+        .orElseThrow(NoSuchElementException::new);
 
       // Author post amount + 1
       author.setPostAmounts(author.getPostAmounts() + 1);
@@ -46,7 +48,9 @@ public class PostService {
   @Transactional
   public Post editPost(Long postId, UpdatePostDto dto, Long userId) {
     try {
-      Post post = postRepository.findById(postId).orElseThrow();
+      Post post = postRepository
+        .findById(postId)
+        .orElseThrow(NoSuchElementException::new);
 
       if (dto.getContent() != null) {
         post.setContent(dto.getContent());
@@ -63,7 +67,9 @@ public class PostService {
   @Transactional
   public Boolean deletePost(Long postId, Long userId) {
     try {
-      Post post = postRepository.findById(postId).orElseThrow();
+      Post post = postRepository
+        .findById(postId)
+        .orElseThrow(NoSuchElementException::new);
 
       // If it wasn't the author, do nothing
       if (post.getUserId().equals(userId)) return true;
@@ -71,7 +77,9 @@ public class PostService {
       postRepository.delete(post);
 
       // Author post amount - 1
-      User author = userRepository.findById(post.getUserId()).orElseThrow();
+      User author = userRepository
+        .findById(post.getUserId())
+        .orElseThrow(NoSuchElementException::new);
       author.setPostAmounts(author.getPostAmounts() - 1);
 
       return true;
@@ -85,6 +93,6 @@ public class PostService {
   }
 
   public Post fetchSinglePost(Long id) {
-    return postRepository.findById(id).orElseThrow();
+    return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
   }
 }
