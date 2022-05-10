@@ -200,7 +200,7 @@ public class UserService {
     List<UserProfileWithInteractions> userProfileList,
     Long userId
   ) {
-    UserInfo userInfo = buildUserInfoWithInteraction(userProfileList);
+    UserInfo userInfo = buildUserInfo(userProfileList);
 
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
@@ -238,22 +238,10 @@ public class UserService {
     );
   }
 
-  private UserInfo buildUserInfoWithInteraction(
-    List<UserProfileWithInteractions> userProfileList
+  private <T extends UserProfile> UserInfo buildUserInfo(
+    List<T> userProfileList
   ) {
-    UserProfileWithInteractions userProfile = userProfileList.get(0);
-
-    return new UserInfo(
-      userProfile.getId(),
-      userProfile.getUserCreatedAt(),
-      userProfile.getEmail(),
-      userProfile.getPostAmounts(),
-      userProfile.getUsername()
-    );
-  }
-
-  private UserInfo buildUserInfo(List<UserProfile> userProfileList) {
-    UserProfile userProfile = userProfileList.get(0);
+    T userProfile = userProfileList.get(0);
 
     return new UserInfo(
       userProfile.getId(),
