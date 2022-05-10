@@ -1,13 +1,21 @@
 package com.example.reddit.user;
 
+import com.example.reddit.user.dto.db.UserProfile;
+import com.example.reddit.user.dto.db.UserProfileWithInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.ResUserError;
-import com.example.reddit.user.dto.response.UserProfile;
 import com.example.reddit.user.dto.response.UserRO;
+import com.example.reddit.user.dto.response.userProfile.Interactions;
+import com.example.reddit.user.dto.response.userProfile.Post;
+import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
+import com.example.reddit.user.dto.response.userProfile.UserInfo;
+import com.example.reddit.user.dto.response.userProfile.UserPaginatedPost;
+import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -27,6 +35,25 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final EntityManager em;
+  private final String queryStrWithoutInteraction =
+    "SELECT u.id, u.created_at AS userCreatedAt," +
+    " u.username, u.email, u.post_amounts, p.id AS postId," +
+    " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
+    " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
+    " p.confused_points, p.laugh_points, p.comment_amounts" +
+    " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
+    " WHERE p.user_id = :userId";
+  private final String queryStrWithInteraction =
+    "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
+    " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
+    " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
+    " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
+    " p.comment_amounts, i.created_at AS interactionCreatedAt," +
+    " i.updated_at AS interactionUpdatedAt, i.vote_status, i.like_status," +
+    " i.laugh_status, i.confused_status, i.have_read, i.have_checked" +
+    " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
+    " LEFT JOIN interactions i ON i.post_id = p.id" +
+    " AND i.user_id = :meId WHERE p.user_id = :userId";
 
   @Autowired
   UserService(
@@ -105,46 +132,30 @@ public class UserService {
   }
 
   @SuppressWarnings("unchecked")
-  public List<UserProfile> fetchUserProfile(Long userId, Long meId) {
+  public UserProfileRO fetchUserProfile(Long userId, Long meId) {
     if (meId == null) {
       Query queryResWithoutInteraction = em
         .createNativeQuery(
-          "SELECT u.id, u.created_at AS userCreatedAt," +
-          " u.username, u.email, u.post_amounts," +
-          " p.id AS postId, p.created_at AS postCreatedAt," +
-          " p.updated_at AS postUpdatedAt, p.title," +
-          " p.content, p.view_count, p.vote_points," +
-          " p.like_points, p.confused_points," +
-          " p.laugh_points, p.comment_amounts" +
-          " FROM user u JOIN post p" +
-          " ON p.user_id = u.id" +
-          " WHERE u.id = :userId",
+          queryStrWithoutInteraction,
           "userProfileWithoutInteractions"
         )
         .setParameter("userId", userId);
 
-      return (List<UserProfile>) queryResWithoutInteraction.getResultList();
+      List<UserProfile> userProfileList = (List<UserProfile>) queryResWithoutInteraction.getResultList();
+
+      return this.buildUserProfileRO(userProfileList, userId);
     } else {
       Query queryResWithInteraction = em
         .createNativeQuery(
-          "SELECT u.id, u.created_at AS userCreatedAt," +
-          " u.username, u.email, u.post_amounts," +
-          " p.id AS postId, p.created_at AS postCreatedAt," +
-          " p.updated_at AS postUpdatedAt, p.title," +
-          " p.content, p.view_count, p.vote_points," +
-          " p.like_points, p.confused_points, p.laugh_points," +
-          " p.comment_amounts, i.created_at AS interactionCreatedAt," +
-          " i.updated_at AS interactionUpdatedAt," +
-          " i.vote_status, i.like_status, i.laugh_status," +
-          " i.confused_status, i.have_read, i.have_checked" +
-          " FROM user u JOIN post p ON p.user_id = u.id" +
-          " JOIN interactions i ON i.user_id = u.id AND i.post_id = p.id" +
-          " WHERE u.id = :userId",
+          queryStrWithInteraction,
           "userProfileWithInteractions"
         )
+        .setParameter("meId", meId)
         .setParameter("userId", userId);
 
-      return null;
+      List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
+
+      return buildUserProfileROWithInteraction(userProfileList, userId);
     }
   }
 
@@ -160,5 +171,131 @@ public class UserService {
 
   private ResUserError buildErrorRO(String field) {
     return ResUserError.of(field);
+  }
+
+  private UserProfileRO buildUserProfileRO(
+    List<UserProfile> userProfileList,
+    Long userId
+  ) {
+    UserInfo userInfo = buildUserInfo(userProfileList);
+
+    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
+
+    for (UserProfile users : userProfileList) {
+      PostAndInteractions postAndInteractions = new PostAndInteractions(
+        buildPost(users, userId)
+      );
+      postAndInteractionsList.add(postAndInteractions);
+    }
+
+    UserPaginatedPost userPaginatedPost = new UserPaginatedPost(
+      true,
+      postAndInteractionsList
+    );
+
+    return new UserProfileRO(userInfo, userPaginatedPost);
+  }
+
+  private UserProfileRO buildUserProfileROWithInteraction(
+    List<UserProfileWithInteractions> userProfileList,
+    Long userId
+  ) {
+    UserInfo userInfo = buildUserInfoWithInteraction(userProfileList);
+
+    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
+
+    for (UserProfileWithInteractions users : userProfileList) {
+      PostAndInteractions postAndInteractions = new PostAndInteractions(
+        buildPost(users, userId),
+        buildInteractions(users, userId)
+      );
+
+      postAndInteractionsList.add(postAndInteractions);
+    }
+
+    UserPaginatedPost userPaginatedPost = new UserPaginatedPost(
+      true,
+      postAndInteractionsList
+    );
+
+    return new UserProfileRO(userInfo, userPaginatedPost);
+  }
+
+  private <T extends UserProfile> Post buildPost(T users, Long userId) {
+    return new Post(
+      users.getPostId(),
+      users.getPostCreatedAt(),
+      users.getPostUpdatedAt(),
+      users.getTitle(),
+      users.getContent(),
+      users.getViewCount(),
+      users.getVotePoints(),
+      users.getLikePoints(),
+      users.getConfusedPoints(),
+      users.getLaughPoints(),
+      users.getCommentAmounts(),
+      userId
+    );
+  }
+
+  private UserInfo buildUserInfoWithInteraction(
+    List<UserProfileWithInteractions> userProfileList
+  ) {
+    UserProfileWithInteractions userProfile = userProfileList.get(0);
+
+    return new UserInfo(
+      userProfile.getId(),
+      userProfile.getUserCreatedAt(),
+      userProfile.getEmail(),
+      userProfile.getPostAmounts(),
+      userProfile.getUsername()
+    );
+  }
+
+  private UserInfo buildUserInfo(List<UserProfile> userProfileList) {
+    UserProfile userProfile = userProfileList.get(0);
+
+    return new UserInfo(
+      userProfile.getId(),
+      userProfile.getUserCreatedAt(),
+      userProfile.getEmail(),
+      userProfile.getPostAmounts(),
+      userProfile.getUsername()
+    );
+  }
+
+  private Interactions buildInteractions(
+    UserProfileWithInteractions users,
+    Long userId
+  ) {
+    Boolean isNull = true;
+
+    if (
+      nullCheck(users.getVoteStatus()) ||
+      nullCheck(users.getLikeStatus()) ||
+      nullCheck(users.getLaughStatus()) ||
+      nullCheck(users.getConfusedStatus())
+    ) {
+      isNull = false;
+    }
+
+    return isNull
+      ? null
+      : new Interactions(
+        users.getInteractionCreatedAt(),
+        users.getInteractionUpdatedAt(),
+        users.getVoteStatus(),
+        users.getLikeStatus(),
+        users.getLaughStatus(),
+        users.getConfusedStatus(),
+        users.getRead(),
+        users.getChecked(),
+        userId,
+        users.getPostId()
+      );
+  }
+
+  private <T> Boolean nullCheck(T item) {
+    return item == null ? false : true;
   }
 }

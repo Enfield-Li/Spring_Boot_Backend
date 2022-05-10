@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto.response;
+package com.example.reddit.user.dto.db;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileWithInteractions {
+public class UserProfile {
 
   private Long id;
   private Instant userCreatedAt;
@@ -27,13 +27,4 @@ public class UserProfileWithInteractions {
   private Integer confusedPoints;
   private Integer laughPoints;
   private Integer commentAmounts;
-
-  private Instant createdAt;
-  private Instant updatedAt;
-  private Boolean voteStatus;
-  private Boolean likeStatus;
-  private Boolean laughStatus;
-  private Boolean confusedStatus;
-  private Boolean read;
-  private Boolean checked;
 }

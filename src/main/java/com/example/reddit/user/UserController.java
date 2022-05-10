@@ -1,11 +1,12 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.interfaces.UserInfo;
+import com.example.reddit.user.dto.db.UserInfo;
+import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
-import com.example.reddit.user.dto.response.UserProfile;
 import com.example.reddit.user.dto.response.UserRO;
+import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ class UserController {
   }
 
   @GetMapping("profile/{id}")
-  public List<UserProfile> findOne(
+  public UserProfileRO findOne(
     @PathVariable("id") Long id,
     HttpSession session
   ) {
@@ -106,7 +107,10 @@ class UserController {
   public void updateUser(@PathVariable("id") Long id, HttpSession session) {}
 
   @GetMapping("logout")
-  public void logoutUser() {}
+  public Boolean logoutUser(HttpSession session) {
+    session.removeAttribute("userId");
+    return true;
+  }
 
   @DeleteMapping("{id}")
   public void delete(@PathVariable("id") Long id) {}
