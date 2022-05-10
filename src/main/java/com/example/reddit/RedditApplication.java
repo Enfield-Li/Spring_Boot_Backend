@@ -57,10 +57,12 @@ public class RedditApplication {
     Employee entity = new Employee();
     entity.setId(1);
     entity.setName("user1");
+    entity.setDivisionId(2);
+    entity.setDivisionName("divisionName");
 
     EmployeeDTO dto = mapper.employeeToEmployeeDTO(entity);
 
-    System.out.println(dto.toString());
+    System.out.println(dto.getDivision().toString());
   }
 
   @Bean

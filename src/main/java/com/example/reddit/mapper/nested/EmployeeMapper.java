@@ -10,6 +10,8 @@ public interface EmployeeMapper {
     {
       @Mapping(target = "employeeId", source = "entity.id"),
       @Mapping(target = "employeeName", source = "entity.name"),
+      @Mapping(target = "division.id", source = "entity.divisionId"),
+      @Mapping(target = "division.name", source = "entity.divisionName"),
     }
   )
   EmployeeDTO employeeToEmployeeDTO(Employee entity);

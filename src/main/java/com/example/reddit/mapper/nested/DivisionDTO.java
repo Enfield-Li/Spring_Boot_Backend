@@ -3,10 +3,8 @@ package com.example.reddit.mapper.nested;
 import lombok.Data;
 
 @Data
-public class Employee {
+public class DivisionDTO {
 
   private int id;
   private String name;
-  private int divisionId;
-  private String divisionName;
 }
