@@ -1,8 +1,11 @@
 package com.example.reddit;
 
-import com.example.reddit.mapper.SimpleDestination;
-import com.example.reddit.mapper.SimpleSource;
-import com.example.reddit.mapper.SimpleSourceDestinationMapper;
+import com.example.reddit.mapper.demo.SimpleDestination;
+import com.example.reddit.mapper.demo.SimpleSource;
+import com.example.reddit.mapper.demo.SimpleSourceDestinationMapper;
+import com.example.reddit.mapper.nested.Employee;
+import com.example.reddit.mapper.nested.EmployeeDTO;
+import com.example.reddit.mapper.nested.EmployeeMapper;
 import com.example.reddit.user.UserService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -31,23 +34,33 @@ public class RedditApplication {
     // userService.newUser("user1", "user1", "user1@gmail.com");
     // userService.newUser("user2", "user2", "user2@gmail.com");
 
-    SimpleSourceDestinationMapper mapper = Mappers.getMapper(
-      SimpleSourceDestinationMapper.class
-    );
+    // SimpleSourceDestinationMapper mapper = Mappers.getMapper(
+    //   SimpleSourceDestinationMapper.class
+    // );
 
-    SimpleSource simpleSource = new SimpleSource();
-    simpleSource.setName("SourceName");
-    simpleSource.setDescription("SourceDescription");
+    // SimpleSource simpleSource = new SimpleSource();
+    // simpleSource.setName("SourceName");
+    // simpleSource.setDescription("SourceDescription");
 
-    SimpleDestination destination = mapper.sourceToDestination(simpleSource);
-    System.out.println(destination.toString());
+    // SimpleDestination destination = mapper.sourceToDestination(simpleSource);
+    // System.out.println(destination.toString());
 
-    SimpleDestination destination2 = new SimpleDestination();
-    destination2.setName("DestinationName");
-    destination2.setDescription("DestinationDescription");
+    // SimpleDestination destination2 = new SimpleDestination();
+    // destination2.setName("DestinationName");
+    // destination2.setDescription("DestinationDescription");
 
-    SimpleSource source = mapper.destinationToSource(destination2);
-    System.out.println(source.toString());
+    // SimpleSource source = mapper.destinationToSource(destination2);
+    // System.out.println(source.toString());
+
+    EmployeeMapper mapper = Mappers.getMapper(EmployeeMapper.class);
+
+    Employee entity = new Employee();
+    entity.setId(1);
+    entity.setName("user1");
+
+    EmployeeDTO dto = mapper.employeeToEmployeeDTO(entity);
+
+    System.out.println(dto.toString());
   }
 
   @Bean

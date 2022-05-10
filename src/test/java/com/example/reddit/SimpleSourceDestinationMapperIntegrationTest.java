@@ -2,9 +2,10 @@ package com.example.reddit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.example.reddit.mapper.SimpleDestination;
-import com.example.reddit.mapper.SimpleSource;
-import com.example.reddit.mapper.SimpleSourceDestinationMapper;
+import com.example.reddit.mapper.demo.SimpleDestination;
+import com.example.reddit.mapper.demo.SimpleSource;
+import com.example.reddit.mapper.demo.SimpleSourceDestinationMapper;
+
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
