@@ -144,19 +144,16 @@ public class UserService {
       List<UserProfile> userProfileList = (List<UserProfile>) queryResWithoutInteraction.getResultList();
 
       return this.buildUserProfileRO(userProfileList, userId);
-    } else {
-      Query queryResWithInteraction = em
-        .createNativeQuery(
-          queryStrWithInteraction,
-          "userProfileWithInteractions"
-        )
-        .setParameter("meId", meId)
-        .setParameter("userId", userId);
-
-      List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
-
-      return buildUserProfileROWithInteraction(userProfileList, userId);
     }
+
+    Query queryResWithInteraction = em
+      .createNativeQuery(queryStrWithInteraction, "userProfileWithInteractions")
+      .setParameter("meId", meId)
+      .setParameter("userId", userId);
+
+    List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
+
+    return buildUserProfileROWithInteraction(userProfileList, userId);
   }
 
   private ResUser buildResUser(User user, Long meId) {

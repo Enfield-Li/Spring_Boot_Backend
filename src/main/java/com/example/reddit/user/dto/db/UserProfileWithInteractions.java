@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileWithInteractions extends UserProfile{
+public class UserProfileWithInteractions extends UserProfile {
 
   private Long id;
   private Instant userCreatedAt;
