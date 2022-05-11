@@ -1,24 +1,20 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.db.UserAtZero;
 import com.example.reddit.user.dto.db.UserInfo;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.UserRO;
-import com.example.reddit.user.dto.response.userProfile.UserProfile;
 import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
-import com.example.reddit.user.entity.User;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Instant;
 import java.util.NoSuchElementException;
-import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +34,7 @@ class UserController {
   }
 
   @GetMapping("test1")
-  public UserAtZero test1() {
-    return userService.fetchOneUserProfile();
-  }
+  public void test1() {}
 
   @GetMapping("test2/{id}")
   public UserInfo test2(@PathVariable("id") Long id) {
@@ -65,11 +59,16 @@ class UserController {
   @GetMapping("profile/{id}")
   public UserProfileRO findOne(
     @PathVariable("id") Long id,
-    HttpSession session
+    HttpSession session,
+    @RequestParam(
+      name = "cursor",
+      required = false
+    ) @DateTimeFormat Instant cursor,
+    @RequestParam(name = "take", required = false) Integer take
   ) {
     Long meId = (Long) session.getAttribute("userId");
 
-    return userService.fetchUserProfile(id, meId);
+    return userService.fetchUserProfile(id, meId, cursor, take);
   }
 
   @GetMapping("userInfo/{id}")

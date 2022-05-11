@@ -1,17 +1,9 @@
 package com.example.reddit;
 
-import com.example.reddit.mapper.demo.SimpleDestination;
-import com.example.reddit.mapper.demo.SimpleSource;
-import com.example.reddit.mapper.demo.SimpleSourceDestinationMapper;
-import com.example.reddit.mapper.nested.Employee;
-import com.example.reddit.mapper.nested.EmployeeDTO;
-import com.example.reddit.mapper.nested.EmployeeMapper;
 import com.example.reddit.user.UserService;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
-import org.mapstruct.Mapper;
-import org.mapstruct.factory.Mappers;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -31,20 +23,14 @@ public class RedditApplication {
       args
     );
     // UserService userService = configContext.getBean(UserService.class);
+
     // userService.newUser("user1", "user1", "user1@gmail.com");
     // userService.newUser("user2", "user2", "user2@gmail.com");
+    // userService.newUser("user3", "user3", "user3@gmail.com");
+    // userService.newUser("user4", "user4", "user4@gmail.com");
+    // userService.newUser("user5", "user5", "user5@gmail.com");
+    // userService.newUser("user6", "user6", "user6@gmail.com");
 
-    // EmployeeMapper mapper = Mappers.getMapper(EmployeeMapper.class);
-
-    // Employee entity = new Employee();
-    // entity.setId(1);
-    // entity.setName("user1");
-    // entity.setDivisionId(2);
-    // entity.setDivisionName("divisionName");
-
-    // EmployeeDTO dto = mapper.employeeToEmployeeDTO(entity);
-
-    // System.out.println(dto.getDivision().toString());
   }
 
   @Bean

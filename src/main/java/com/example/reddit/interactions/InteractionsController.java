@@ -78,10 +78,10 @@ class InteractionsController {
   ) {
     Long userId = (Long) session.getAttribute("userId");
 
-    System.out.println(userId);
+    System.out.println(value);
     if (userId == null) return null;
-
-    return interactionService.interact(id, userId, value);
+    return null;
+    // return interactionService.interact(id, userId, value);
   }
 
   @GetMapping("interactives")

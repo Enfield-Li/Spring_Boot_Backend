@@ -1,36 +1,33 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.db.UserAtZero;
 import com.example.reddit.user.dto.db.UserMapper;
+import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.db.UserProfileWithInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.ResUserError;
 import com.example.reddit.user.dto.response.UserRO;
-import com.example.reddit.user.dto.response.userProfile.Interactions;
-import com.example.reddit.user.dto.response.userProfile.Post;
 import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
 import com.example.reddit.user.dto.response.userProfile.UserInfo;
 import com.example.reddit.user.dto.response.userProfile.UserPaginatedPost;
-import com.example.reddit.user.dto.response.userProfile.UserProfile;
 import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -45,7 +42,8 @@ public class UserService {
     " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
     " p.confused_points, p.laugh_points, p.comment_amounts" +
     " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-    " WHERE p.user_id = :userId";
+    " WHERE p.user_id = :userId AND p.created_at < :cursor" +
+    " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset";
   private final String queryStrWithInteraction =
     "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
     " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -56,7 +54,9 @@ public class UserService {
     " i.laugh_status, i.confused_status, i.have_read, i.have_checked" +
     " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
     " LEFT JOIN interactions i ON i.post_id = p.id" +
-    " AND i.user_id = :meId WHERE p.user_id = :userId";
+    " AND i.user_id = :meId WHERE p.user_id = :userId AND p.created_at < :cursor" +
+    " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset";
+  private Integer takeAmount = 10;
 
   @Autowired
   UserService(
@@ -67,6 +67,12 @@ public class UserService {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.em = em;
+  }
+
+  public void newUser(String username, String password, String email) {
+    Password pass = Password.encode(password, this.passwordEncoder);
+    User user = User.of(username, email, pass);
+    userRepository.save(user);
   }
 
   public UserRO login(LoginUserDto dto, HttpSession session) {
@@ -142,40 +148,62 @@ public class UserService {
     return null;
   }
 
-  public UserAtZero fetchOneUserProfile() {
-    return null;
-  }
+  public void fetchOneUserProfile() {}
 
   @SuppressWarnings("unchecked")
-  public UserProfileRO fetchUserProfile(Long userId, Long meId) {
+  public UserProfileRO fetchUserProfile(
+    Long userId,
+    Long meId,
+    Instant cursor,
+    Integer take
+  ) {
+    takeAmount = take == null ? takeAmount : take;
+
+    Integer fetchCount = Math.min(takeAmount, 25);
+    Integer fetchCountPlusOne = fetchCount + 1;
+    Integer offset = cursor == null ? 0 : 1;
+    Instant timeFrame = cursor == null ? Instant.now() : cursor;
+
     if (meId == null) {
       Query queryResWithoutInteraction = em
         .createNativeQuery(
           queryStrWithoutInteraction,
           "userProfileWithoutInteractions"
         )
+        .setParameter("offset", offset)
+        .setParameter("cursor", timeFrame)
+        .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
       List<UserProfile> userProfileList = (List<UserProfile>) queryResWithoutInteraction.getResultList();
+      Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
-      return this.buildUserProfileRO(userProfileList, userId);
+      userProfileList.remove(userProfileList.size() - 1);
+
+      return this.buildUserProfileRO(userProfileList, userId, hasMore, meId);
     }
 
     Query queryResWithInteraction = em
       .createNativeQuery(queryStrWithInteraction, "userProfileWithInteractions")
       .setParameter("meId", meId)
+      .setParameter("offset", offset)
+      .setParameter("cursor", timeFrame)
+      .setParameter("fetchCountPlusOne", fetchCountPlusOne)
       .setParameter("userId", userId);
 
     List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
+    Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
-    return buildUserProfileRO(userProfileList, userId);
+    userProfileList.remove(userProfileList.size() - 1);
+
+    return buildUserProfileRO(userProfileList, userId, hasMore, meId);
   }
 
   private ResUser buildResUser(User user, Long meId) {
     return ResUser.of(
       user.getId(),
       user.getUsername(),
-      meId == null ? null : user.getEmail(),
+      meId == user.getId() ? user.getEmail() : null,
       user.getCreatedAt(),
       user.getPostAmounts()
     );
@@ -187,11 +215,11 @@ public class UserService {
 
   private <T extends UserProfile> UserProfileRO buildUserProfileRO(
     List<T> userProfileList,
-    Long userId
+    Long userId,
+    Boolean hasMore,
+    Long meId
   ) {
-    UserInfo userInfo = buildUserInfo(userProfileList);
     UserMapper mapper = Mappers.getMapper(UserMapper.class);
-
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (T users : userProfileList) {
@@ -202,22 +230,26 @@ public class UserService {
     }
 
     UserPaginatedPost userPaginatedPost = new UserPaginatedPost(
-      true,
+      hasMore,
       postAndInteractionsList
     );
+
+    UserInfo userInfo = buildUserInfo(userProfileList, meId);
 
     return new UserProfileRO(userInfo, userPaginatedPost);
   }
 
   private <T extends UserProfile> UserInfo buildUserInfo(
-    List<T> userProfileList
+    List<T> userProfileList,
+    Long meId
   ) {
     T userProfile = userProfileList.get(0);
+    System.out.println(meId == userProfile.getId());
 
     return new UserInfo(
       userProfile.getId(),
       userProfile.getUserCreatedAt(),
-      userProfile.getEmail(),
+      meId == userProfile.getId() ? userProfile.getEmail() : null,
       userProfile.getPostAmounts(),
       userProfile.getUsername()
     );

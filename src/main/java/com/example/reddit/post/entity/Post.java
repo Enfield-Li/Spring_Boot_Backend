@@ -2,14 +2,9 @@ package com.example.reddit.post.entity;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
-import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.post.dto.classes.PostInfo;
-import com.example.reddit.post.dto.classes.PostMoreInfo;
-import com.example.reddit.post.dto.classes.PostTitle;
-import com.example.reddit.post.dto.classes.PostWithUser;
 import com.example.reddit.post.dto.classes.PostWithUserInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,7 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NamedNativeQuery(
   name = "Post.getPostTitle", // repository name
   query = "SELECT p.id, p.title, u.username, i.vote_status AS voteStatus FROM post p JOIN user u on p.user_id = u.id JOIN interactions i on p.id = i.post_id AND u.id = i.user_id WHERE p.id = 1 AND u.id = 1;",
-  resultSetMapping = "PostTitle" 
+  resultSetMapping = "PostTitle"
 )
 @SqlResultSetMapping(
   name = "PostTitle", // em creation name
@@ -66,7 +61,8 @@ public class Post {
   @Column(nullable = false, unique = true)
   private String title;
 
-  @Column(nullable = true)
+  @Lob
+  @Column(nullable = true, length = 512)
   private String content;
 
   @ColumnDefault(value = "0")

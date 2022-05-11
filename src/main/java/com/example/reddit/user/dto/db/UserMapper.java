@@ -1,7 +1,7 @@
 package com.example.reddit.user.dto.db;
 
 import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
-import com.example.reddit.user.dto.response.userProfile.UserProfile;
+
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
