@@ -2,11 +2,11 @@ package com.example.reddit.user;
 
 import com.example.reddit.user.dto.db.UserAtZero;
 import com.example.reddit.user.dto.db.UserInfo;
-import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.UserRO;
+import com.example.reddit.user.dto.response.userProfile.UserProfile;
 import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;

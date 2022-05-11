@@ -2,7 +2,6 @@ package com.example.reddit.user;
 
 import com.example.reddit.user.dto.db.UserAtZero;
 import com.example.reddit.user.dto.db.UserMapper;
-import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.db.UserProfileWithInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
@@ -14,6 +13,7 @@ import com.example.reddit.user.dto.response.userProfile.Post;
 import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
 import com.example.reddit.user.dto.response.userProfile.UserInfo;
 import com.example.reddit.user.dto.response.userProfile.UserPaginatedPost;
+import com.example.reddit.user.dto.response.userProfile.UserProfile;
 import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
@@ -143,19 +143,7 @@ public class UserService {
   }
 
   public UserAtZero fetchOneUserProfile() {
-    Query queryResWithoutInteraction = em
-      .createNativeQuery(
-        queryStrWithoutInteraction,
-        "userProfileWithoutInteractions"
-      )
-      .setParameter("userId", 1);
-
-    List<UserProfile> userProfileList = (List<UserProfile>) queryResWithoutInteraction.getResultList();
-
-    UserMapper mapper = Mappers.getMapper(UserMapper.class);
-    UserAtZero res = mapper.userProfileToUserAtZero(userProfileList.get(0));
-
-    return res;
+    return null;
   }
 
   @SuppressWarnings("unchecked")
@@ -180,7 +168,7 @@ public class UserService {
 
     List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
 
-    return buildUserProfileROWithInteraction(userProfileList, userId);
+    return buildUserProfileRO(userProfileList, userId);
   }
 
   private ResUser buildResUser(User user, Long meId) {
@@ -197,17 +185,18 @@ public class UserService {
     return ResUserError.of(field);
   }
 
-  private UserProfileRO buildUserProfileRO(
-    List<UserProfile> userProfileList,
+  private <T extends UserProfile> UserProfileRO buildUserProfileRO(
+    List<T> userProfileList,
     Long userId
   ) {
     UserInfo userInfo = buildUserInfo(userProfileList);
+    UserMapper mapper = Mappers.getMapper(UserMapper.class);
 
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (UserProfile users : userProfileList) {
-      PostAndInteractions postAndInteractions = new PostAndInteractions(
-        buildPost(users, userId)
+    for (T users : userProfileList) {
+      PostAndInteractions postAndInteractions = mapper.userProfileToPostAndInteractions(
+        users
       );
       postAndInteractionsList.add(postAndInteractions);
     }
@@ -218,48 +207,6 @@ public class UserService {
     );
 
     return new UserProfileRO(userInfo, userPaginatedPost);
-  }
-
-  private UserProfileRO buildUserProfileROWithInteraction(
-    List<UserProfileWithInteractions> userProfileList,
-    Long userId
-  ) {
-    UserInfo userInfo = buildUserInfo(userProfileList);
-
-    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
-
-    for (UserProfileWithInteractions users : userProfileList) {
-      PostAndInteractions postAndInteractions = new PostAndInteractions(
-        buildPost(users, userId),
-        buildInteractions(users, userId)
-      );
-
-      postAndInteractionsList.add(postAndInteractions);
-    }
-
-    UserPaginatedPost userPaginatedPost = new UserPaginatedPost(
-      true,
-      postAndInteractionsList
-    );
-
-    return new UserProfileRO(userInfo, userPaginatedPost);
-  }
-
-  private <T extends UserProfile> Post buildPost(T users, Long userId) {
-    return new Post(
-      users.getPostId(),
-      users.getPostCreatedAt(),
-      users.getPostUpdatedAt(),
-      users.getTitle(),
-      users.getContent(),
-      users.getViewCount(),
-      users.getVotePoints(),
-      users.getLikePoints(),
-      users.getConfusedPoints(),
-      users.getLaughPoints(),
-      users.getCommentAmounts(),
-      userId
-    );
   }
 
   private <T extends UserProfile> UserInfo buildUserInfo(
@@ -274,40 +221,5 @@ public class UserService {
       userProfile.getPostAmounts(),
       userProfile.getUsername()
     );
-  }
-
-  private Interactions buildInteractions(
-    UserProfileWithInteractions users,
-    Long userId
-  ) {
-    Boolean isNull = true;
-
-    if (
-      nullCheck(users.getVoteStatus()) ||
-      nullCheck(users.getLikeStatus()) ||
-      nullCheck(users.getLaughStatus()) ||
-      nullCheck(users.getConfusedStatus())
-    ) {
-      isNull = false;
-    }
-
-    return isNull
-      ? null
-      : new Interactions(
-        users.getInteractionCreatedAt(),
-        users.getInteractionUpdatedAt(),
-        users.getVoteStatus(),
-        users.getLikeStatus(),
-        users.getLaughStatus(),
-        users.getConfusedStatus(),
-        users.getRead(),
-        users.getChecked(),
-        userId,
-        users.getPostId()
-      );
-  }
-
-  private <T> Boolean nullCheck(T item) {
-    return item == null ? false : true;
   }
 }

@@ -1,6 +1,9 @@
 package com.example.reddit.user.dto.db;
 
 import java.time.Instant;
+
+import com.example.reddit.user.dto.response.userProfile.UserProfile;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

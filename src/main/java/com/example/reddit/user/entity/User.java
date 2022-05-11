@@ -7,8 +7,8 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.post.entity.Post;
-import com.example.reddit.user.dto.db.UserProfile;
 import com.example.reddit.user.dto.db.UserProfileWithInteractions;
+import com.example.reddit.user.dto.response.userProfile.UserProfile;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
