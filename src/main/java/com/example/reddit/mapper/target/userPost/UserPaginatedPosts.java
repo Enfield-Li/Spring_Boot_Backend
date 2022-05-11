@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.dto.userPost;
+package com.example.reddit.mapper.target.userPost;
 
 import java.util.List;
 

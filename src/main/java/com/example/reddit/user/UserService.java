@@ -1,11 +1,11 @@
 package com.example.reddit.user;
 
 import com.example.reddit.mapper.UserPostMapper;
-import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
-import com.example.reddit.mapper.dto.userPost.UserPaginatedPosts;
-import com.example.reddit.mapper.dto.userPost.UserPostAndInteractions;
-import com.example.reddit.mapper.source.PostInfoWithInteractions;
-import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.target.homePost.PostAndInteractions;
+import com.example.reddit.mapper.target.userPost.UserPaginatedPosts;
+import com.example.reddit.mapper.target.userPost.UserPostAndInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
@@ -162,7 +162,7 @@ public class UserService {
         .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
-      List<PostInfoWitoutInteractions> userProfileList = (List<PostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
+      List<UserPostInfoWitoutInteractions> userProfileList = (List<UserPostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
       Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
       userProfileList.remove(userProfileList.size() - 1);
@@ -191,7 +191,7 @@ public class UserService {
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    List<PostInfoWithInteractions> userProfileList = (List<PostInfoWithInteractions>) queryResWithInteraction.getResultList();
+    List<UserPostInfoWithInteractions> userProfileList = (List<UserPostInfoWithInteractions>) queryResWithInteraction.getResultList();
     Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
     userProfileList.remove(userProfileList.size() - 1);
@@ -209,7 +209,7 @@ public class UserService {
     );
   }
 
-  private <T extends PostInfoWitoutInteractions> UserProfileRO buildUserProfileRO(
+  private <T extends UserPostInfoWitoutInteractions> UserProfileRO buildUserProfileRO(
     List<T> userProfileList,
     Long userId,
     Boolean hasMore,
@@ -235,7 +235,7 @@ public class UserService {
     return new UserProfileRO(userInfo, userPaginatedPost);
   }
 
-  private <T extends PostInfoWitoutInteractions> UserInfo buildUserInfo(
+  private <T extends UserPostInfoWitoutInteractions> UserInfo buildUserInfo(
     List<T> userProfileList,
     Long meId
   ) {

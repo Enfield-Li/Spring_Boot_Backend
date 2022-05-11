@@ -1,8 +1,11 @@
 package com.example.reddit.mapper;
 
-import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
-import com.example.reddit.mapper.source.PostInfoWithInteractions;
-import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.target.homePost.PostAndInteractions;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -11,140 +14,79 @@ import org.mapstruct.Mappings;
 public interface HomePostMapper {
   @Mappings(
     {
-      @Mapping(target = "post.id", source = "profileWitoutInteractions.postId"),
-      @Mapping(
-        target = "post.createdAt",
-        source = "profileWitoutInteractions.postCreatedAt"
-      ),
-      @Mapping(
-        target = "post.updatedAt",
-        source = "profileWitoutInteractions.postUpdatedAt"
-      ),
-      @Mapping(
-        target = "post.title",
-        source = "profileWitoutInteractions.title"
-      ),
-      @Mapping(
-        target = "post.content",
-        source = "profileWitoutInteractions.content"
-      ),
-      @Mapping(
-        target = "post.viewCount",
-        source = "profileWitoutInteractions.viewCount"
-      ),
-      @Mapping(
-        target = "post.votePoints",
-        source = "profileWitoutInteractions.votePoints"
-      ),
-      @Mapping(
-        target = "post.likePoints",
-        source = "profileWitoutInteractions.likePoints"
-      ),
+      @Mapping(target = "post.user.id", source = "postInfo.id"),
+      @Mapping(target = "post.user.username", source = "postInfo.username"),
+      @Mapping(target = "post.id", source = "postInfo.postId"),
+      @Mapping(target = "post.createdAt", source = "postInfo.postCreatedAt"),
+      @Mapping(target = "post.updatedAt", source = "postInfo.postUpdatedAt"),
+      @Mapping(target = "post.title", source = "postInfo.title"),
+      @Mapping(target = "post.content", source = "postInfo.content"),
+      @Mapping(target = "post.viewCount", source = "postInfo.viewCount"),
+      @Mapping(target = "post.votePoints", source = "postInfo.votePoints"),
+      @Mapping(target = "post.likePoints", source = "postInfo.likePoints"),
       @Mapping(
         target = "post.confusedPoints",
-        source = "profileWitoutInteractions.confusedPoints"
+        source = "postInfo.confusedPoints"
       ),
-      @Mapping(
-        target = "post.laughPoints",
-        source = "profileWitoutInteractions.laughPoints"
-      ),
+      @Mapping(target = "post.laughPoints", source = "postInfo.laughPoints"),
       @Mapping(
         target = "post.commentAmounts",
-        source = "profileWitoutInteractions.commentAmounts"
-      ),
-      @Mapping(
-        target = "post.user.id",
-        source = "profileWitoutInteractions.id"
-      ),
-      @Mapping(
-        target = "post.user.username",
-        source = "profileWitoutInteractions.username"
+        source = "postInfo.commentAmounts"
       ),
     }
   )
   PostAndInteractions toPostAndInteractions(
-    PostInfoWitoutInteractions profileWitoutInteractions
+    PostInfoWithoutInteractions postInfo
   );
 
   @Mappings(
     {
-      @Mapping(target = "post.id", source = "ProfileWithInteractions.postId"),
-      @Mapping(
-        target = "post.createdAt",
-        source = "ProfileWithInteractions.postCreatedAt"
-      ),
-      @Mapping(
-        target = "post.updatedAt",
-        source = "ProfileWithInteractions.postUpdatedAt"
-      ),
-      @Mapping(target = "post.title", source = "ProfileWithInteractions.title"),
-      @Mapping(
-        target = "post.content",
-        source = "ProfileWithInteractions.content"
-      ),
-      @Mapping(
-        target = "post.viewCount",
-        source = "ProfileWithInteractions.viewCount"
-      ),
-      @Mapping(
-        target = "post.votePoints",
-        source = "ProfileWithInteractions.votePoints"
-      ),
-      @Mapping(
-        target = "post.likePoints",
-        source = "ProfileWithInteractions.likePoints"
-      ),
+      @Mapping(target = "post.user.id", source = "postInfo.id"),
+      @Mapping(target = "post.user.username", source = "postInfo.username"),
+      @Mapping(target = "post.id", source = "postInfo.postId"),
+      @Mapping(target = "post.createdAt", source = "postInfo.postCreatedAt"),
+      @Mapping(target = "post.updatedAt", source = "postInfo.postUpdatedAt"),
+      @Mapping(target = "post.title", source = "postInfo.title"),
+      @Mapping(target = "post.content", source = "postInfo.content"),
+      @Mapping(target = "post.viewCount", source = "postInfo.viewCount"),
+      @Mapping(target = "post.votePoints", source = "postInfo.votePoints"),
+      @Mapping(target = "post.likePoints", source = "postInfo.likePoints"),
       @Mapping(
         target = "post.confusedPoints",
-        source = "ProfileWithInteractions.confusedPoints"
+        source = "postInfo.confusedPoints"
       ),
-      @Mapping(
-        target = "post.laughPoints",
-        source = "ProfileWithInteractions.laughPoints"
-      ),
+      @Mapping(target = "post.laughPoints", source = "postInfo.laughPoints"),
       @Mapping(
         target = "post.commentAmounts",
-        source = "ProfileWithInteractions.commentAmounts"
-      ),
-      @Mapping(
-        target = "post.user.id",
-        source = "ProfileWithInteractions.id"
-      ),
-      @Mapping(
-        target = "post.user.username",
-        source = "ProfileWithInteractions.username"
+        source = "postInfo.commentAmounts"
       ),
       @Mapping(
         target = "interactions.createdAt",
-        source = "ProfileWithInteractions.interactionCreatedAt"
+        source = "postInfo.interactionCreatedAt"
       ),
       @Mapping(
         target = "interactions.updatedAt",
-        source = "ProfileWithInteractions.interactionUpdatedAt"
+        source = "postInfo.interactionUpdatedAt"
       ),
       @Mapping(
         target = "interactions.voteStatus",
-        source = "ProfileWithInteractions.voteStatus"
+        source = "postInfo.voteStatus"
       ),
       @Mapping(
         target = "interactions.likeStatus",
-        source = "ProfileWithInteractions.likeStatus"
+        source = "postInfo.likeStatus"
       ),
       @Mapping(
         target = "interactions.laughStatus",
-        source = "ProfileWithInteractions.laughStatus"
+        source = "postInfo.laughStatus"
       ),
       @Mapping(
         target = "interactions.confusedStatus",
-        source = "ProfileWithInteractions.confusedStatus"
+        source = "postInfo.confusedStatus"
       ),
-      @Mapping(
-        target = "interactions.checked",
-        source = "ProfileWithInteractions.checked"
-      ),
+      @Mapping(target = "interactions.checked", source = "postInfo.checked"),
+      @Mapping(target = "interactions.read", source = "postInfo.read"),
     }
   )
-  PostAndInteractions toPostAndInteractions(
-    PostInfoWithInteractions ProfileWithInteractions
-  );
+  PostAndInteractions toPostAndInteractions(PostInfoWithInteractions postInfo);
 }

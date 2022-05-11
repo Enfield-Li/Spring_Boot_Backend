@@ -1,9 +1,10 @@
 package com.example.reddit.post;
 
 import com.example.reddit.mapper.HomePostMapper;
-import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
-import com.example.reddit.mapper.source.PostInfoWithInteractions;
-import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
+import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -119,8 +120,8 @@ public class PostService {
     if (meId == null) {
       Query queryResWithoutInteraction = em
         .createNativeQuery(
-          "SELECT u.id, u.created_at AS userCreatedAt," +
-          " u.username, u.email, u.post_amounts, p.id AS postId," +
+          "SELECT u.id," +
+          " u.username p.id AS postId," +
           " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
           " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
           " p.confused_points, p.laugh_points, p.comment_amounts" +
@@ -133,7 +134,7 @@ public class PostService {
         .setParameter("cursor", timeFrame)
         .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-      List<PostInfoWitoutInteractions> postList = (List<PostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
+      List<PostInfoWithoutInteractions> postList = (List<PostInfoWithoutInteractions>) queryResWithoutInteraction.getResultList();
       Boolean hasMore = postList.size() == fetchCountPlusOne;
 
       postList.remove(postList.size() - 1);
@@ -143,8 +144,8 @@ public class PostService {
 
     Query queryResWithInteraction = em
       .createNativeQuery(
-        "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
-        " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
+        "SELECT u.id, u.username," +
+        " p.id AS postId, p.created_at AS postCreatedAt," +
         " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
         " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
         " p.comment_amounts, i.created_at AS interactionCreatedAt," +
@@ -173,7 +174,7 @@ public class PostService {
     return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
   }
 
-  private <T extends PostInfoWitoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
+  private <T extends PostInfoWithoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
     List<T> postList,
     Boolean hasMore
   ) {

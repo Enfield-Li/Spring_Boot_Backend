@@ -2,7 +2,7 @@ package com.example.reddit.post.dto.response;
 
 import java.util.List;
 
-import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
+import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

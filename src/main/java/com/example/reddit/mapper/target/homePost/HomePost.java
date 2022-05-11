@@ -1,8 +1,8 @@
-package com.example.reddit.mapper.dto.homePost;
+package com.example.reddit.mapper.target.homePost;
 
 import java.time.Instant;
 
-import com.example.reddit.mapper.dto.userPost.AuthorInfo;
+import com.example.reddit.mapper.target.userPost.AuthorInfo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,7 +1,7 @@
-package com.example.reddit.mapper.dto.userPost;
+package com.example.reddit.mapper.target.userPost;
 
-import com.example.reddit.mapper.dto.Interactions;
-import com.example.reddit.mapper.dto.Post;
+import com.example.reddit.mapper.target.Interactions;
+import com.example.reddit.mapper.target.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
