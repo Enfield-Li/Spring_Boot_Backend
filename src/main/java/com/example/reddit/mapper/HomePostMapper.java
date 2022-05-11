@@ -1,9 +1,8 @@
 package com.example.reddit.mapper;
 
 import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
-import com.example.reddit.mapper.source.ProfileWithInteractions;
-import com.example.reddit.mapper.source.ProfileWitoutInteractions;
-
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -53,11 +52,18 @@ public interface HomePostMapper {
         target = "post.commentAmounts",
         source = "profileWitoutInteractions.commentAmounts"
       ),
-      @Mapping(target = "post.userId", source = "profileWitoutInteractions.id"),
+      @Mapping(
+        target = "post.user.id",
+        source = "profileWitoutInteractions.id"
+      ),
+      @Mapping(
+        target = "post.user.username",
+        source = "profileWitoutInteractions.username"
+      ),
     }
   )
   PostAndInteractions toPostAndInteractions(
-    ProfileWitoutInteractions profileWitoutInteractions
+    PostInfoWitoutInteractions profileWitoutInteractions
   );
 
   @Mappings(
@@ -100,7 +106,14 @@ public interface HomePostMapper {
         target = "post.commentAmounts",
         source = "ProfileWithInteractions.commentAmounts"
       ),
-      @Mapping(target = "post.userId", source = "ProfileWithInteractions.id"),
+      @Mapping(
+        target = "post.user.id",
+        source = "ProfileWithInteractions.id"
+      ),
+      @Mapping(
+        target = "post.user.username",
+        source = "ProfileWithInteractions.username"
+      ),
       @Mapping(
         target = "interactions.createdAt",
         source = "ProfileWithInteractions.interactionCreatedAt"
@@ -132,6 +145,6 @@ public interface HomePostMapper {
     }
   )
   PostAndInteractions toPostAndInteractions(
-    ProfileWithInteractions ProfileWithInteractions
+    PostInfoWithInteractions ProfileWithInteractions
   );
 }

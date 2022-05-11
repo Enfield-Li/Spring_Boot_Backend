@@ -4,8 +4,8 @@ import com.example.reddit.mapper.UserPostMapper;
 import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
 import com.example.reddit.mapper.dto.userPost.UserPaginatedPosts;
 import com.example.reddit.mapper.dto.userPost.UserPostAndInteractions;
-import com.example.reddit.mapper.source.ProfileWithInteractions;
-import com.example.reddit.mapper.source.ProfileWitoutInteractions;
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
@@ -80,7 +80,7 @@ public class UserService {
           .getPassword()
           .matchPassword(dto.getPassword(), this.passwordEncoder)
       ) {
-        return new UserRO(this.buildErrorRO("password"));
+        return new UserRO(ResUserError.of("password"));
       }
 
       // Keep user login session state
@@ -89,7 +89,7 @@ public class UserService {
       return new UserRO(this.buildResUser(user, null));
     } catch (NoSuchElementException e) {
       // Catch user does not exist
-      return new UserRO(this.buildErrorRO("usernameOrEmail"));
+      return new UserRO(ResUserError.of("usernameOrEmail"));
     }
   }
 
@@ -108,7 +108,7 @@ public class UserService {
 
       return new UserRO(this.buildResUser(user, user.getId()));
     } catch (DataIntegrityViolationException e) {
-      return new UserRO(this.buildErrorRO("usernameOrEmail"));
+      return new UserRO(ResUserError.of("usernameOrEmail"));
     }
   }
 
@@ -162,7 +162,7 @@ public class UserService {
         .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
-      List<ProfileWitoutInteractions> userProfileList = (List<ProfileWitoutInteractions>) queryResWithoutInteraction.getResultList();
+      List<PostInfoWitoutInteractions> userProfileList = (List<PostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
       Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
       userProfileList.remove(userProfileList.size() - 1);
@@ -191,7 +191,7 @@ public class UserService {
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    List<ProfileWithInteractions> userProfileList = (List<ProfileWithInteractions>) queryResWithInteraction.getResultList();
+    List<PostInfoWithInteractions> userProfileList = (List<PostInfoWithInteractions>) queryResWithInteraction.getResultList();
     Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
     userProfileList.remove(userProfileList.size() - 1);
@@ -209,11 +209,7 @@ public class UserService {
     );
   }
 
-  private ResUserError buildErrorRO(String field) {
-    return ResUserError.of(field);
-  }
-
-  private <T extends ProfileWitoutInteractions> UserProfileRO buildUserProfileRO(
+  private <T extends PostInfoWitoutInteractions> UserProfileRO buildUserProfileRO(
     List<T> userProfileList,
     Long userId,
     Boolean hasMore,
@@ -222,11 +218,11 @@ public class UserService {
     UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (T users : userProfileList) {
-      UserPostAndInteractions postAndInteractions = mapper.toPostAndInteractions(
-        users
+    for (T sourceItem : userProfileList) {
+      UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
+        sourceItem
       );
-      postAndInteractionsList.add(postAndInteractions);
+      postAndInteractionsList.add(dtoItem);
     }
 
     UserPaginatedPosts userPaginatedPost = new UserPaginatedPosts(
@@ -239,12 +235,11 @@ public class UserService {
     return new UserProfileRO(userInfo, userPaginatedPost);
   }
 
-  private <T extends ProfileWitoutInteractions> UserInfo buildUserInfo(
+  private <T extends PostInfoWitoutInteractions> UserInfo buildUserInfo(
     List<T> userProfileList,
     Long meId
   ) {
     T userProfile = userProfileList.get(0);
-    System.out.println(meId == userProfile.getId());
 
     return new UserInfo(
       userProfile.getId(),

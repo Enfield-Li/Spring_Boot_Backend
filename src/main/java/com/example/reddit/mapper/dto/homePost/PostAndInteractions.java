@@ -1,8 +1,6 @@
 package com.example.reddit.mapper.dto.homePost;
 
 import com.example.reddit.mapper.dto.Interactions;
-import com.example.reddit.mapper.dto.Post;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PostAndInteractions {
 
-  private Post post;
+  private HomePost post;
   private Interactions interactions;
 
-  public PostAndInteractions(Post post) {
+  public PostAndInteractions(HomePost post) {
     this.post = post;
   }
 }

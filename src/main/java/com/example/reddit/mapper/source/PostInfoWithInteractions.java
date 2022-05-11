@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfileWithInteractions extends ProfileWitoutInteractions {
+public class PostInfoWithInteractions extends PostInfoWitoutInteractions {
 
   private Long id;
   private Instant userCreatedAt;

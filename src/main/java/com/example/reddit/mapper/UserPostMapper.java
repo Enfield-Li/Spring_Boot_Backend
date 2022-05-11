@@ -2,9 +2,8 @@ package com.example.reddit.mapper;
 
 import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
 import com.example.reddit.mapper.dto.userPost.UserPostAndInteractions;
-import com.example.reddit.mapper.source.ProfileWithInteractions;
-import com.example.reddit.mapper.source.ProfileWitoutInteractions;
-
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -34,7 +33,7 @@ public interface UserPostMapper {
     }
   )
   UserPostAndInteractions toPostAndInteractions(
-    ProfileWitoutInteractions profile
+    PostInfoWitoutInteractions profile
   );
 
   @Mappings(
@@ -109,6 +108,6 @@ public interface UserPostMapper {
     }
   )
   UserPostAndInteractions toPostAndInteractions(
-    ProfileWithInteractions ProfileWithInteractions
+    PostInfoWithInteractions ProfileWithInteractions
   );
 }

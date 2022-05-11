@@ -1,17 +1,24 @@
 package com.example.reddit.post;
 
+import com.example.reddit.mapper.HomePostMapper;
+import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
+import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
 import com.example.reddit.user.UserRepository;
 import com.example.reddit.user.entity.User;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
+import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -99,7 +106,7 @@ public class PostService {
   }
 
   @SuppressWarnings("unchecked")
-  public List<Object> fetchPaginatedPost(
+  public PaginatedPostsRO fetchPaginatedPost(
     Long meId,
     Instant cursor,
     Integer take
@@ -126,10 +133,15 @@ public class PostService {
         .setParameter("cursor", timeFrame)
         .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-      return queryResWithoutInteraction.getResultList();
+      List<PostInfoWitoutInteractions> postList = (List<PostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
+      Boolean hasMore = postList.size() == fetchCountPlusOne;
+
+      postList.remove(postList.size() - 1);
+
+      return buildPaginatedPostsRO(postList, hasMore);
     }
 
-    Query queryResWithoutInteraction = em
+    Query queryResWithInteraction = em
       .createNativeQuery(
         "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
         " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -149,10 +161,31 @@ public class PostService {
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    return queryResWithoutInteraction.getResultList();
+    List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryResWithInteraction.getResultList();
+    Boolean hasMore = postList.size() == fetchCountPlusOne;
+
+    postList.remove(postList.size() - 1);
+
+    return buildPaginatedPostsRO(postList, hasMore);
   }
 
   public Post fetchSinglePost(Long id) {
     return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
+  }
+
+  private <T extends PostInfoWitoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
+    List<T> postList,
+    Boolean hasMore
+  ) {
+    HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
+    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
+
+    for (T sourceItem : postList) {
+      PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+
+      postAndInteractionsList.add(dtoItem);
+    }
+
+    return new PaginatedPostsRO(hasMore, postAndInteractionsList);
   }
 }

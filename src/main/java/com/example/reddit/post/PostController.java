@@ -1,8 +1,8 @@
 package com.example.reddit.post;
 
-
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
+import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
@@ -44,16 +44,13 @@ class PostController {
   }
 
   @GetMapping("test")
-  public void test() {
-  }
+  public void test() {}
 
   @GetMapping("test2")
-  public void getOne() {
-    
-  }
+  public void getOne() {}
 
   @GetMapping
-  public Object getAll(HttpSession session) {
+  public PaginatedPostsRO getAll(HttpSession session) {
     return postService.fetchPaginatedPost(1L, null, null);
   }
 

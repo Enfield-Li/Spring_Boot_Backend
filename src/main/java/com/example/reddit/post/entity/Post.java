@@ -5,8 +5,8 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.mapper.source.ProfileWithInteractions;
-import com.example.reddit.mapper.source.ProfileWitoutInteractions;
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -30,7 +30,7 @@ import org.hibernate.annotations.UpdateTimestamp;
   name = "HomeProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = ProfileWitoutInteractions.class,
+      targetClass = PostInfoWitoutInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
@@ -56,7 +56,7 @@ import org.hibernate.annotations.UpdateTimestamp;
   name = "HomeProfileWithInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = ProfileWithInteractions.class,
+      targetClass = PostInfoWithInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),

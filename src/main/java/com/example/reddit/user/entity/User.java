@@ -6,8 +6,8 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.mapper.source.ProfileWithInteractions;
-import com.example.reddit.mapper.source.ProfileWitoutInteractions;
+import com.example.reddit.mapper.source.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.PostInfoWitoutInteractions;
 import com.example.reddit.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,7 +33,7 @@ import org.springframework.data.annotation.LastModifiedDate;
   name = "UserProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = ProfileWitoutInteractions.class,
+      targetClass = PostInfoWitoutInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
@@ -59,7 +59,7 @@ import org.springframework.data.annotation.LastModifiedDate;
   name = "UserProfileWithInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = ProfileWithInteractions.class,
+      targetClass = PostInfoWithInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
