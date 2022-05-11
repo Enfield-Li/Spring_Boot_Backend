@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.demo;
+package com.example.reddit.mapper.test.demo;
 
 import lombok.Data;
 

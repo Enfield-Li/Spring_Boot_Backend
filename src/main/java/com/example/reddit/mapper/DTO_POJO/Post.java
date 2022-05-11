@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto.db;
+package com.example.reddit.mapper.DTO_POJO;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;
@@ -8,17 +8,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfile {
+public class Post {
 
   private Long id;
-  private Instant userCreatedAt;
-  private String email;
-  private Integer postAmounts;
-  private String username;
-
-  private Long postId;
-  private Instant postCreatedAt;
-  private Instant postUpdatedAt;
+  private Instant createdAt;
+  private Instant updatedAt;
   private String title;
   private String content;
   private Integer viewCount;
@@ -27,4 +21,5 @@ public class UserProfile {
   private Integer confusedPoints;
   private Integer laughPoints;
   private Integer commentAmounts;
+  private Long userId;
 }

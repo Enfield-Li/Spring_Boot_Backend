@@ -10,6 +10,7 @@ import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -63,8 +65,8 @@ class PostController {
   }
 
   @GetMapping
-  public List<Post> getAll(HttpSession session) {
-    return postService.fetchPaginatedPost();
+  public Object getAll(HttpSession session) {
+    return postService.fetchPaginatedPost(1L, null, null);
   }
 
   @GetMapping("single-post/{id}")
@@ -153,12 +155,32 @@ class PostController {
   }
 
   @GetMapping("paginated-posts")
-  public List<Post> getPaginatedPosts() {
-    return postService.fetchPaginatedPost();
+  public List<Post> getPaginatedPosts(
+    HttpSession session,
+    @RequestParam(
+      name = "cursor",
+      required = false
+    ) @DateTimeFormat Instant cursor,
+    @RequestParam(name = "take", required = false) Integer take
+  ) {
+    Long meId = (Long) session.getAttribute("userId");
+
+    return null;
+    // return postService.fetchPaginatedPost(meId, cursor, take);
   }
 
   @GetMapping("paginated-posts/top")
-  public List<Post> getPaginatedPostsByTop() {
-    return postService.fetchPaginatedPost();
+  public List<Post> getPaginatedPostsByTop(
+    HttpSession session,
+    @RequestParam(
+      name = "cursor",
+      required = false
+    ) @DateTimeFormat Instant cursor,
+    @RequestParam(name = "take", required = false) Integer take
+  ) {
+    Long meId = (Long) session.getAttribute("userId");
+
+    return null;
+    // return postService.fetchPaginatedPost(meId, cursor, take);
   }
 }

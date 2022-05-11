@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.nested;
+package com.example.reddit.mapper.test.nested;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

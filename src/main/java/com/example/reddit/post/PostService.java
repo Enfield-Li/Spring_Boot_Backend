@@ -5,8 +5,11 @@ import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
 import com.example.reddit.user.UserRepository;
 import com.example.reddit.user.entity.User;
+import java.time.Instant;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
 import javax.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,18 @@ public class PostService {
 
   private final PostRepository postRepository;
   private final UserRepository userRepository;
+  private final EntityManager em;
+  private Integer takeAmount = 10;
 
   @Autowired
-  PostService(PostRepository postRepository, UserRepository userRepository) {
+  PostService(
+    PostRepository postRepository,
+    UserRepository userRepository,
+    EntityManager em
+  ) {
     this.postRepository = postRepository;
     this.userRepository = userRepository;
+    this.em = em;
   }
 
   @Transactional
@@ -88,8 +98,35 @@ public class PostService {
     }
   }
 
-  public List<Post> fetchPaginatedPost() {
-    return postRepository.findAll();
+  @SuppressWarnings("unchecked")
+  public List<Object> fetchPaginatedPost(
+    Long meId,
+    Instant cursor,
+    Integer take
+  ) {
+    Integer fetchCount = Math.min(takeAmount, 25);
+    Integer fetchCountPlusOne = fetchCount + 1;
+    Integer offset = cursor == null ? 0 : 1;
+    Instant timeFrame = cursor == null ? Instant.now() : cursor;
+
+    Query queryResWithoutInteraction = em
+      .createNativeQuery(
+        "SELECT u.id, u.created_at AS userCreatedAt," +
+        " u.username, u.email, u.post_amounts, p.id AS postId," +
+        " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
+        " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
+        " p.confused_points, p.laugh_points, p.comment_amounts" +
+        " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
+        " AND p.created_at < :cursor" +
+        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset"
+      )
+      .setParameter("offset", offset)
+      .setParameter("cursor", timeFrame)
+      .setParameter("fetchCountPlusOne", fetchCountPlusOne);
+    // .setParameter("userId", userId);
+
+    return queryResWithoutInteraction.getResultList();
+    // return postRepository.findAll();
   }
 
   public Post fetchSinglePost(Long id) {

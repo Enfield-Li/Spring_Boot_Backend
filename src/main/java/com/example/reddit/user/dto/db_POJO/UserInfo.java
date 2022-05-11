@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto.db;
+package com.example.reddit.user.dto.DB_POJO;
 
 import java.time.Instant;
 

@@ -1,7 +1,6 @@
-package com.example.reddit.user.dto.db;
+package com.example.reddit.user.dto.DB_POJO;
 
 import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
-
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +9,7 @@ import org.mapstruct.Mappings;
 @Mapper
 public interface UserMapper {
   List<PostAndInteractions> toPostListWithoutInteractions(
-    List<UserProfile> userProfileList
+    List<UserProfileWitoutInteractions> userProfileList
   );
 
   List<PostAndInteractions> toPostListWithInteractions(
@@ -45,7 +44,9 @@ public interface UserMapper {
       @Mapping(target = "post.userId", source = "userProfile.id"),
     }
   )
-  PostAndInteractions userProfileToPostAndInteractions(UserProfile userProfile);
+  PostAndInteractions userProfileToPostAndInteractions(
+    UserProfileWitoutInteractions userProfile
+  );
 
   @Mappings(
     {

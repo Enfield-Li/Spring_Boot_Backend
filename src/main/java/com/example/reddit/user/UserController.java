@@ -1,6 +1,6 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.db.UserInfo;
+import com.example.reddit.user.dto.DB_POJO.UserInfo;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;

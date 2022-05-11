@@ -1,7 +1,6 @@
-package com.example.reddit.user.dto.db;
+package com.example.reddit.user.dto.DB_POJO;
 
 import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserProfileWithInteractions extends UserProfile {
+public class UserProfileWithInteractions
+  extends UserProfileWitoutInteractions {
 
   private Long id;
   private Instant userCreatedAt;
