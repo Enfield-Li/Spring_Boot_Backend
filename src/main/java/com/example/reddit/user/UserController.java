@@ -6,7 +6,7 @@ import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.UserProfileRO;
 import com.example.reddit.user.dto.response.UserRO;
-
+import com.example.reddit.user.entity.User;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,11 +37,6 @@ class UserController {
   @GetMapping("test1")
   public void test1() {}
 
-  @GetMapping("test2/{id}")
-  public UserInfo test2(@PathVariable("id") Long id) {
-    return userRepository.findByid(id).orElseThrow(NoSuchElementException::new);
-  }
-
   @PostMapping("register")
   public ResponseEntity register(
     @Valid @RequestBody CreateUserDto createUserDto,
@@ -58,7 +53,7 @@ class UserController {
   }
 
   @GetMapping("profile/{id}")
-  public UserProfileRO findOne(
+  public ResponseEntity findOne(
     @PathVariable("id") Long id,
     HttpSession session,
     @RequestParam(
@@ -67,16 +62,34 @@ class UserController {
     ) @DateTimeFormat Instant cursor,
     @RequestParam(name = "take", required = false) Integer take
   ) {
-    Long meId = (Long) session.getAttribute("userId");
+    try {
+      Long meId = (Long) session.getAttribute("userId");
 
-    return userService.fetchUserProfile(id, meId, cursor, take);
+      UserProfileRO res = userService.fetchUserProfile(id, meId, cursor, take);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @GetMapping("userInfo/{id}")
-  public void findUserProfile(
+  public ResponseEntity findUserProfile(
     @PathVariable("id") Long id,
     HttpSession session
-  ) {}
+  ) {
+    try {
+      Long meId = (Long) session.getAttribute("userId");
+
+      User user = userService.getProfile(id, meId);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
+  }
 
   @PutMapping("login")
   public ResponseEntity login(LoginUserDto loginUserDto, HttpSession session) {
@@ -106,15 +119,40 @@ class UserController {
   }
 
   @PatchMapping("update-user/{id}")
-  public void updateUser(@PathVariable("id") Long id, HttpSession session) {}
+  public ResponseEntity updateUser(
+    @PathVariable("id") Long id,
+    HttpSession session
+  ) {
+    try {
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
+  }
 
   @GetMapping("logout")
-  public Boolean logoutUser(HttpSession session) {
-    session.removeAttribute("userId");
-    System.out.println(session.getAttribute("userId"));
-    return true;
+  public ResponseEntity logoutUser(HttpSession session) {
+    try {
+      session.removeAttribute("userId");
+
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @DeleteMapping("{id}")
-  public void delete(@PathVariable("id") Long id) {}
+  public ResponseEntity delete(@PathVariable("id") Long id) {
+    try {
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
+  }
 }

@@ -29,10 +29,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Entity
 @DynamicInsert
 @SqlResultSetMapping(
-  name = "HomeProfileWithoutInteractions", // em creation name
+  name = "HomePostWithoutInteractions", // EntityManager creation name
   classes = {
     @ConstructorResult(
-      targetClass = PostInfoWithoutInteractions.class,
+      targetClass = PostInfoWithoutInteractions.class, // Target class
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "username"),
@@ -52,10 +52,10 @@ import org.hibernate.annotations.UpdateTimestamp;
   }
 )
 @SqlResultSetMapping(
-  name = "HomeProfileWithInteractions", // em creation name
+  name = "HomePostWithInteractions", // EntityManager creation name
   classes = {
     @ConstructorResult(
-      targetClass = PostInfoWithInteractions.class,
+      targetClass = PostInfoWithInteractions.class, // Target class
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "username"),

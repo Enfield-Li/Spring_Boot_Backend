@@ -1,5 +1,6 @@
 package com.example.reddit.post;
 
+import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -49,16 +50,22 @@ class PostController {
   @GetMapping("test2")
   public void getOne() {}
 
-  @GetMapping
-  public PaginatedPostsRO getAll(HttpSession session) {
-    Long meId = (Long) session.getAttribute("userId");
-
-    return postService.fetchPaginatedPost(meId, null, null);
-  }
-
   @GetMapping("single-post/{id}")
-  public Post getById(@PathVariable("id") Long id) {
-    return postService.fetchSinglePost(id);
+  public ResponseEntity getById(
+    @PathVariable("id") Long id,
+    HttpSession session
+  ) {
+    try {
+      Long meId = (Long) session.getAttribute("userId");
+
+      PostAndInteractions res = postService.fetchSinglePost(id, meId);
+
+      return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @PostMapping("create-post")
@@ -127,7 +134,6 @@ class PostController {
       }
 
       Boolean deleted = postService.deletePost(id, userId);
-      if (!deleted) throw new Exception();
 
       return ResponseEntity.status(HttpStatus.CREATED).body(deleted);
     } catch (Exception e) {
@@ -138,12 +144,18 @@ class PostController {
   }
 
   @GetMapping("search-post")
-  public ResponseEntity<List<Post>> searchPosts(@PathVariable("id") Long id) {
-    return null;
+  public ResponseEntity searchPosts(@PathVariable("id") Long id) {
+    try {
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @GetMapping("paginated-posts")
-  public List<Post> getPaginatedPosts(
+  public ResponseEntity getPaginatedPosts(
     HttpSession session,
     @RequestParam(
       name = "cursor",
@@ -151,14 +163,20 @@ class PostController {
     ) @DateTimeFormat Instant cursor,
     @RequestParam(name = "take", required = false) Integer take
   ) {
-    Long meId = (Long) session.getAttribute("userId");
+    try {
+      Long meId = (Long) session.getAttribute("userId");
 
-    return null;
-    // return postService.fetchPaginatedPost(meId, cursor, take);
+      PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(res);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @GetMapping("paginated-posts/top")
-  public List<Post> getPaginatedPostsByTop(
+  public ResponseEntity getPaginatedPostsByTop(
     HttpSession session,
     @RequestParam(
       name = "cursor",
@@ -166,9 +184,15 @@ class PostController {
     ) @DateTimeFormat Instant cursor,
     @RequestParam(name = "take", required = false) Integer take
   ) {
-    Long meId = (Long) session.getAttribute("userId");
+    try {
+      Long meId = (Long) session.getAttribute("userId");
 
-    return null;
-    // return postService.fetchPaginatedPost(meId, cursor, take);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      // PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 }

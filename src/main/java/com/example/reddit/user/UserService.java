@@ -3,7 +3,6 @@ package com.example.reddit.user;
 import com.example.reddit.mapper.UserPostMapper;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
-import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.UserPaginatedPosts;
 import com.example.reddit.mapper.target.userPost.UserPostAndInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
@@ -16,9 +15,7 @@ import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.persistence.EntityManager;
@@ -47,6 +44,17 @@ public class UserService {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.em = em;
+  }
+
+  public User getProfile(Long id, Long meId) {
+    User user = userRepository
+      .findById(id)
+      .orElseThrow(NoSuchElementException::new);
+
+    // User can only see their own email
+    if (user.getId() != meId) user.setEmail(null);
+
+    return user;
   }
 
   public void newUser(String username, String password, String email) {
@@ -95,6 +103,7 @@ public class UserService {
 
   public UserRO createUser(CreateUserDto dto, HttpSession session) {
     try {
+      // Check password
       Password password = Password.encode(
         dto.getPassword(),
         this.passwordEncoder
@@ -104,6 +113,7 @@ public class UserService {
 
       User user = userRepository.save(newUser);
 
+      // Create cookie session
       session.setAttribute("userId", user.getId());
 
       return new UserRO(this.buildResUser(user, user.getId()));
@@ -113,15 +123,11 @@ public class UserService {
   }
 
   public ResUser me(Long id) {
-    try {
-      User user = userRepository
-        .findById(id)
-        .orElseThrow(NoSuchElementException::new);
+    User user = userRepository
+      .findById(id)
+      .orElseThrow(NoSuchElementException::new);
 
-      return this.buildResUser(user, id);
-    } catch (NoSuchElementException e) {
-      return null;
-    }
+    return this.buildResUser(user, id);
   }
 
   public ResUser fetchUserInfo(Long id, Long meId) {
@@ -155,7 +161,7 @@ public class UserService {
           " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
           " WHERE p.user_id = :userId AND p.created_at < :cursor" +
           " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
-          "UserProfileWithoutInteractions"
+          "UserProfileWithoutInteractions" // SQL to POJO
         )
         .setParameter("offset", offset)
         .setParameter("cursor", timeFrame)
@@ -183,7 +189,7 @@ public class UserService {
         " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" +
         " WHERE p.user_id = :userId AND p.created_at < :cursor" +
         " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
-        "UserProfileWithInteractions"
+        "UserProfileWithInteractions" // SQL to POJO
       )
       .setParameter("meId", meId)
       .setParameter("userId", userId)
