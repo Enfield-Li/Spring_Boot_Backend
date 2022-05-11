@@ -4,7 +4,6 @@ import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.UserPostAndInteractions;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -58,14 +57,6 @@ public interface UserPostMapper {
       ),
       @Mapping(target = "post.userId", source = "postInfo.id"),
       @Mapping(
-        target = "interactions.createdAt",
-        source = "postInfo.interactionCreatedAt"
-      ),
-      @Mapping(
-        target = "interactions.updatedAt",
-        source = "postInfo.interactionUpdatedAt"
-      ),
-      @Mapping(
         target = "interactions.voteStatus",
         source = "postInfo.voteStatus"
       ),
@@ -81,7 +72,6 @@ public interface UserPostMapper {
         target = "interactions.confusedStatus",
         source = "postInfo.confusedStatus"
       ),
-      @Mapping(target = "interactions.checked", source = "postInfo.checked"),
     }
   )
   UserPostAndInteractions toPostAndInteractions(

@@ -25,12 +25,8 @@ public class PostInfoWithInteractions extends PostInfoWithoutInteractions {
   private Integer laughPoints;
   private Integer commentAmounts;
 
-  private Instant interactionCreatedAt;
-  private Instant interactionUpdatedAt;
   private Boolean voteStatus;
   private Boolean likeStatus;
   private Boolean laughStatus;
   private Boolean confusedStatus;
-  private Boolean read;
-  private Boolean checked;
 }

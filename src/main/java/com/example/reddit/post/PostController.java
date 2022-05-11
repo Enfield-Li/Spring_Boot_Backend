@@ -65,6 +65,7 @@ class PostController {
     HttpSession session
   ) {
     try {
+      // Check login state
       Long userId = (Long) session.getAttribute("userId");
       if (userId == null) {
         return ResponseEntity

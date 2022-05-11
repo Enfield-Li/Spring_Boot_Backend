@@ -77,14 +77,10 @@ import org.springframework.data.annotation.LastModifiedDate;
         @ColumnResult(name = "confused_points"),
         @ColumnResult(name = "laugh_points"),
         @ColumnResult(name = "comment_amounts"),
-        @ColumnResult(name = "interactionCreatedAt", type = Instant.class),
-        @ColumnResult(name = "interactionUpdatedAt", type = Instant.class),
         @ColumnResult(name = "vote_status"),
         @ColumnResult(name = "like_status"),
         @ColumnResult(name = "laugh_status"),
         @ColumnResult(name = "confused_status"),
-        @ColumnResult(name = "have_read"),
-        @ColumnResult(name = "have_checked"),
       }
     ),
   }

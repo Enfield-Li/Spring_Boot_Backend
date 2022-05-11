@@ -54,6 +54,7 @@ public class PostService {
       // Author post amount + 1
       author.setPostAmounts(author.getPostAmounts() + 1);
 
+      // Form post-user relationship
       Post post = Post.of(dto.getTitle(), dto.getContent(), author);
       postRepository.save(post);
 
@@ -70,6 +71,7 @@ public class PostService {
         .findById(postId)
         .orElseThrow(NoSuchElementException::new);
 
+      // @Transcational listen to state change-flush to db
       if (dto.getContent() != null) {
         post.setContent(dto.getContent());
       } else if (dto.getTitle() != null) {
@@ -118,10 +120,9 @@ public class PostService {
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
     if (meId == null) {
-      Query queryResWithoutInteraction = em
+      Query queryRes = em
         .createNativeQuery(
-          "SELECT u.id," +
-          " u.username p.id AS postId," +
+          "SELECT u.id, u.username p.id AS postId," +
           " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
           " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
           " p.confused_points, p.laugh_points, p.comment_amounts" +
@@ -134,27 +135,21 @@ public class PostService {
         .setParameter("cursor", timeFrame)
         .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-      List<PostInfoWithoutInteractions> postList = (List<PostInfoWithoutInteractions>) queryResWithoutInteraction.getResultList();
-      Boolean hasMore = postList.size() == fetchCountPlusOne;
+      List<PostInfoWithoutInteractions> postList = (List<PostInfoWithoutInteractions>) queryRes.getResultList();
 
-      postList.remove(postList.size() - 1);
-
-      return buildPaginatedPostsRO(postList, hasMore);
+      return buildPaginatedPostsRO(postList, fetchCountPlusOne);
     }
 
-    Query queryResWithInteraction = em
+    Query queryRes = em
       .createNativeQuery(
-        "SELECT u.id, u.username," +
-        " p.id AS postId, p.created_at AS postCreatedAt," +
+        "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
         " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
         " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
-        " p.comment_amounts, i.created_at AS interactionCreatedAt," +
-        " i.updated_at AS interactionUpdatedAt, i.vote_status, i.like_status," +
-        " i.laugh_status, i.confused_status, i.have_read, i.have_checked" +
+        " p.comment_amounts, i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
         " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id" +
-        " AND i.user_id = :meId WHERE p.created_at < :cursor" +
-        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
+        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" +
+        " WHERE p.created_at < :cursor ORDER BY p.created_at DESC" +
+        " LIMIT :fetchCountPlusOne OFFSET :offset",
         "HomeProfileWithInteractions"
       )
       .setParameter("meId", meId)
@@ -162,12 +157,9 @@ public class PostService {
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryResWithInteraction.getResultList();
-    Boolean hasMore = postList.size() == fetchCountPlusOne;
+    List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryRes.getResultList();
 
-    postList.remove(postList.size() - 1);
-
-    return buildPaginatedPostsRO(postList, hasMore);
+    return buildPaginatedPostsRO(postList, fetchCountPlusOne);
   }
 
   public Post fetchSinglePost(Long id) {
@@ -176,12 +168,23 @@ public class PostService {
 
   private <T extends PostInfoWithoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
     List<T> postList,
-    Boolean hasMore
+    Integer fetchCountPlusOne
   ) {
+    Boolean hasMore = postList.size() == fetchCountPlusOne;
+
+    if (hasMore) postList.remove(postList.size() - 1);
+
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (T sourceItem : postList) {
+      // Slice content and only send 50 char
+      String postContent = sourceItem.getContent();
+      if (postContent != null && postContent.length() > 50) {
+        String contentSnippet = postContent.substring(0, 50);
+        sourceItem.setContent(contentSnippet);
+      }
+
       PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
 
       postAndInteractionsList.add(dtoItem);

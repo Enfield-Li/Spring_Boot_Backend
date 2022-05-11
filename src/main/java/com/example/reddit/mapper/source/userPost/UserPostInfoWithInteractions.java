@@ -1,7 +1,6 @@
 package com.example.reddit.mapper.source.userPost;
 
 import java.time.Instant;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPostInfoWithInteractions extends UserPostInfoWitoutInteractions {
+public class UserPostInfoWithInteractions
+  extends UserPostInfoWitoutInteractions {
 
   private Long id;
   private Instant userCreatedAt;
@@ -29,12 +29,8 @@ public class UserPostInfoWithInteractions extends UserPostInfoWitoutInteractions
   private Integer laughPoints;
   private Integer commentAmounts;
 
-  private Instant interactionCreatedAt;
-  private Instant interactionUpdatedAt;
   private Boolean voteStatus;
   private Boolean likeStatus;
   private Boolean laughStatus;
   private Boolean confusedStatus;
-  private Boolean read;
-  private Boolean checked;
 }

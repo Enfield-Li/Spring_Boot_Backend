@@ -145,7 +145,7 @@ public class UserService {
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
     if (meId == null) {
-      Query queryResWithoutInteraction = em
+      Query queryRes = em
         .createNativeQuery(
           "SELECT u.id, u.created_at AS userCreatedAt," +
           " u.username, u.email, u.post_amounts, p.id AS postId," +
@@ -162,26 +162,26 @@ public class UserService {
         .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
-      List<UserPostInfoWitoutInteractions> userProfileList = (List<UserPostInfoWitoutInteractions>) queryResWithoutInteraction.getResultList();
-      Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
+      List<UserPostInfoWitoutInteractions> userProfileList = (List<UserPostInfoWitoutInteractions>) queryRes.getResultList();
 
-      userProfileList.remove(userProfileList.size() - 1);
-
-      return this.buildUserProfileRO(userProfileList, userId, hasMore, meId);
+      return this.buildUserProfileRO(
+          userProfileList,
+          userId,
+          meId,
+          fetchCountPlusOne
+        );
     }
 
-    Query queryResWithInteraction = em
+    Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
         " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
-        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
-        " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
-        " p.comment_amounts, i.created_at AS interactionCreatedAt," +
-        " i.updated_at AS interactionUpdatedAt, i.vote_status, i.like_status," +
-        " i.laugh_status, i.confused_status, i.have_read, i.have_checked" +
+        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count, p.vote_points," +
+        " p.like_points, p.confused_points, p.laugh_points, p.comment_amounts," +
+        " i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
         " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id" +
-        " AND i.user_id = :meId WHERE p.user_id = :userId AND p.created_at < :cursor" +
+        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" +
+        " WHERE p.user_id = :userId AND p.created_at < :cursor" +
         " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
         "UserProfileWithInteractions"
       )
@@ -191,12 +191,9 @@ public class UserService {
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    List<UserPostInfoWithInteractions> userProfileList = (List<UserPostInfoWithInteractions>) queryResWithInteraction.getResultList();
-    Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
+    List<UserPostInfoWithInteractions> userProfileList = (List<UserPostInfoWithInteractions>) queryRes.getResultList();
 
-    userProfileList.remove(userProfileList.size() - 1);
-
-    return buildUserProfileRO(userProfileList, userId, hasMore, meId);
+    return buildUserProfileRO(userProfileList, userId, meId, fetchCountPlusOne);
   }
 
   private ResUser buildResUser(User user, Long meId) {
@@ -212,13 +209,24 @@ public class UserService {
   private <T extends UserPostInfoWitoutInteractions> UserProfileRO buildUserProfileRO(
     List<T> userProfileList,
     Long userId,
-    Boolean hasMore,
-    Long meId
+    Long meId,
+    Integer fetchCountPlusOne
   ) {
+    Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
+
+    if (hasMore) userProfileList.remove(userProfileList.size() - 1);
+
     UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (T sourceItem : userProfileList) {
+      // Slice content and send only 50 char
+      String postContent = sourceItem.getContent();
+      if (postContent != null && postContent.length() > 50) {
+        String contentSnippet = postContent.substring(0, 50);
+        sourceItem.setContent(contentSnippet);
+      }
+
       UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
         sourceItem
       );
