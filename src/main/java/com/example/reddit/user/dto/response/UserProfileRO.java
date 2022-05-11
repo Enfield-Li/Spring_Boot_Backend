@@ -1,4 +1,6 @@
-package com.example.reddit.user.dto.response.userProfile;
+package com.example.reddit.user.dto.response;
+
+import com.example.reddit.mapper.DTO_POJO.UserPaginatedPosts;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class UserProfileRO {
 
   private UserInfo user;
-  private UserPaginatedPost userPaginatedPost;
+  private UserPaginatedPosts userPaginatedPost;
 }

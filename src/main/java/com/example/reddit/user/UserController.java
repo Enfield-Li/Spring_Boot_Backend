@@ -4,8 +4,9 @@ import com.example.reddit.user.dto.DB_POJO.UserInfo;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
+import com.example.reddit.user.dto.response.UserProfileRO;
 import com.example.reddit.user.dto.response.UserRO;
-import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
+
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;

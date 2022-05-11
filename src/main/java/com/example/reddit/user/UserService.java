@@ -1,17 +1,18 @@
 package com.example.reddit.user;
 
-import com.example.reddit.user.dto.DB_POJO.UserMapper;
+import com.example.reddit.mapper.UserPostMapper;
+import com.example.reddit.mapper.DTO_POJO.PostAndInteractions;
+import com.example.reddit.mapper.DTO_POJO.UserPaginatedPosts;
+import com.example.reddit.mapper.DTO_POJO.UserPostAndInteractions;
 import com.example.reddit.user.dto.DB_POJO.UserProfileWithInteractions;
 import com.example.reddit.user.dto.DB_POJO.UserProfileWitoutInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.ResUserError;
+import com.example.reddit.user.dto.response.UserInfo;
+import com.example.reddit.user.dto.response.UserProfileRO;
 import com.example.reddit.user.dto.response.UserRO;
-import com.example.reddit.user.dto.response.userProfile.PostAndInteractions;
-import com.example.reddit.user.dto.response.userProfile.UserInfo;
-import com.example.reddit.user.dto.response.userProfile.UserPaginatedPost;
-import com.example.reddit.user.dto.response.userProfile.UserProfileRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
 import java.time.Instant;
@@ -218,17 +219,17 @@ public class UserService {
     Boolean hasMore,
     Long meId
   ) {
-    UserMapper mapper = Mappers.getMapper(UserMapper.class);
-    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
+    UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
+    List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (T users : userProfileList) {
-      PostAndInteractions postAndInteractions = mapper.userProfileToPostAndInteractions(
+      UserPostAndInteractions postAndInteractions = mapper.toPostAndInteractions(
         users
       );
       postAndInteractionsList.add(postAndInteractions);
     }
 
-    UserPaginatedPost userPaginatedPost = new UserPaginatedPost(
+    UserPaginatedPosts userPaginatedPost = new UserPaginatedPosts(
       hasMore,
       postAndInteractionsList
     );

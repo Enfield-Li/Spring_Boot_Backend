@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto.response.userProfile;
+package com.example.reddit.mapper.DTO_POJO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,12 +7,12 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostAndInteractions {
+public class UserPostAndInteractions {
 
-  private Post post;
+  private UserPost post;
   private Interactions interactions;
 
-  public PostAndInteractions(Post post) {
+  public UserPostAndInteractions(UserPost post) {
     this.post = post;
   }
 }

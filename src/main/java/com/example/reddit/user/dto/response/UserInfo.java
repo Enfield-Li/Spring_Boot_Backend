@@ -1,4 +1,4 @@
-package com.example.reddit.user.dto.response.userProfile;
+package com.example.reddit.user.dto.response;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;
