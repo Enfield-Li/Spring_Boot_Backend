@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.DTO_POJO;
+package com.example.reddit.mapper.source;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;
@@ -8,11 +8,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+public class ProfileWitoutInteractions {
 
   private Long id;
-  private Instant createdAt;
-  private Instant updatedAt;
+  private Instant userCreatedAt;
+  private String email;
+  private Integer postAmounts;
+  private String username;
+
+  private Long postId;
+  private Instant postCreatedAt;
+  private Instant postUpdatedAt;
   private String title;
   private String content;
   private Integer viewCount;
@@ -21,5 +27,4 @@ public class Post {
   private Integer confusedPoints;
   private Integer laughPoints;
   private Integer commentAmounts;
-  private Long userId;
 }

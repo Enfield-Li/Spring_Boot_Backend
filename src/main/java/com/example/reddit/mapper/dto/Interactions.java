@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.DTO_POJO;
+package com.example.reddit.mapper.dto;
 
 import java.time.Instant;
 import lombok.AllArgsConstructor;

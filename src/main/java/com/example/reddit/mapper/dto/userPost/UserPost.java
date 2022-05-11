@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.DTO_POJO.userPost;
+package com.example.reddit.mapper.dto.userPost;
 
 import java.time.Instant;
 

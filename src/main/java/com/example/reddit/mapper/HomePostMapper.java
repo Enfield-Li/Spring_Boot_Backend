@@ -1,8 +1,9 @@
 package com.example.reddit.mapper;
 
-import com.example.reddit.mapper.DTO_POJO.homePost.PostAndInteractions;
-import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
-import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
+import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
+import com.example.reddit.mapper.source.ProfileWithInteractions;
+import com.example.reddit.mapper.source.ProfileWitoutInteractions;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;

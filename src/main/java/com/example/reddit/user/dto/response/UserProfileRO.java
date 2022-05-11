@@ -1,6 +1,6 @@
 package com.example.reddit.user.dto.response;
 
-import com.example.reddit.mapper.DTO_POJO.userPost.UserPaginatedPosts;
+import com.example.reddit.mapper.dto.userPost.UserPaginatedPosts;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

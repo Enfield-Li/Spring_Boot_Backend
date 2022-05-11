@@ -1,4 +1,4 @@
-package com.example.reddit.mapper.DTO_POJO.userPost;
+package com.example.reddit.mapper.dto.homePost;
 
 import java.util.List;
 
@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPaginatedPosts {
+public class PaginatedPosts {
 
   private Boolean hasMore = true;
-  private List<UserPostAndInteractions> postAndInteractions;
+  private List<PostAndInteractions> postAndInteractions;
 }

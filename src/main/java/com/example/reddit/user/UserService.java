@@ -1,11 +1,11 @@
 package com.example.reddit.user;
 
-import com.example.reddit.mapper.DTO_POJO.homePost.PostAndInteractions;
-import com.example.reddit.mapper.DTO_POJO.userPost.UserPaginatedPosts;
-import com.example.reddit.mapper.DTO_POJO.userPost.UserPostAndInteractions;
 import com.example.reddit.mapper.UserPostMapper;
-import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
-import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
+import com.example.reddit.mapper.dto.homePost.PostAndInteractions;
+import com.example.reddit.mapper.dto.userPost.UserPaginatedPosts;
+import com.example.reddit.mapper.dto.userPost.UserPostAndInteractions;
+import com.example.reddit.mapper.source.ProfileWithInteractions;
+import com.example.reddit.mapper.source.ProfileWitoutInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;

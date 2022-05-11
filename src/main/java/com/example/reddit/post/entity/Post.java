@@ -5,8 +5,8 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
-import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
+import com.example.reddit.mapper.source.ProfileWithInteractions;
+import com.example.reddit.mapper.source.ProfileWitoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;

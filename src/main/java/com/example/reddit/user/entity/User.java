@@ -6,8 +6,8 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
-import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
+import com.example.reddit.mapper.source.ProfileWithInteractions;
+import com.example.reddit.mapper.source.ProfileWitoutInteractions;
 import com.example.reddit.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
