@@ -3,7 +3,7 @@ package com.example.reddit.mapper;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

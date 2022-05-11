@@ -51,7 +51,9 @@ class PostController {
 
   @GetMapping
   public PaginatedPostsRO getAll(HttpSession session) {
-    return postService.fetchPaginatedPost(1L, null, null);
+    Long meId = (Long) session.getAttribute("userId");
+
+    return postService.fetchPaginatedPost(meId, null, null);
   }
 
   @GetMapping("single-post/{id}")

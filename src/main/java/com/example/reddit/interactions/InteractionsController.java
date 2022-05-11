@@ -70,18 +70,28 @@ class InteractionsController {
       allowableValues = { "vote", "like", "laugh", "confused" }
     )
   )
-  public Boolean getById(
+  public ResponseEntity interact(
     @PathVariable("id") Long id,
     Boolean value,
     String field,
     HttpSession session
   ) {
-    Long userId = (Long) session.getAttribute("userId");
+    try {
+      Long userId = (Long) session.getAttribute("userId");
+      if (userId == null) {
+        return ResponseEntity
+          .status(HttpStatus.UNAUTHORIZED)
+          .body("You'll have to login first :)");
+      }
 
-    System.out.println(value);
-    if (userId == null) return null;
-    return null;
-    // return interactionService.interact(id, userId, value);
+      Boolean res = interactionService.interact(id, userId, value);
+
+      return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    } catch (Exception e) {
+      return ResponseEntity
+        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Something's gone wrong...");
+    }
   }
 
   @GetMapping("interactives")

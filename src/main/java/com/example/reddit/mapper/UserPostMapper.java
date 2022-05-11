@@ -1,7 +1,7 @@
 package com.example.reddit.mapper;
 
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.UserPostAndInteractions;
 import org.mapstruct.Mapper;
@@ -33,7 +33,7 @@ public interface UserPostMapper {
     }
   )
   UserPostAndInteractions toPostAndInteractions(
-    UserPostInfoWitoutInteractions postInfo
+    UserPostInfoWithoutInteractions postInfo
   );
 
   @Mappings(

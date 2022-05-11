@@ -2,7 +2,7 @@ package com.example.reddit.user;
 
 import com.example.reddit.mapper.UserPostMapper;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.UserPaginatedPosts;
 import com.example.reddit.mapper.target.userPost.UserPostAndInteractions;
@@ -162,7 +162,7 @@ public class UserService {
         .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
-      List<UserPostInfoWitoutInteractions> userProfileList = (List<UserPostInfoWitoutInteractions>) queryRes.getResultList();
+      List<UserPostInfoWithoutInteractions> userProfileList = (List<UserPostInfoWithoutInteractions>) queryRes.getResultList();
 
       return this.buildUserProfileRO(
           userProfileList,
@@ -193,7 +193,12 @@ public class UserService {
 
     List<UserPostInfoWithInteractions> userProfileList = (List<UserPostInfoWithInteractions>) queryRes.getResultList();
 
-    return buildUserProfileRO(userProfileList, userId, meId, fetchCountPlusOne);
+    return buildUserProfileROWithInteractions(
+      userProfileList,
+      userId,
+      meId,
+      fetchCountPlusOne
+    );
   }
 
   private ResUser buildResUser(User user, Long meId) {
@@ -206,8 +211,8 @@ public class UserService {
     );
   }
 
-  private <T extends UserPostInfoWitoutInteractions> UserProfileRO buildUserProfileRO(
-    List<T> userProfileList,
+  private UserProfileRO buildUserProfileRO(
+    List<UserPostInfoWithoutInteractions> userProfileList,
     Long userId,
     Long meId,
     Integer fetchCountPlusOne
@@ -219,7 +224,7 @@ public class UserService {
     UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (T sourceItem : userProfileList) {
+    for (UserPostInfoWithoutInteractions sourceItem : userProfileList) {
       // Slice content and send only 50 char
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {
@@ -243,7 +248,44 @@ public class UserService {
     return new UserProfileRO(userInfo, userPaginatedPost);
   }
 
-  private <T extends UserPostInfoWitoutInteractions> UserInfo buildUserInfo(
+  private UserProfileRO buildUserProfileROWithInteractions(
+    List<UserPostInfoWithInteractions> userProfileList,
+    Long userId,
+    Long meId,
+    Integer fetchCountPlusOne
+  ) {
+    Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
+
+    if (hasMore) userProfileList.remove(userProfileList.size() - 1);
+
+    UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
+    List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
+
+    for (UserPostInfoWithInteractions sourceItem : userProfileList) {
+      // Slice content and send only 50 char
+      String postContent = sourceItem.getContent();
+      if (postContent != null && postContent.length() > 50) {
+        String contentSnippet = postContent.substring(0, 50);
+        sourceItem.setContent(contentSnippet);
+      }
+
+      UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
+        sourceItem
+      );
+      postAndInteractionsList.add(dtoItem);
+    }
+
+    UserPaginatedPosts userPaginatedPost = new UserPaginatedPosts(
+      hasMore,
+      postAndInteractionsList
+    );
+
+    UserInfo userInfo = buildUserInfo(userProfileList, meId);
+
+    return new UserProfileRO(userInfo, userPaginatedPost);
+  }
+
+  private <T extends UserPostInfoWithoutInteractions> UserInfo buildUserInfo(
     List<T> userProfileList,
     Long meId
   ) {

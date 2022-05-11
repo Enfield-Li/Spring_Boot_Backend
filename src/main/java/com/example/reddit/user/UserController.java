@@ -111,6 +111,7 @@ class UserController {
   @GetMapping("logout")
   public Boolean logoutUser(HttpSession session) {
     session.removeAttribute("userId");
+    System.out.println(session.getAttribute("userId"));
     return true;
   }
 

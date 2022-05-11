@@ -6,8 +6,9 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
+import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -31,7 +32,7 @@ import org.hibernate.annotations.UpdateTimestamp;
   name = "HomeProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = PostInfoWithInteractions.class,
+      targetClass = PostInfoWithoutInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "username"),

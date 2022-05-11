@@ -28,10 +28,8 @@ public class InteractionService {
 
       return true;
     } catch (Exception e) {
-      throw new ResponseStatusException(
-        HttpStatus.BAD_REQUEST,
-        "Post not found"
-      );
+      System.out.println(e);
+      return false;
     }
   }
 }

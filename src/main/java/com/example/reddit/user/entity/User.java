@@ -7,7 +7,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWitoutInteractions;
+import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -33,7 +33,7 @@ import org.springframework.data.annotation.LastModifiedDate;
   name = "UserProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = UserPostInfoWitoutInteractions.class,
+      targetClass = UserPostInfoWithoutInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),

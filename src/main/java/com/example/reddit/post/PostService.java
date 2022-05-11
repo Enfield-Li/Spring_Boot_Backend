@@ -4,6 +4,7 @@ import com.example.reddit.mapper.HomePostMapper;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
+import com.example.reddit.mapper.target.Interactions;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
@@ -122,12 +123,12 @@ public class PostService {
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
-          "SELECT u.id, u.username p.id AS postId," +
+          "SELECT u.id, u.username, p.id AS postId," +
           " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
           " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
           " p.confused_points, p.laugh_points, p.comment_amounts" +
           " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-          " AND p.created_at < :cursor" +
+          " WHERE p.created_at < :cursor" +
           " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
           "HomeProfileWithoutInteractions"
         )
@@ -159,15 +160,15 @@ public class PostService {
 
     List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryRes.getResultList();
 
-    return buildPaginatedPostsRO(postList, fetchCountPlusOne);
+    return buildPaginatedPostsROWithInteractions(postList, fetchCountPlusOne);
   }
 
   public Post fetchSinglePost(Long id) {
     return postRepository.findById(id).orElseThrow(NoSuchElementException::new);
   }
 
-  private <T extends PostInfoWithoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
-    List<T> postList,
+  private PaginatedPostsRO buildPaginatedPostsRO(
+    List<PostInfoWithoutInteractions> postList,
     Integer fetchCountPlusOne
   ) {
     Boolean hasMore = postList.size() == fetchCountPlusOne;
@@ -177,7 +178,34 @@ public class PostService {
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (T sourceItem : postList) {
+    for (PostInfoWithoutInteractions sourceItem : postList) {
+      // Slice content and only send 50 char
+      String postContent = sourceItem.getContent();
+      if (postContent != null && postContent.length() > 50) {
+        String contentSnippet = postContent.substring(0, 50);
+        sourceItem.setContent(contentSnippet);
+      }
+
+      PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+
+      postAndInteractionsList.add(dtoItem);
+    }
+
+    return new PaginatedPostsRO(hasMore, postAndInteractionsList);
+  }
+
+  private PaginatedPostsRO buildPaginatedPostsROWithInteractions(
+    List<PostInfoWithInteractions> postList,
+    Integer fetchCountPlusOne
+  ) {
+    Boolean hasMore = postList.size() == fetchCountPlusOne;
+
+    if (hasMore) postList.remove(postList.size() - 1);
+
+    HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
+    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
+
+    for (PostInfoWithInteractions sourceItem : postList) {
       // Slice content and only send 50 char
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {

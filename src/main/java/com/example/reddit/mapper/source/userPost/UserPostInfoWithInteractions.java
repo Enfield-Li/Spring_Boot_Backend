@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserPostInfoWithInteractions
-  extends UserPostInfoWitoutInteractions {
+  extends UserPostInfoWithoutInteractions {
 
   private Long id;
   private Instant userCreatedAt;
