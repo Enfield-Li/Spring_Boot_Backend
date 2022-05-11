@@ -1,40 +1,62 @@
 package com.example.reddit.mapper;
 
 import com.example.reddit.mapper.DTO_POJO.homePost.PostAndInteractions;
-import com.example.reddit.mapper.DTO_POJO.userPost.UserPostAndInteractions;
 import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
 import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
-
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 
 @Mapper
-public interface UserPostMapper {
+public interface HomePostMapper {
   @Mappings(
     {
-      @Mapping(target = "post.id", source = "profile.postId"),
-      @Mapping(target = "post.createdAt", source = "profile.postCreatedAt"),
-      @Mapping(target = "post.updatedAt", source = "profile.postUpdatedAt"),
-      @Mapping(target = "post.title", source = "profile.title"),
-      @Mapping(target = "post.content", source = "profile.content"),
-      @Mapping(target = "post.viewCount", source = "profile.viewCount"),
-      @Mapping(target = "post.votePoints", source = "profile.votePoints"),
-      @Mapping(target = "post.likePoints", source = "profile.likePoints"),
+      @Mapping(target = "post.id", source = "profileWitoutInteractions.postId"),
+      @Mapping(
+        target = "post.createdAt",
+        source = "profileWitoutInteractions.postCreatedAt"
+      ),
+      @Mapping(
+        target = "post.updatedAt",
+        source = "profileWitoutInteractions.postUpdatedAt"
+      ),
+      @Mapping(
+        target = "post.title",
+        source = "profileWitoutInteractions.title"
+      ),
+      @Mapping(
+        target = "post.content",
+        source = "profileWitoutInteractions.content"
+      ),
+      @Mapping(
+        target = "post.viewCount",
+        source = "profileWitoutInteractions.viewCount"
+      ),
+      @Mapping(
+        target = "post.votePoints",
+        source = "profileWitoutInteractions.votePoints"
+      ),
+      @Mapping(
+        target = "post.likePoints",
+        source = "profileWitoutInteractions.likePoints"
+      ),
       @Mapping(
         target = "post.confusedPoints",
-        source = "profile.confusedPoints"
+        source = "profileWitoutInteractions.confusedPoints"
       ),
-      @Mapping(target = "post.laughPoints", source = "profile.laughPoints"),
+      @Mapping(
+        target = "post.laughPoints",
+        source = "profileWitoutInteractions.laughPoints"
+      ),
       @Mapping(
         target = "post.commentAmounts",
-        source = "profile.commentAmounts"
+        source = "profileWitoutInteractions.commentAmounts"
       ),
-      @Mapping(target = "post.userId", source = "profile.id"),
+      @Mapping(target = "post.userId", source = "profileWitoutInteractions.id"),
     }
   )
-  UserPostAndInteractions toPostAndInteractions(
-    ProfileWitoutInteractions profile
+  PostAndInteractions toPostAndInteractions(
+    ProfileWitoutInteractions profileWitoutInteractions
   );
 
   @Mappings(
@@ -108,7 +130,7 @@ public interface UserPostMapper {
       ),
     }
   )
-  UserPostAndInteractions toPostAndInteractions(
+  PostAndInteractions toPostAndInteractions(
     ProfileWithInteractions ProfileWithInteractions
   );
 }

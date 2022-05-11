@@ -1,11 +1,6 @@
 package com.example.reddit.post;
 
-import com.example.reddit.post.dto.classes.PostInfo;
-import com.example.reddit.post.dto.classes.PostMoreInfo;
-import com.example.reddit.post.dto.classes.PostTitle;
-import com.example.reddit.post.dto.classes.PostWithUser;
-import com.example.reddit.post.dto.classes.PostWithUserInteractions;
-import com.example.reddit.post.dto.interfaces.PostWithAuthorAndInteractions;
+
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.entity.Post;
@@ -49,19 +44,12 @@ class PostController {
   }
 
   @GetMapping("test")
-  public PostWithUserInteractions test() {
-    Query q = em.createNativeQuery(
-      "SELECT p.id, p.title, u.username, i.vote_status AS voteStatus FROM post p JOIN user u on p.user_id = u.id JOIN interactions i on p.id = i.post_id AND u.id = i.user_id WHERE p.id = 1 AND u.id = 1;",
-      "PostTitle"
-    );
-    // PostWithUserInteractions res = (PostWithUserInteractions) q.getSingleResult();
-    // return res;
-    return (PostWithUserInteractions) q.getSingleResult();
+  public void test() {
   }
 
   @GetMapping("test2")
-  public PostWithUserInteractions getOne() {
-    return postRepository.getPostTitle();
+  public void getOne() {
+    
   }
 
   @GetMapping

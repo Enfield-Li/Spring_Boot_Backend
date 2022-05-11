@@ -1,4 +1,6 @@
-package com.example.reddit.mapper.DTO_POJO;
+package com.example.reddit.mapper.DTO_POJO.userPost;
+
+import com.example.reddit.mapper.DTO_POJO.Interactions;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

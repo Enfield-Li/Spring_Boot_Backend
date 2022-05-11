@@ -1,11 +1,11 @@
 package com.example.reddit.user;
 
+import com.example.reddit.mapper.DTO_POJO.homePost.PostAndInteractions;
+import com.example.reddit.mapper.DTO_POJO.userPost.UserPaginatedPosts;
+import com.example.reddit.mapper.DTO_POJO.userPost.UserPostAndInteractions;
 import com.example.reddit.mapper.UserPostMapper;
-import com.example.reddit.mapper.DTO_POJO.PostAndInteractions;
-import com.example.reddit.mapper.DTO_POJO.UserPaginatedPosts;
-import com.example.reddit.mapper.DTO_POJO.UserPostAndInteractions;
-import com.example.reddit.user.dto.DB_POJO.UserProfileWithInteractions;
-import com.example.reddit.user.dto.DB_POJO.UserProfileWitoutInteractions;
+import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
+import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
 import com.example.reddit.user.dto.request.CreateUserDto;
 import com.example.reddit.user.dto.request.LoginUserDto;
 import com.example.reddit.user.dto.response.ResUser;
@@ -155,14 +155,14 @@ public class UserService {
           " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
           " WHERE p.user_id = :userId AND p.created_at < :cursor" +
           " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
-          "userProfileWithoutInteractions"
+          "UserProfileWithoutInteractions"
         )
         .setParameter("offset", offset)
         .setParameter("cursor", timeFrame)
         .setParameter("fetchCountPlusOne", fetchCountPlusOne)
         .setParameter("userId", userId);
 
-      List<UserProfileWitoutInteractions> userProfileList = (List<UserProfileWitoutInteractions>) queryResWithoutInteraction.getResultList();
+      List<ProfileWitoutInteractions> userProfileList = (List<ProfileWitoutInteractions>) queryResWithoutInteraction.getResultList();
       Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
       userProfileList.remove(userProfileList.size() - 1);
@@ -183,15 +183,15 @@ public class UserService {
         " LEFT JOIN interactions i ON i.post_id = p.id" +
         " AND i.user_id = :meId WHERE p.user_id = :userId AND p.created_at < :cursor" +
         " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
-        "userProfileWithInteractions"
+        "UserProfileWithInteractions"
       )
       .setParameter("meId", meId)
+      .setParameter("userId", userId)
       .setParameter("offset", offset)
       .setParameter("cursor", timeFrame)
-      .setParameter("fetchCountPlusOne", fetchCountPlusOne)
-      .setParameter("userId", userId);
+      .setParameter("fetchCountPlusOne", fetchCountPlusOne);
 
-    List<UserProfileWithInteractions> userProfileList = (List<UserProfileWithInteractions>) queryResWithInteraction.getResultList();
+    List<ProfileWithInteractions> userProfileList = (List<ProfileWithInteractions>) queryResWithInteraction.getResultList();
     Boolean hasMore = userProfileList.size() == fetchCountPlusOne;
 
     userProfileList.remove(userProfileList.size() - 1);
@@ -213,7 +213,7 @@ public class UserService {
     return ResUserError.of(field);
   }
 
-  private <T extends UserProfileWitoutInteractions> UserProfileRO buildUserProfileRO(
+  private <T extends ProfileWitoutInteractions> UserProfileRO buildUserProfileRO(
     List<T> userProfileList,
     Long userId,
     Boolean hasMore,
@@ -239,7 +239,7 @@ public class UserService {
     return new UserProfileRO(userInfo, userPaginatedPost);
   }
 
-  private <T extends UserProfileWitoutInteractions> UserInfo buildUserInfo(
+  private <T extends ProfileWitoutInteractions> UserInfo buildUserInfo(
     List<T> userProfileList,
     Long meId
   ) {

@@ -5,7 +5,8 @@ import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.post.dto.classes.PostWithUserInteractions;
+import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
+import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -25,21 +26,62 @@ import org.hibernate.annotations.UpdateTimestamp;
 @ToString(exclude = "user")
 @Entity
 @DynamicInsert
-@NamedNativeQuery(
-  name = "Post.getPostTitle", // repository name
-  query = "SELECT p.id, p.title, u.username, i.vote_status AS voteStatus FROM post p JOIN user u on p.user_id = u.id JOIN interactions i on p.id = i.post_id AND u.id = i.user_id WHERE p.id = 1 AND u.id = 1;",
-  resultSetMapping = "PostTitle"
-)
 @SqlResultSetMapping(
-  name = "PostTitle", // em creation name
+  name = "HomeProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = PostWithUserInteractions.class,
+      targetClass = ProfileWitoutInteractions.class,
       columns = {
-        @ColumnResult(name = "id", type = java.lang.Long.class),
-        @ColumnResult(name = "title"),
+        @ColumnResult(name = "id", type = Long.class),
+        @ColumnResult(name = "userCreatedAt", type = Instant.class),
+        @ColumnResult(name = "email"),
+        @ColumnResult(name = "post_amounts"),
         @ColumnResult(name = "username"),
-        @ColumnResult(name = "voteStatus"),
+        @ColumnResult(name = "postId", type = Long.class),
+        @ColumnResult(name = "postCreatedAt", type = Instant.class),
+        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "title"),
+        @ColumnResult(name = "content"),
+        @ColumnResult(name = "view_Count"),
+        @ColumnResult(name = "vote_points"),
+        @ColumnResult(name = "like_points"),
+        @ColumnResult(name = "confused_points"),
+        @ColumnResult(name = "laugh_points"),
+        @ColumnResult(name = "comment_amounts"),
+      }
+    ),
+  }
+)
+@SqlResultSetMapping(
+  name = "HomeProfileWithInteractions", // em creation name
+  classes = {
+    @ConstructorResult(
+      targetClass = ProfileWithInteractions.class,
+      columns = {
+        @ColumnResult(name = "id", type = Long.class),
+        @ColumnResult(name = "userCreatedAt", type = Instant.class),
+        @ColumnResult(name = "email"),
+        @ColumnResult(name = "post_amounts"),
+        @ColumnResult(name = "username"),
+        @ColumnResult(name = "postId", type = Long.class),
+        @ColumnResult(name = "postCreatedAt", type = Instant.class),
+        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "title"),
+        @ColumnResult(name = "content"),
+        @ColumnResult(name = "view_Count"),
+        @ColumnResult(name = "vote_points"),
+        @ColumnResult(name = "like_points"),
+        @ColumnResult(name = "confused_points"),
+        @ColumnResult(name = "laugh_points"),
+        @ColumnResult(name = "comment_amounts"),
+        @ColumnResult(name = "interactionCreatedAt", type = Instant.class),
+        @ColumnResult(name = "interactionUpdatedAt", type = Instant.class),
+        @ColumnResult(name = "vote_status"),
+        @ColumnResult(name = "like_status"),
+        @ColumnResult(name = "laugh_status"),
+        @ColumnResult(name = "confused_status"),
+        @ColumnResult(name = "have_read"),
+        @ColumnResult(name = "have_checked"),
       }
     ),
   }

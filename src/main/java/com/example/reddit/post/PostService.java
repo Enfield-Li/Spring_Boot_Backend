@@ -109,24 +109,47 @@ public class PostService {
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
+    if (meId == null) {
+      Query queryResWithoutInteraction = em
+        .createNativeQuery(
+          "SELECT u.id, u.created_at AS userCreatedAt," +
+          " u.username, u.email, u.post_amounts, p.id AS postId," +
+          " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
+          " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
+          " p.confused_points, p.laugh_points, p.comment_amounts" +
+          " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
+          " AND p.created_at < :cursor" +
+          " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
+          "HomeProfileWithoutInteractions"
+        )
+        .setParameter("offset", offset)
+        .setParameter("cursor", timeFrame)
+        .setParameter("fetchCountPlusOne", fetchCountPlusOne);
+
+      return queryResWithoutInteraction.getResultList();
+    }
+
     Query queryResWithoutInteraction = em
       .createNativeQuery(
-        "SELECT u.id, u.created_at AS userCreatedAt," +
-        " u.username, u.email, u.post_amounts, p.id AS postId," +
-        " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
-        " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
-        " p.confused_points, p.laugh_points, p.comment_amounts" +
+        "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
+        " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
+        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
+        " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
+        " p.comment_amounts, i.created_at AS interactionCreatedAt," +
+        " i.updated_at AS interactionUpdatedAt, i.vote_status, i.like_status," +
+        " i.laugh_status, i.confused_status, i.have_read, i.have_checked" +
         " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " AND p.created_at < :cursor" +
-        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset"
+        " LEFT JOIN interactions i ON i.post_id = p.id" +
+        " AND i.user_id = :meId WHERE p.created_at < :cursor" +
+        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
+        "HomeProfileWithInteractions"
       )
+      .setParameter("meId", meId)
       .setParameter("offset", offset)
       .setParameter("cursor", timeFrame)
       .setParameter("fetchCountPlusOne", fetchCountPlusOne);
-    // .setParameter("userId", userId);
 
     return queryResWithoutInteraction.getResultList();
-    // return postRepository.findAll();
   }
 
   public Post fetchSinglePost(Long id) {

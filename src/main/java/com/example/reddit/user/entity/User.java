@@ -6,9 +6,9 @@ import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
+import com.example.reddit.mapper.source_POJO.ProfileWithInteractions;
+import com.example.reddit.mapper.source_POJO.ProfileWitoutInteractions;
 import com.example.reddit.post.entity.Post;
-import com.example.reddit.user.dto.DB_POJO.UserProfileWithInteractions;
-import com.example.reddit.user.dto.DB_POJO.UserProfileWitoutInteractions;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Instant;
@@ -30,10 +30,10 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @DynamicInsert
 @SqlResultSetMapping(
-  name = "userProfileWithoutInteractions", // em creation name
+  name = "UserProfileWithoutInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = UserProfileWitoutInteractions.class,
+      targetClass = ProfileWitoutInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
@@ -56,10 +56,10 @@ import org.springframework.data.annotation.LastModifiedDate;
   }
 )
 @SqlResultSetMapping(
-  name = "userProfileWithInteractions", // em creation name
+  name = "UserProfileWithInteractions", // em creation name
   classes = {
     @ConstructorResult(
-      targetClass = UserProfileWithInteractions.class,
+      targetClass = ProfileWithInteractions.class,
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
