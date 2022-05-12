@@ -14,6 +14,8 @@ import java.time.Instant;
 import java.util.NoSuchElementException;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,9 @@ class UserController {
 
   private final UserService userService;
   private final UserRepository userRepository;
+  private static final Logger log = LoggerFactory.getLogger(
+    UserController.class
+  );
 
   @Autowired
   UserController(UserService userService, UserRepository userRepository) {
@@ -35,7 +40,9 @@ class UserController {
   }
 
   @GetMapping("test1")
-  public void test1() {}
+  public String test1() {
+    return "YOOOOO)Oo";
+  }
 
   @PostMapping("register")
   public ResponseEntity register(
@@ -44,8 +51,10 @@ class UserController {
   ) {
     try {
       UserRO userRo = userService.createUser(createUserDto, session);
+
       return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -68,6 +77,7 @@ class UserController {
       UserProfileRO res = userService.fetchUserProfile(id, meId, cursor, take);
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -85,6 +95,7 @@ class UserController {
       User user = userService.getProfile(id, meId);
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -97,6 +108,7 @@ class UserController {
       UserRO userRo = userService.login(loginUserDto, session);
       return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -112,6 +124,7 @@ class UserController {
       ResUser resUser = userService.me(userId);
       return ResponseEntity.status(HttpStatus.CREATED).body(resUser);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -126,6 +139,7 @@ class UserController {
     try {
       return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -139,6 +153,7 @@ class UserController {
 
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -150,6 +165,7 @@ class UserController {
     try {
       return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");

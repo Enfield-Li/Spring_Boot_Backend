@@ -6,9 +6,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import javax.servlet.http.HttpSession;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/interactions")
 class InteractionsController {
 
-  InteractionService interactionService;
-  InteractionsRepository interactionsRepository;
+  private final InteractionService interactionService;
+  private final InteractionsRepository interactionsRepository;
+  private static final Logger log = LoggerFactory.getLogger(
+    InteractionsController.class
+  );
 
   @Autowired
   InteractionsController(
@@ -36,8 +43,8 @@ class InteractionsController {
   }
 
   @GetMapping("test")
-  public List<Interactions> getAll() {
-    return interactionsRepository.findAll();
+  public void getAll() {
+    interactionService.testCase();
   }
 
   @PatchMapping("setNotificationChecked")
@@ -45,8 +52,9 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -58,8 +66,9 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -71,8 +80,9 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -89,26 +99,28 @@ class InteractionsController {
     schema = @Schema(
       type = "string",
       allowableValues = { "vote", "like", "laugh", "confused" }
-    )
+    ),
+    required = true
   )
   public ResponseEntity interact(
-    @PathVariable("id") Long id,
+    @PathVariable("id") Long postId,
     Boolean value,
     String field,
     HttpSession session
   ) {
     try {
-      Long userId = (Long) session.getAttribute("userId");
-      if (userId == null) {
+      Long meId = (Long) session.getAttribute("userId");
+      if (meId == null) {
         return ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
           .body("You'll have to login first :)");
       }
 
-      Boolean res = interactionService.interact(id, userId, value);
+      Boolean res = interactionService.interact(postId, meId, field, value);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(res);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -120,8 +132,9 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -137,8 +150,9 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");

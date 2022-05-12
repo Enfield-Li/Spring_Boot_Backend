@@ -78,7 +78,7 @@ public class Interactions {
 
   public Interactions() {}
 
-  public static Interactions of(
+  public static Interactions createVote(
     CompositeKeys compositeKeys,
     Boolean voteStatus
   ) {

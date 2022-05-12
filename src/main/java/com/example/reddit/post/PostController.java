@@ -5,6 +5,8 @@ import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,6 +36,9 @@ class PostController {
   private final PostService postService;
   private final PostRepository postRepository;
   private final EntityManager em;
+  private static final Logger log = LoggerFactory.getLogger(
+    PostController.class
+  );
 
   @Autowired
   PostController(
@@ -62,6 +69,7 @@ class PostController {
 
       return ResponseEntity.status(HttpStatus.CREATED).body(res);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -90,6 +98,7 @@ class PostController {
         .status(HttpStatus.UNAUTHORIZED)
         .body("Oops, post title already taken!");
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -114,6 +123,7 @@ class PostController {
 
       return ResponseEntity.status(HttpStatus.CREATED).body(post);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -137,6 +147,7 @@ class PostController {
 
       return ResponseEntity.status(HttpStatus.CREATED).body(deleted);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -146,8 +157,9 @@ class PostController {
   @GetMapping("search-post")
   public ResponseEntity searchPosts(@PathVariable("id") Long id) {
     try {
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -155,20 +167,30 @@ class PostController {
   }
 
   @GetMapping("paginated-posts")
+  @Parameter(
+    name = "sortBy",
+    schema = @Schema(
+      type = "string",
+      allowableValues = { "best", "top", "new" }
+    ),
+    required = true
+  )
   public ResponseEntity getPaginatedPosts(
     HttpSession session,
     @RequestParam(
       name = "cursor",
       required = false
     ) @DateTimeFormat Instant cursor,
-    @RequestParam(name = "take", required = false) Integer take
+    @RequestParam(name = "take", required = false) Integer take,
+    String sortBy
   ) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
       PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(res);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");
@@ -187,9 +209,10 @@ class PostController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
       // PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
     } catch (Exception e) {
+      log.error("error: ", e);
       return ResponseEntity
         .status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Something's gone wrong...");

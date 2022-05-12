@@ -28,7 +28,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @ToString(exclude = "user")
 @Entity
 @DynamicInsert
-@SqlResultSetMapping(
+@SqlResultSetMapping( 
   name = "HomePostWithoutInteractions", // EntityManager creation name
   classes = {
     @ConstructorResult(

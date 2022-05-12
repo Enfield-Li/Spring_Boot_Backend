@@ -34,20 +34,6 @@ public class RedditApplication {
   }
 
   @Bean
-  public WebMvcConfigurer corsConfigurer() {
-    return new WebMvcConfigurer() {
-      @Override
-      public void addCorsMappings(CorsRegistry registry) {
-        registry
-          .addMapping("/**")
-          .allowedOrigins("http://localhost:3118")
-          .allowedOrigins("http://localhost:3119")
-          .allowCredentials(true);
-      }
-    };
-  }
-
-  @Bean
   PasswordEncoder passwordEncoder() {
     return new BCryptPasswordEncoder();
   }

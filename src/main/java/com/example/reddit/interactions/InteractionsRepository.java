@@ -7,4 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface InteractionsRepository
-  extends JpaRepository<Interactions, Long> {}
+  extends JpaRepository<Interactions, CompositeKeys> {}
