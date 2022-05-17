@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -143,13 +142,21 @@ public class Post {
     this.title = title;
   }
 
-  public Post(String title, String content, User user) {
+  public Post(
+    String title,
+    String content,
+    User user,
+    Integer likePoints,
+    Integer votePoints
+  ) {
     this.title = title;
     this.content = content;
     this.user = user;
+    this.likePoints = likePoints;
+    this.votePoints = votePoints;
   }
 
   public static Post of(String title, String content, User user) {
-    return new Post(title, content, user);
+    return new Post(title, content, user, 1, 1);
   }
 }

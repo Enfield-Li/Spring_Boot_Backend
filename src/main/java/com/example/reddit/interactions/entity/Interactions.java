@@ -11,6 +11,8 @@ import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
@@ -20,7 +22,7 @@ public class Interactions {
 
   @EmbeddedId
   @JsonIgnore
-  private CompositeKeys CompositeKeys;
+  private CompositeKeys compositeKeys;
 
   @Column(
     name = "user_id",
@@ -69,24 +71,28 @@ public class Interactions {
   @JsonIgnore
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_id", insertable = false, updatable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private User user;
 
   @JsonIgnore
   @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "post_id", insertable = false, updatable = false)
+  @OnDelete(action = OnDeleteAction.CASCADE)
   private Post post;
 
   public Interactions() {}
 
-  public static Interactions createVote(
+  public Interactions(
     CompositeKeys compositeKeys,
-    Boolean voteStatus
+    Boolean voteStatus,
+    Boolean likeStatus
   ) {
-    return new Interactions(compositeKeys, voteStatus);
+    this.compositeKeys = compositeKeys;
+    this.voteStatus = voteStatus;
+    this.likeStatus = likeStatus;
   }
 
-  private Interactions(CompositeKeys compositeKeys, Boolean voteStatus) {
-    this.CompositeKeys = compositeKeys;
-    this.voteStatus = voteStatus;
+  public static Interactions ofCreation(CompositeKeys compositeKeys) {
+    return new Interactions(compositeKeys, true, true);
   }
 }

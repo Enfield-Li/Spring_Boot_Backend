@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 class InteractionsController {
 
   private final InteractionService interactionService;
-  private final InteractionsRepository interactionsRepository;
+  private final InteractionsRepository interactionsRepo;
   private static final Logger log = LoggerFactory.getLogger(
     InteractionsController.class
   );
@@ -39,7 +39,7 @@ class InteractionsController {
     InteractionsRepository interactionsRepository
   ) {
     this.interactionService = interactionService;
-    this.interactionsRepository = interactionsRepository;
+    this.interactionsRepo = interactionsRepository;
   }
 
   @GetMapping("test")

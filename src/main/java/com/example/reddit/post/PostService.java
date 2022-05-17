@@ -1,9 +1,15 @@
 package com.example.reddit.post;
 
+import com.example.reddit.interactions.InteractionsRepository;
+import com.example.reddit.interactions.entity.CompositeKeys;
+import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.mapper.HomePostMapper;
+import com.example.reddit.mapper.SinglePostMapper;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
+import com.example.reddit.mapper.target.homePost.HomePost;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
+import com.example.reddit.mapper.target.userPost.AuthorInfo;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -12,6 +18,7 @@ import com.example.reddit.user.UserRepository;
 import com.example.reddit.user.entity.User;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import javax.persistence.EntityManager;
@@ -24,24 +31,27 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
-  private final PostRepository postRepository;
-  private final UserRepository userRepository;
+  private final PostRepository postRepo;
+  private final UserRepository userRepo;
+  private final InteractionsRepository interactionRepo;
   private final EntityManager em;
 
   @Autowired
   PostService(
     PostRepository postRepository,
     UserRepository userRepository,
+    InteractionsRepository interactionService,
     EntityManager em
   ) {
-    this.postRepository = postRepository;
-    this.userRepository = userRepository;
+    this.postRepo = postRepository;
+    this.userRepo = userRepository;
+    this.interactionRepo = interactionService;
     this.em = em;
   }
 
   @Transactional
-  public Post createPost(CreatePostDto dto, Long userId) {
-    User author = userRepository
+  public PostAndInteractions createPost(CreatePostDto dto, Long userId) {
+    User author = userRepo
       .findById(userId)
       .orElseThrow(NoSuchElementException::new);
 
@@ -50,14 +60,45 @@ public class PostService {
 
     // Form post-user relationship
     Post post = Post.of(dto.getTitle(), dto.getContent(), author);
-    postRepository.save(post);
+    Post createdPost = postRepo.save(post);
 
-    return post;
+    // Author casting upvote and like when creating post
+    Interactions interactions = Interactions.ofCreation(
+      CompositeKeys.of(userId, post.getId())
+    );
+    createdPost.setInteractions(Arrays.asList(interactions));
+
+    // SinglePostMapper mapper = Mappers.getMapper(SinglePostMapper.class);
+    // return mapper.toPostAndInteractions(createdPost);
+    AuthorInfo authorRes = new AuthorInfo(author.getId(), author.getUsername());
+    HomePost postRes = new HomePost(
+      createdPost.getId(),
+      createdPost.getCreatedAt(),
+      createdPost.getUpdatedAt(),
+      createdPost.getTitle(),
+      createdPost.getContent(),
+      createdPost.getViewCount(),
+      createdPost.getVotePoints(),
+      createdPost.getLikePoints(),
+      createdPost.getConfusedPoints(),
+      createdPost.getLaughPoints(),
+      createdPost.getCommentAmounts(),
+      userId,
+      authorRes
+    );
+    com.example.reddit.mapper.target.Interactions inRes = new com.example.reddit.mapper.target.Interactions(
+      createdPost.getInteractions().get(0).getVoteStatus(),
+      createdPost.getInteractions().get(0).getLikeStatus(),
+      createdPost.getInteractions().get(0).getLaughStatus(),
+      createdPost.getInteractions().get(0).getConfusedStatus()
+    );
+
+    return new PostAndInteractions(postRes, inRes);
   }
 
   @Transactional
   public Post editPost(Long postId, UpdatePostDto dto, Long userId) {
-    Post post = postRepository
+    Post post = postRepo
       .findById(postId)
       .orElseThrow(NoSuchElementException::new);
 
@@ -70,20 +111,21 @@ public class PostService {
 
   @Transactional
   public Boolean deletePost(Long postId, Long userId) {
-    Post post = postRepository
+    Post post = postRepo
       .findById(postId)
       .orElseThrow(NoSuchElementException::new);
 
     // If it wasn't the author, do nothing
-    if (post.getUserId().equals(userId)) return true;
+    if (!post.getUserId().equals(userId)) return false;
 
-    postRepository.delete(post);
+    postRepo.delete(post);
 
     // Author post amount - 1
-    User author = userRepository
+    User author = userRepo
       .findById(post.getUserId())
       .orElseThrow(NoSuchElementException::new);
     author.setPostAmounts(author.getPostAmounts() - 1);
+    Boolean deleted = author.getPost().remove(post);
 
     return true;
   }
@@ -98,7 +140,7 @@ public class PostService {
     Integer takeAmount = take == null ? 10 : take; // Default amount: 10
     Integer fetchCount = Math.min(takeAmount, 25);
     Integer fetchCountPlusOne = fetchCount + 1;
-    
+
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 

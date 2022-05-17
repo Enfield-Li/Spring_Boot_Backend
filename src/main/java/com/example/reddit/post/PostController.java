@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Post")
 @RestController
 @RequestMapping("post")
+@CrossOrigin(origins = "http://localhost:3118", maxAge = 3600)
 class PostController {
 
   private final PostService postService;
@@ -94,7 +95,7 @@ class PostController {
           .body("You'll have to login first :)");
       }
 
-      Post post = postService.createPost(dto, meId);
+      PostAndInteractions post = postService.createPost(dto, meId);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(post);
     } catch (DataIntegrityViolationException e) {

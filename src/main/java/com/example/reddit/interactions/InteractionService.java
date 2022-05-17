@@ -17,7 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class InteractionService {
 
-  private final InteractionsRepository interactionsRepository;
+  private final InteractionsRepository interactionsRepo;
   private final PostRepository postRepository;
   private final EntityManager em;
 
@@ -28,7 +28,7 @@ public class InteractionService {
     EntityManager em
   ) {
     this.postRepository = postRepository;
-    this.interactionsRepository = interactionsRepository;
+    this.interactionsRepo = interactionsRepository;
     this.em = em;
   }
 
@@ -44,7 +44,7 @@ public class InteractionService {
     String fieldPoints = field + "_points";
     Integer intValue = boolValue ? 1 : -1;
 
-    Optional<Interactions> interactionOptional = interactionsRepository.findById(
+    Optional<Interactions> interactionOptional = interactionsRepo.findById(
       CompositeKeys.of(meId, postId)
     );
 
