@@ -33,7 +33,6 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final EntityManager em;
-  private Integer takeAmount = 10;
 
   @Autowired
   UserService(
@@ -46,7 +45,7 @@ public class UserService {
     this.em = em;
   }
 
-  public User getProfile(Long id, Long meId) {
+  public User getUserInfo(Long id, Long meId) {
     User user = userRepository
       .findById(id)
       .orElseThrow(NoSuchElementException::new);
@@ -94,7 +93,7 @@ public class UserService {
       // Keep user login session state
       session.setAttribute("userId", user.getId());
 
-      return new UserRO(this.buildResUser(user, null));
+      return new UserRO(this.buildResUser(user));
     } catch (NoSuchElementException e) {
       // Catch user does not exist
       return new UserRO(ResUserError.of("usernameOrEmail"));
@@ -116,7 +115,7 @@ public class UserService {
       // Create cookie session
       session.setAttribute("userId", user.getId());
 
-      return new UserRO(this.buildResUser(user, user.getId()));
+      return new UserRO(this.buildResUser(user));
     } catch (DataIntegrityViolationException e) {
       return new UserRO(ResUserError.of("usernameOrEmail"));
     }
@@ -127,7 +126,7 @@ public class UserService {
       .findById(id)
       .orElseThrow(NoSuchElementException::new);
 
-    return this.buildResUser(user, id);
+    return this.buildResUser(user);
   }
 
   public ResUser fetchUserInfo(Long id, Long meId) {
@@ -143,13 +142,15 @@ public class UserService {
     Instant cursor,
     Integer take
   ) {
-    takeAmount = take == null ? takeAmount : take;
-
+    // Setting up default params
+    Integer takeAmount = take == null ? 10 : take; // Default amount: 10
     Integer fetchCount = Math.min(takeAmount, 25);
     Integer fetchCountPlusOne = fetchCount + 1;
+
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
+    // Fetch user's posts without interactions
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -159,8 +160,8 @@ public class UserService {
           " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
           " p.confused_points, p.laugh_points, p.comment_amounts" +
           " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-          " WHERE p.user_id = :userId AND p.created_at < :cursor" +
-          " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
+          " WHERE p.user_id = :userId AND p.created_at < :cursor" + // userId & cursor
+          " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
           "UserProfileWithoutInteractions" // SQL to POJO
         )
         .setParameter("offset", offset)
@@ -178,6 +179,7 @@ public class UserService {
         );
     }
 
+    // Fetch user's posts with interactions
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
@@ -186,9 +188,9 @@ public class UserService {
         " p.like_points, p.confused_points, p.laugh_points, p.comment_amounts," +
         " i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
         " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" +
-        " WHERE p.user_id = :userId AND p.created_at < :cursor" +
-        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset",
+        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" + // meId
+        " WHERE p.user_id = :userId AND p.created_at < :cursor" + // userId & cursor
+        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
         "UserProfileWithInteractions" // SQL to POJO
       )
       .setParameter("meId", meId)
@@ -207,11 +209,11 @@ public class UserService {
     );
   }
 
-  private ResUser buildResUser(User user, Long meId) {
+  private ResUser buildResUser(User user) {
     return ResUser.of(
       user.getId(),
       user.getUsername(),
-      meId == user.getId() ? user.getEmail() : null,
+      user.getEmail(),
       user.getCreatedAt(),
       user.getPostAmounts()
     );

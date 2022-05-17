@@ -48,7 +48,7 @@ class InteractionsController {
   }
 
   @PatchMapping("setNotificationChecked")
-  public ResponseEntity setNotificationChecked(HttpSession session) {
+  public ResponseEntity<?> setNotificationChecked(HttpSession session) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
@@ -62,7 +62,7 @@ class InteractionsController {
   }
 
   @PatchMapping("setInteractionRead")
-  public ResponseEntity setInteractionRead(HttpSession session) {
+  public ResponseEntity<?> setInteractionRead(HttpSession session) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
@@ -76,7 +76,7 @@ class InteractionsController {
   }
 
   @PatchMapping("setAllInteractionRead")
-  public ResponseEntity setAllInteractionRead(HttpSession session) {
+  public ResponseEntity<?> setAllInteractionRead(HttpSession session) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
@@ -102,7 +102,7 @@ class InteractionsController {
     ),
     required = true
   )
-  public ResponseEntity interact(
+  public ResponseEntity<?> interact(
     @PathVariable("id") Long postId,
     Boolean value,
     String field,
@@ -128,7 +128,7 @@ class InteractionsController {
   }
 
   @GetMapping("interactives")
-  public ResponseEntity create(HttpSession session) {
+  public ResponseEntity<?> create(HttpSession session) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
@@ -142,7 +142,7 @@ class InteractionsController {
   }
 
   @GetMapping("interact/comment/{id}")
-  public ResponseEntity delete(
+  public ResponseEntity<?> delete(
     @PathVariable("id") Long id,
     HttpSession session,
     @RequestParam(name = "value", required = true) Boolean value

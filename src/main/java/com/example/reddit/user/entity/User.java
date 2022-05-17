@@ -11,10 +11,14 @@ import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions
 import com.example.reddit.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,10 +28,9 @@ import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-@Getter
-@Setter
-@ToString(exclude = "post")
+@Data
 @Entity
+@JsonSerialize
 @DynamicInsert
 @SqlResultSetMapping(
   name = "UserProfileWithoutInteractions", // em creation name
@@ -109,6 +112,8 @@ public class User {
   @ColumnDefault(value = "0")
   private Integer postAmounts;
 
+
+  @ToString.Exclude
   @JsonIgnore
   @OneToMany(
     mappedBy = "user",

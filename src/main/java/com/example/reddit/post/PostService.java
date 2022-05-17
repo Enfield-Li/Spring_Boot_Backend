@@ -27,7 +27,6 @@ public class PostService {
   private final PostRepository postRepository;
   private final UserRepository userRepository;
   private final EntityManager em;
-  private Integer takeAmount = 10;
 
   @Autowired
   PostService(
@@ -63,11 +62,8 @@ public class PostService {
       .orElseThrow(NoSuchElementException::new);
 
     // @Transcational listen to state change-flush to db
-    if (dto.getContent() != null) {
-      post.setContent(dto.getContent());
-    } else if (dto.getTitle() != null) {
-      post.setTitle(dto.getTitle());
-    }
+    if (dto.getContent() != null) post.setContent(dto.getContent());
+    if (dto.getTitle() != null) post.setTitle(dto.getTitle());
 
     return post;
   }
@@ -98,11 +94,15 @@ public class PostService {
     Instant cursor,
     Integer take
   ) {
+    // Setting up default params
+    Integer takeAmount = take == null ? 10 : take; // Default amount: 10
     Integer fetchCount = Math.min(takeAmount, 25);
     Integer fetchCountPlusOne = fetchCount + 1;
+    
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
+    // Fetch posts without interactions
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -124,6 +124,7 @@ public class PostService {
       return buildPaginatedPostsRO(postList, fetchCountPlusOne);
     }
 
+    // Fetch posts with interactions
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -147,6 +148,7 @@ public class PostService {
   }
 
   public PostAndInteractions fetchSinglePost(Long postId, Long meId) {
+    // Fetch post without interactions
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -162,10 +164,12 @@ public class PostService {
 
       PostInfoWithoutInteractions postList = (PostInfoWithoutInteractions) queryRes.getSingleResult();
 
+      // POJO mapped to response object
       HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
       return mapper.toPostAndInteractions(postList);
     }
 
+    // Fetch post with interactions
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -182,6 +186,7 @@ public class PostService {
 
     PostInfoWithInteractions postList = (PostInfoWithInteractions) queryRes.getSingleResult();
 
+    // POJO mapped to response object
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
     return mapper.toPostAndInteractions(postList);
   }

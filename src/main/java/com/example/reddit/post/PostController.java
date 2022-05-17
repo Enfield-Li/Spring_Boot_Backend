@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import javax.persistence.EntityManager;
@@ -55,10 +56,14 @@ class PostController {
   public void test() {}
 
   @GetMapping("test2")
-  public void getOne() {}
+  public Post getOne() {
+    return postRepository
+      .findById(1007L)
+      .orElseThrow(NoSuchElementException::new);
+  }
 
   @GetMapping("single-post/{id}")
-  public ResponseEntity getById(
+  public ResponseEntity<?> getById(
     @PathVariable("id") Long id,
     HttpSession session
   ) {
@@ -77,20 +82,19 @@ class PostController {
   }
 
   @PostMapping("create-post")
-  public ResponseEntity create(
+  public ResponseEntity<?> create(
     @RequestBody CreatePostDto dto,
     HttpSession session
   ) {
     try {
-      // Check login state
-      Long userId = (Long) session.getAttribute("userId");
-      if (userId == null) {
+      Long meId = (Long) session.getAttribute("userId");
+      if (meId == null) {
         return ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
           .body("You'll have to login first :)");
       }
 
-      Post post = postService.createPost(dto, userId);
+      Post post = postService.createPost(dto, meId);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(post);
     } catch (DataIntegrityViolationException e) {
@@ -106,7 +110,7 @@ class PostController {
   }
 
   @PutMapping("edit/{id}")
-  public ResponseEntity update(
+  public ResponseEntity<?> update(
     @PathVariable("id") Long id,
     @RequestBody UpdatePostDto dto,
     HttpSession session
@@ -131,7 +135,7 @@ class PostController {
   }
 
   @DeleteMapping("delete/{id}")
-  public ResponseEntity delete(
+  public ResponseEntity<?> delete(
     @PathVariable("id") Long id,
     HttpSession session
   ) {
@@ -155,7 +159,7 @@ class PostController {
   }
 
   @GetMapping("search-post")
-  public ResponseEntity searchPosts(@PathVariable("id") Long id) {
+  public ResponseEntity<?> searchPosts(@PathVariable("id") Long id) {
     try {
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
     } catch (Exception e) {
@@ -175,7 +179,7 @@ class PostController {
     ),
     required = true
   )
-  public ResponseEntity getPaginatedPosts(
+  public ResponseEntity<?> getPaginatedPosts(
     HttpSession session,
     @RequestParam(
       name = "cursor",
@@ -198,7 +202,7 @@ class PostController {
   }
 
   @GetMapping("paginated-posts/top")
-  public ResponseEntity getPaginatedPostsByTop(
+  public ResponseEntity<?> getPaginatedPostsByTop(
     HttpSession session,
     @RequestParam(
       name = "cursor",

@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "user")
 @RestController
 @RequestMapping("user")
+@CrossOrigin(origins = "http://localhost:3118", maxAge = 3600)
 class UserController {
 
   private final UserService userService;
@@ -45,7 +46,7 @@ class UserController {
   }
 
   @PostMapping("register")
-  public ResponseEntity register(
+  public ResponseEntity<?> register(
     @Valid @RequestBody CreateUserDto createUserDto,
     HttpSession session
   ) {
@@ -62,7 +63,7 @@ class UserController {
   }
 
   @GetMapping("profile/{id}")
-  public ResponseEntity findOne(
+  public ResponseEntity<?> findOne(
     @PathVariable("id") Long id,
     HttpSession session,
     @RequestParam(
@@ -85,14 +86,14 @@ class UserController {
   }
 
   @GetMapping("userInfo/{id}")
-  public ResponseEntity findUserProfile(
+  public ResponseEntity<?> findUserProfile(
     @PathVariable("id") Long id,
     HttpSession session
   ) {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      User user = userService.getProfile(id, meId);
+      User user = userService.getUserInfo(id, meId);
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
     } catch (Exception e) {
       log.error("error: ", e);
@@ -103,7 +104,10 @@ class UserController {
   }
 
   @PutMapping("login")
-  public ResponseEntity login(LoginUserDto loginUserDto, HttpSession session) {
+  public ResponseEntity<?> login(
+    @Valid @RequestBody LoginUserDto loginUserDto,
+    HttpSession session
+  ) {
     try {
       UserRO userRo = userService.login(loginUserDto, session);
       return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
@@ -116,7 +120,7 @@ class UserController {
   }
 
   @GetMapping("me")
-  public ResponseEntity loginUser(HttpSession session) {
+  public ResponseEntity<?> loginUser(HttpSession session) {
     try {
       Long userId = (Long) session.getAttribute("userId");
       if (userId == null) return null;
@@ -132,7 +136,7 @@ class UserController {
   }
 
   @PatchMapping("update-user/{id}")
-  public ResponseEntity updateUser(
+  public ResponseEntity<?> updateUser(
     @PathVariable("id") Long id,
     HttpSession session
   ) {
@@ -147,7 +151,7 @@ class UserController {
   }
 
   @GetMapping("logout")
-  public ResponseEntity logoutUser(HttpSession session) {
+  public ResponseEntity<?> logoutUser(HttpSession session) {
     try {
       session.removeAttribute("userId");
 
@@ -161,7 +165,7 @@ class UserController {
   }
 
   @DeleteMapping("{id}")
-  public ResponseEntity delete(@PathVariable("id") Long id) {
+  public ResponseEntity<?> delete(@PathVariable("id") Long id) {
     try {
       return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {

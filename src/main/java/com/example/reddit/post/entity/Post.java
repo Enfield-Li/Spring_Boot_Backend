@@ -11,10 +11,13 @@ import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
+
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -23,12 +26,10 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
-@Getter
-@Setter
-@ToString(exclude = "user")
+@Data
 @Entity
 @DynamicInsert
-@SqlResultSetMapping( 
+@SqlResultSetMapping(
   name = "HomePostWithoutInteractions", // EntityManager creation name
   classes = {
     @ConstructorResult(
@@ -120,6 +121,7 @@ public class Post {
   @Column(name = "user_id", insertable = false, updatable = false)
   private Long userId;
 
+  @ToString.Exclude
   @ManyToOne(fetch = EAGER)
   @JoinColumn(name = "user_id")
   @JsonIgnoreProperties("post")
@@ -130,7 +132,7 @@ public class Post {
     cascade = ALL,
     orphanRemoval = true,
     targetEntity = Interactions.class,
-    fetch = EAGER
+    fetch = FetchType.LAZY
   )
   @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();

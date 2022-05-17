@@ -1,18 +1,9 @@
 package com.example.reddit;
 
-import com.example.reddit.user.UserService;
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class RedditApplication {
@@ -31,17 +22,5 @@ public class RedditApplication {
     // userService.newUser("user5", "user5", "user5@gmail.com");
     // userService.newUser("user6", "user6", "user6@gmail.com");
 
-  }
-
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
-
-  @Bean
-  public OpenAPI customOpenAPI() {
-    return new OpenAPI()
-      .components(new Components())
-      .info(new Info().title("Spring版 API").description("使用 Spring 搭建"));
   }
 }
