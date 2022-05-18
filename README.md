@@ -1,4 +1,4 @@
-## 本作使用Spring boot重写原作[仿Reddit论坛应用](https://github.com/Enfield-Li/PERN_Stack_REST_api)后端
+# 本作使用Spring boot重写原作[仿Reddit论坛应用](https://github.com/Enfield-Li/PERN_Stack_REST_api)后端
 
     实现一些主要功能，如用户登录注册，帖子CRUD，用户与帖子的投票等互动行为，向前端应用提供同样的REST api路径及数据。
 
@@ -24,7 +24,8 @@
     细节：使用mapstruct提供的`@Mappings`注解，手动转换POJO数据。
     
 
-## An attempt to rewrite the backend from [Mock-Reddit app](https://github.com/Enfield-Li/PERN_Stack_REST_api)
+
+# An attempt to rewrite the backend from [Mock-Reddit app](https://github.com/Enfield-Li/PERN_Stack_REST_api)
 
     Implement some major features like user register/login, post CRUD, user's interaction with post, 
     provideing the same REST api end point and data.
