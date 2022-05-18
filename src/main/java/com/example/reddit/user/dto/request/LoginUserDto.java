@@ -1,6 +1,5 @@
 package com.example.reddit.user.dto.request;
 
-import com.example.reddit.user.entity.Password;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;

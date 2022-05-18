@@ -2,32 +2,24 @@ package com.example.reddit.interactions;
 
 import com.example.reddit.interactions.entity.CompositeKeys;
 import com.example.reddit.interactions.entity.Interactions;
-import com.example.reddit.post.PostRepository;
-import com.example.reddit.post.entity.Post;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class InteractionService {
 
   private final InteractionsRepository interactionsRepo;
-  private final PostRepository postRepository;
   private final EntityManager em;
 
   @Autowired
   InteractionService(
     InteractionsRepository interactionsRepository,
-    PostRepository postRepository,
     EntityManager em
   ) {
-    this.postRepository = postRepository;
     this.interactionsRepo = interactionsRepository;
     this.em = em;
   }
@@ -39,7 +31,10 @@ public class InteractionService {
     String field,
     Boolean boolValue
   ) {
-    // Initial values to be inserted/updated
+    /* 
+      设置需要插入/更新的初始值 
+      Set up initial values to be inserted/updated
+     */
     String fieldStatus = field + "_status";
     String fieldPoints = field + "_points";
     Integer intValue = boolValue ? 1 : -1;
@@ -49,13 +44,14 @@ public class InteractionService {
     );
 
     /*
-     *  User has no previous record, therefore create record
+      用户先前无互动状态，创建新的互动
+      User has no previous interactions, therefore create
      */
     if (!interactionOptional.isPresent()) {
       int insertRes = em
         .createNativeQuery(
           "INSERT INTO interactions (post_id, user_id, " +
-          fieldStatus + // Couldn't use setParameter, weird
+          fieldStatus +
           ")" +
           " VALUES (:postId, :userId, :value)"
         )
@@ -68,23 +64,27 @@ public class InteractionService {
         .createNativeQuery(
           "UPDATE post SET " +
           fieldPoints +
-          " = " +
+          " = IFNULL(" +
           fieldPoints +
-          " + :value WHERE id = :postId"
+          ", 0) + :intValue WHERE id = :postId"
         )
         .setParameter("postId", postId)
-        .setParameter("value", intValue)
+        .setParameter("intValue", intValue)
         .executeUpdate();
 
       return insertRes == 1 && updatePointRes == 1 ? true : false;
     }
 
     /*
-     *  User has previous record, therefore update record
+      用户先前有互动，更新互动状态
+      User has previous interactions, therefore update
      */
     Interactions interactions = interactionOptional.get();
 
-    // Modify values to be updated on vote
+    /* 
+      修改用于更新字段vote相关的值
+      Modify values to be updated on vote
+     */
     if (field.equals("vote")) {
       if (
         interactions.getVoteStatus() != boolValue &&
@@ -99,7 +99,10 @@ public class InteractionService {
       }
     }
 
-    // Modify values to be updated on other fields
+    /* 
+      修改用于更新其他字段相关的值
+      Modify values to be updated on other fields
+     */
     if (field.equals("like")) {
       intValue = interactions.getLikeStatus() == boolValue ? -1 : 1;
       if (interactions.getLikeStatus() == boolValue) boolValue = false;
@@ -113,7 +116,10 @@ public class InteractionService {
       if (interactions.getConfusedStatus() == boolValue) boolValue = false;
     }
 
-    // Update fields status
+    /* 
+      更新互动状态
+      Update interactions fields status
+     */
     int updateStatusRes = em
       .createNativeQuery(
         "UPDATE interactions SET " +
@@ -126,22 +132,34 @@ public class InteractionService {
       .setParameter("value", boolValue)
       .executeUpdate();
 
-    // Update field points
+    /* 
+      更新帖子点数
+      Update post field points
+     */
     int updatePointRes = em
       .createNativeQuery(
         "UPDATE post SET " +
         fieldPoints +
-        " = " +
+        " = IFNULL(" +
         fieldPoints +
-        " + :value WHERE id = :postId"
+        ", 0) + :intValue WHERE id = :postId"
       )
       .setParameter("postId", postId)
-      .setParameter("value", intValue)
+      .setParameter("intValue", intValue)
       .executeUpdate();
 
     return updatePointRes == 1 && updateStatusRes == 1 ? true : false;
   }
 
+  // Test wierd case
   @Transactional
-  public void testCase() {}
+  public Object testCase() {
+    String fieldStatus = "vote_points";
+    Query q = em
+      .createNativeQuery("select " + fieldStatus + " from post where id = :id")
+      .setParameter("id", 1);
+
+    System.out.println(q.getSingleResult());
+    return q.getSingleResult();
+  }
 }

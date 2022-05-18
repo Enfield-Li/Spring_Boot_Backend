@@ -1,15 +1,14 @@
 package com.example.reddit.post;
 
-import com.example.reddit.interactions.InteractionsRepository;
 import com.example.reddit.interactions.entity.CompositeKeys;
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.mapper.HomePostMapper;
-import com.example.reddit.mapper.SinglePostMapper;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
 import com.example.reddit.mapper.target.homePost.HomePost;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.AuthorInfo;
+import com.example.reddit.post.dto.dbProjection.PostAuthorInfo;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -33,19 +32,16 @@ public class PostService {
 
   private final PostRepository postRepo;
   private final UserRepository userRepo;
-  private final InteractionsRepository interactionRepo;
   private final EntityManager em;
 
   @Autowired
   PostService(
     PostRepository postRepository,
     UserRepository userRepository,
-    InteractionsRepository interactionService,
     EntityManager em
   ) {
     this.postRepo = postRepository;
     this.userRepo = userRepository;
-    this.interactionRepo = interactionService;
     this.em = em;
   }
 
@@ -55,21 +51,40 @@ public class PostService {
       .findById(userId)
       .orElseThrow(NoSuchElementException::new);
 
-    // Author post amount + 1
+    /* 
+      作者帖子数量 + 1
+      Author post amount + 1
+     */
     author.setPostAmounts(author.getPostAmounts() + 1);
 
-    // Form post-user relationship
+    /*
+       绑定帖子与用户的关系
+       Form post-user relationship 
+     */
     Post post = Post.of(dto.getTitle(), dto.getContent(), author);
+    post.setVotePoints(1);
     Post createdPost = postRepo.save(post);
 
-    // Author casting upvote and like when creating post
+    /* 
+      创建新的互动——即投票和点赞
+      Author casting upvote and like
+     */
     Interactions interactions = Interactions.ofCreation(
       CompositeKeys.of(userId, post.getId())
     );
     createdPost.setInteractions(Arrays.asList(interactions));
 
+    /* 
+      Mapper 未配置
+      Mapper unconfigured
+     */
     // SinglePostMapper mapper = Mappers.getMapper(SinglePostMapper.class);
     // return mapper.toPostAndInteractions(createdPost);
+
+    /* 
+      构筑响应对象
+      Build response object
+    */
     AuthorInfo authorRes = new AuthorInfo(author.getId(), author.getUsername());
     HomePost postRes = new HomePost(
       createdPost.getId(),
@@ -86,6 +101,7 @@ public class PostService {
       userId,
       authorRes
     );
+    // class重名 / Repeated class naming
     com.example.reddit.mapper.target.Interactions inRes = new com.example.reddit.mapper.target.Interactions(
       createdPost.getInteractions().get(0).getVoteStatus(),
       createdPost.getInteractions().get(0).getLikeStatus(),
@@ -102,7 +118,6 @@ public class PostService {
       .findById(postId)
       .orElseThrow(NoSuchElementException::new);
 
-    // @Transcational listen to state change-flush to db
     if (dto.getContent() != null) post.setContent(dto.getContent());
     if (dto.getTitle() != null) post.setTitle(dto.getTitle());
 
@@ -111,21 +126,22 @@ public class PostService {
 
   @Transactional
   public Boolean deletePost(Long postId, Long userId) {
-    Post post = postRepo
-      .findById(postId)
+    PostAuthorInfo postAuthorInfo = postRepo
+      .getUserIdByid(postId)
       .orElseThrow(NoSuchElementException::new);
 
-    // If it wasn't the author, do nothing
-    if (!post.getUserId().equals(userId)) return false;
+    /* 
+      如果不是作者，不作变化
+      If it wasn't the author, do nothing
+     */
+    if (!postAuthorInfo.getUserId().equals(userId)) return false;
 
-    postRepo.delete(post);
-
-    // Author post amount - 1
-    User author = userRepo
-      .findById(post.getUserId())
-      .orElseThrow(NoSuchElementException::new);
-    author.setPostAmounts(author.getPostAmounts() - 1);
-    Boolean deleted = author.getPost().remove(post);
+    /* 
+    删除成功后，作者帖子数量 - 1
+    Author post amount - 1 after post been deleted
+    */
+    postRepo.deleteById(postId);
+    userRepo.userPostAmountMinusOne(userId);
 
     return true;
   }
@@ -136,15 +152,21 @@ public class PostService {
     Instant cursor,
     Integer take
   ) {
-    // Setting up default params
-    Integer takeAmount = take == null ? 10 : take; // Default amount: 10
+    /* 
+      设置基础参数
+      Setting up default params
+     */
+    Integer takeAmount = take == null ? 10 : take; // 默认获取10条 Default fetch amount: 10
     Integer fetchCount = Math.min(takeAmount, 25);
     Integer fetchCountPlusOne = fetchCount + 1;
 
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
-    // Fetch posts without interactions
+    /* 
+      用户未登录，获取帖子时，不获取互动状态
+      User not loged in, therefore fetch posts without interactions
+     */
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -166,7 +188,10 @@ public class PostService {
       return buildPaginatedPostsRO(postList, fetchCountPlusOne);
     }
 
-    // Fetch posts with interactions
+    /* 
+      用户已登录，获取帖子时，获取互动状态
+      User loged in, therefore fetch posts with interactions
+     */
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -190,7 +215,10 @@ public class PostService {
   }
 
   public PostAndInteractions fetchSinglePost(Long postId, Long meId) {
-    // Fetch post without interactions
+    /* 
+      用户未登录，获取帖子时，不获取互动状态
+      User not loged in, therefore fetch post without interactions
+     */
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -206,12 +234,18 @@ public class PostService {
 
       PostInfoWithoutInteractions postList = (PostInfoWithoutInteractions) queryRes.getSingleResult();
 
-      // POJO mapped to response object
+      /* 
+        将POJO map 到响应对象
+        Map POJO to response object
+       */
       HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
       return mapper.toPostAndInteractions(postList);
     }
 
-    // Fetch post with interactions
+    /* 
+      用户已登录，获取帖子时，获取互动状态
+      User loged in, therefore fetch post with interactions
+     */
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
@@ -228,7 +262,10 @@ public class PostService {
 
     PostInfoWithInteractions postList = (PostInfoWithInteractions) queryRes.getSingleResult();
 
-    // POJO mapped to response object
+    /* 
+      将POJO map 到响应对象
+      Map POJO to response object
+     */
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
     return mapper.toPostAndInteractions(postList);
   }
@@ -245,7 +282,10 @@ public class PostService {
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (PostInfoWithoutInteractions sourceItem : postList) {
-      // Slice content and only send 50 char
+      /* 
+        截取帖子内容到50个字符 
+        Slice post content and only send 50 char
+       */
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {
         String contentSnippet = postContent.substring(0, 50);
@@ -272,7 +312,10 @@ public class PostService {
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (PostInfoWithInteractions sourceItem : postList) {
-      // Slice content and only send 50 char
+      /* 
+        截取帖子内容到50个字符 
+        Slice post content and only send 50 char
+       */
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {
         String contentSnippet = postContent.substring(0, 50);

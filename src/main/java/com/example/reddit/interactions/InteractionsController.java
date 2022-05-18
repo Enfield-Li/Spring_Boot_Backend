@@ -1,23 +1,17 @@
 package com.example.reddit.interactions;
 
-import com.example.reddit.interactions.entity.Interactions;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import javax.servlet.http.HttpSession;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,23 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 class InteractionsController {
 
   private final InteractionService interactionService;
-  private final InteractionsRepository interactionsRepo;
   private static final Logger log = LoggerFactory.getLogger(
     InteractionsController.class
   );
 
   @Autowired
-  InteractionsController(
-    InteractionService interactionService,
-    InteractionsRepository interactionsRepository
-  ) {
+  InteractionsController(InteractionService interactionService) {
     this.interactionService = interactionService;
-    this.interactionsRepo = interactionsRepository;
   }
 
   @GetMapping("test")
-  public void getAll() {
-    interactionService.testCase();
+  public Object getAll() {
+    return interactionService.testCase();
   }
 
   @PatchMapping("setNotificationChecked")
@@ -52,7 +41,7 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity
@@ -66,7 +55,7 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity
@@ -80,7 +69,7 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity
@@ -132,7 +121,7 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity
@@ -150,7 +139,7 @@ class InteractionsController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity

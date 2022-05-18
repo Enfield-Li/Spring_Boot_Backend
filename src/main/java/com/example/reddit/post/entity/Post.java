@@ -2,23 +2,29 @@ package com.example.reddit.post.entity;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
-import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMapping;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -121,7 +127,7 @@ public class Post {
   private Long userId;
 
   @ToString.Exclude
-  @ManyToOne(fetch = EAGER)
+  @ManyToOne
   @JoinColumn(name = "user_id")
   @JsonIgnoreProperties("post")
   private User user;
@@ -131,7 +137,7 @@ public class Post {
     cascade = ALL,
     orphanRemoval = true,
     targetEntity = Interactions.class,
-    fetch = FetchType.LAZY
+    fetch = EAGER
   )
   @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();

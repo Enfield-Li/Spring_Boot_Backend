@@ -1,7 +1,6 @@
 package com.example.reddit.user.entity;
 
 import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
@@ -10,23 +9,24 @@ import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;
 import com.example.reddit.post.entity.Post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
-
+import javax.persistence.Column;
+import javax.persistence.ColumnResult;
+import javax.persistence.ConstructorResult;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SqlResultSetMapping;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Data
 @Entity
@@ -111,7 +111,6 @@ public class User {
   @Column(name = "post_amounts")
   @ColumnDefault(value = "0")
   private Integer postAmounts;
-
 
   @ToString.Exclude
   @JsonIgnore

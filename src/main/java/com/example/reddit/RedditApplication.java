@@ -13,14 +13,5 @@ public class RedditApplication {
       RedditApplication.class,
       args
     );
-    // UserService userService = configContext.getBean(UserService.class);
-
-    // userService.newUser("user1", "user1", "user1@gmail.com");
-    // userService.newUser("user2", "user2", "user2@gmail.com");
-    // userService.newUser("user3", "user3", "user3@gmail.com");
-    // userService.newUser("user4", "user4", "user4@gmail.com");
-    // userService.newUser("user5", "user5", "user5@gmail.com");
-    // userService.newUser("user6", "user6", "user6@gmail.com");
-
   }
 }

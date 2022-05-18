@@ -9,17 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +17,16 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "Post")
 @RestController
@@ -37,30 +36,19 @@ class PostController {
 
   private final PostService postService;
   private final PostRepository postRepository;
-  private final EntityManager em;
   private static final Logger log = LoggerFactory.getLogger(
     PostController.class
   );
 
   @Autowired
-  PostController(
-    PostService postService,
-    PostRepository postRepository,
-    EntityManager em
-  ) {
+  PostController(PostService postService, PostRepository postRepository) {
     this.postService = postService;
     this.postRepository = postRepository;
-    this.em = em;
   }
 
   @GetMapping("test")
-  public void test() {}
-
-  @GetMapping("test2")
-  public Post getOne() {
-    return postRepository
-      .findById(1007L)
-      .orElseThrow(NoSuchElementException::new);
+  public Post test() {
+    return postRepository.findById(1041L).orElse(null);
   }
 
   @GetMapping("single-post/{id}")
@@ -214,7 +202,7 @@ class PostController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
+      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
       // PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
     } catch (Exception e) {
       log.error("error: ", e);
