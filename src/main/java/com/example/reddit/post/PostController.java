@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
+import java.util.Date;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +48,8 @@ class PostController {
   }
 
   @GetMapping("test")
-  public Post test() {
-    return postRepository.findById(1041L).orElse(null);
+  public void test() {
+    postService.test();
   }
 
   @GetMapping("single-post/{id}")
@@ -180,7 +181,12 @@ class PostController {
     try {
       Long meId = (Long) session.getAttribute("userId");
 
-      PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
+      PaginatedPostsRO res = postService.fetchPaginatedPost(
+        meId,
+        cursor,
+        take,
+        sortBy
+      );
       return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
     } catch (Exception e) {
       log.error("error: ", e);
