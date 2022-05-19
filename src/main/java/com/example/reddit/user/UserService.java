@@ -50,7 +50,10 @@ public class UserService {
       .findById(id)
       .orElseThrow(NoSuchElementException::new);
 
-    // User can only see their own email
+    /* 
+      用户邮箱只对自己可见
+      User can only see their own email
+     */
     if (user.getId() != meId) user.setEmail(null);
 
     return user;
@@ -65,10 +68,13 @@ public class UserService {
   public UserRO login(LoginUserDto dto, HttpSession session) {
     try {
       User user;
-      // Parse credentials
+
       String usernameOrEmail = dto.getUsernameOrEmail();
 
-      // Check if user exist
+      /* 
+        检查用户是否存在 
+        Check if user exist
+       */
       if (usernameOrEmail.contains("@")) {
         user =
           userRepository
@@ -81,7 +87,10 @@ public class UserService {
             .orElseThrow(NoSuchElementException::new);
       }
 
-      // Check password
+      /* 
+        核对密码 
+        Check password
+       */
       if (
         !user
           .getPassword()
@@ -90,19 +99,24 @@ public class UserService {
         return new UserRO(ResUserError.of("password"));
       }
 
-      // Keep user login session state
+      /* 
+        保存用户登录状态
+        Keep user login session state
+       */
       session.setAttribute("userId", user.getId());
 
       return new UserRO(this.buildResUser(user));
     } catch (NoSuchElementException e) {
-      // Catch user does not exist
+      /* 
+        返还错误信息
+        Catch user does not exist
+       */
       return new UserRO(ResUserError.of("usernameOrEmail"));
     }
   }
 
   public UserRO createUser(CreateUserDto dto, HttpSession session) {
     try {
-      // Check password
       Password password = Password.encode(
         dto.getPassword(),
         this.passwordEncoder
@@ -112,7 +126,6 @@ public class UserService {
 
       User user = userRepository.save(newUser);
 
-      // Create cookie session
       session.setAttribute("userId", user.getId());
 
       return new UserRO(this.buildResUser(user));
@@ -142,7 +155,10 @@ public class UserService {
     Instant cursor,
     Integer take
   ) {
-    // Setting up default params
+    /* 
+      设置需要插入/更新的初始值 
+      Set up initial values to be inserted/updated
+     */
     Integer takeAmount = take == null ? 10 : take; // Default amount: 10
     Integer fetchCount = Math.min(takeAmount, 25);
     Integer fetchCountPlusOne = fetchCount + 1;
@@ -150,7 +166,10 @@ public class UserService {
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
-    // Fetch user's posts without interactions
+    /*
+      用户先前无互动状态，创建新的互动
+      User has no previous interactions, therefore create
+     */
     if (meId == null) {
       Query queryRes = em
         .createNativeQuery(
@@ -179,7 +198,10 @@ public class UserService {
         );
     }
 
-    // Fetch user's posts with interactions
+    /*
+      用户先前有互动，更新互动状态
+      User has previous interactions, therefore update
+     */
     Query queryRes = em
       .createNativeQuery(
         "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +

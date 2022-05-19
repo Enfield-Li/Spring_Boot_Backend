@@ -69,7 +69,7 @@ class UserController {
   }
 
   @GetMapping("profile/{id}")
-  public ResponseEntity<?> findOne(
+  public ResponseEntity<?> getUserProfile(
     @PathVariable("id") Long id,
     HttpSession session,
     @RequestParam(
@@ -92,7 +92,7 @@ class UserController {
   }
 
   @GetMapping("userInfo/{id}")
-  public ResponseEntity<?> findUserProfile(
+  public ResponseEntity<?> getUserProfile(
     @PathVariable("id") Long id,
     HttpSession session
   ) {

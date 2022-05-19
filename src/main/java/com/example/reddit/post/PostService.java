@@ -157,8 +157,8 @@ public class PostService {
       Setting up default params
      */
     Integer takeAmount = take == null ? 10 : take; // 默认获取10条 Default fetch amount: 10
-    Integer fetchCount = Math.min(takeAmount, 25);
-    Integer fetchCountPlusOne = fetchCount + 1;
+    Integer fetchAmount = Math.min(takeAmount, 25);
+    Integer fetchAmountPlusOne = fetchAmount + 1;
 
     Integer offset = cursor == null ? 0 : 1;
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
@@ -181,11 +181,11 @@ public class PostService {
         )
         .setParameter("offset", offset)
         .setParameter("cursor", timeFrame)
-        .setParameter("fetchCountPlusOne", fetchCountPlusOne);
+        .setParameter("fetchCountPlusOne", fetchAmountPlusOne);
 
       List<PostInfoWithoutInteractions> postList = (List<PostInfoWithoutInteractions>) queryRes.getResultList();
 
-      return buildPaginatedPostsRO(postList, fetchCountPlusOne);
+      return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
     }
 
     /* 
@@ -207,11 +207,11 @@ public class PostService {
       .setParameter("meId", meId)
       .setParameter("offset", offset)
       .setParameter("cursor", timeFrame)
-      .setParameter("fetchCountPlusOne", fetchCountPlusOne);
+      .setParameter("fetchCountPlusOne", fetchAmountPlusOne);
 
     List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryRes.getResultList();
 
-    return buildPaginatedPostsROWithInteractions(postList, fetchCountPlusOne);
+    return buildPaginatedPostsROWithInteractions(postList, fetchAmountPlusOne);
   }
 
   public PostAndInteractions fetchSinglePost(Long postId, Long meId) {
