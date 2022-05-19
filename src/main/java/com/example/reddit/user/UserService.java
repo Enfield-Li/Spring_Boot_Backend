@@ -255,7 +255,10 @@ public class UserService {
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (UserPostInfoWithoutInteractions sourceItem : userProfileList) {
-      // Slice content and send only 50 char
+      /* 
+        截取帖子内容到50个字符 
+        Slice post content and only send 50 char
+       */
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {
         String contentSnippet = postContent.substring(0, 50);
@@ -292,7 +295,10 @@ public class UserService {
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     for (UserPostInfoWithInteractions sourceItem : userProfileList) {
-      // Slice content and send only 50 char
+      /* 
+        截取帖子内容到50个字符 
+        Slice post content and only send 50 char
+       */
       String postContent = sourceItem.getContent();
       if (postContent != null && postContent.length() > 50) {
         String contentSnippet = postContent.substring(0, 50);

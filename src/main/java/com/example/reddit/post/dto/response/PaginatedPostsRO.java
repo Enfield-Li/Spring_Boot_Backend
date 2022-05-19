@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PaginatedPostsRO {
 
-  private Boolean hasMore = true;
+  private Boolean hasMore;
   private List<PostAndInteractions> postAndInteractions;
 }

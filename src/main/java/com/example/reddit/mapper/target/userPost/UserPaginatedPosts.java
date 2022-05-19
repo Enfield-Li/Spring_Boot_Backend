@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserPaginatedPosts {
 
-  private Boolean hasMore = true;
+  private Boolean hasMore;
   private List<UserPostAndInteractions> postAndInteractions;
 }

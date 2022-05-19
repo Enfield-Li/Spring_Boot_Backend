@@ -28,6 +28,29 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
+/* 
+用户实体：
+User Entity:
++--------------+--------------+------+-----+---------+----------------+
+| Field        | Type         | Null | Key | Default | Extra          |
++--------------+--------------+------+-----+---------+----------------+
+| id           | bigint       | NO   | PRI | NULL    | auto_increment |
+| created_at   | datetime(6)  | YES  |     | NULL    |                |
+| email        | varchar(255) | NO   | UNI | NULL    |                |
+| password     | varchar(255) | NO   |     | NULL    |                |
+| post_amounts | int          | YES  |     | 0       |                |
+| username     | varchar(255) | NO   | UNI | NULL    |                |
++--------------+--------------+------+-----+---------+----------------+
+
+例子：
+Example: 
++----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
+| id | created_at                 | email           | password                                                     | post_amounts | username |
++----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
+|  1 | 2022-05-11 09:15:20.882000 | user1@gmail.com | $2a$10$EBq/7srjCoxFWdkUn0niyuefFGjDr/422i7zSdEMoJU3PZf5/BSGW |            4 | user1    |
++----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
+ */
+
 @Data
 @Entity
 @JsonSerialize

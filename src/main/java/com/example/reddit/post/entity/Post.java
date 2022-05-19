@@ -31,6 +31,35 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
+/* 
+帖子实体：
+Post Entity:
++-----------------+--------------+------+-----+---------+----------------+
+| Field           | Type         | Null | Key | Default | Extra          |
++-----------------+--------------+------+-----+---------+----------------+
+| id              | bigint       | NO   | PRI | NULL    | auto_increment |
+| comment_amounts | int          | YES  |     | 0       |                |
+| confused_points | int          | YES  |     | 0       |                |
+| content         | longtext     | YES  |     | NULL    |                |
+| created_at      | datetime(6)  | YES  |     | NULL    |                |
+| laugh_points    | int          | YES  |     | 0       |                |
+| like_points     | int          | YES  |     | 0       |                |
+| title           | varchar(255) | NO   | UNI | NULL    |                |
+| updated_at      | datetime(6)  | YES  |     | NULL    |                |
+| user_id         | bigint       | YES  | MUL | NULL    |                |
+| view_count      | int          | YES  |     | 0       |                |
+| vote_points     | int          | YES  |     | 0       |                |
++-----------------+--------------+------+-----+---------+----------------+
+
+例子：
+Example: 
++----+-----------------+-----------------+-------------+----------------------------+--------------+-------------+----------+----------------------------+---------+------------+-------------+
+| id | comment_amounts | confused_points | content     | created_at                 | laugh_points | like_points | title    | updated_at                 | user_id | view_count | vote_points |
++----+-----------------+-----------------+-------------+----------------------------+--------------+-------------+----------+----------------------------+---------+------------+-------------+
+|  1 |               0 |            NULL |  lorum ip.. | 2021-01-01 21:53:10.000000 |            6 |          46 | Mr. Nice | 2020-07-17 05:37:04.000000 |       5 |        862 |          60 |
++----+-----------------+-----------------+-------------+----------------------------+--------------+-------------+----------+----------------------------+---------+------------+-------------+
+ */
+
 @Data
 @Entity
 @DynamicInsert
