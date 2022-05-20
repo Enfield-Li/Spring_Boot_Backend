@@ -15,17 +15,17 @@
       
 值得注意的地方：
 
-1. Spring Data JPA [Projections](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections)(数据映射)：
+1. 运用 Spring Data JPA [Projections](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections) (数据映射)：
 
     细节：使用基于 Interface 的映射，获取指定的字段，简化 Hibernate 生成的 SQL 语句，指定返还的数据；
       
 2. 使用 [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) 注解：
 
-    细节: 因 Spring Data JPA 不支持相对复杂自定义 Query，所以使用 `EntityManager.createNativeQuery();` 创建 SQL 语句，将 NativeQuery 生成的值，转换成 POJO；
+    细节: 因 Spring Data JPA 不支持包含 join 的相对复杂 Query，所以使用 `EntityManager.createNativeQuery();` 创建 SQL 语句，将 NativeQuery 返还的值，转换成 POJO；
 
-3. 使用 [mapstruct](https://mapstruct.org/) 将 POJO 的数据，转换成响应对象：
+3. 使用 [mapstruct](https://mapstruct.org/) 将 POJO 对象，转换成响应对象：
     
-    细节：使用 mapstruct 提供的 `@Mappings` 等注解，转换 POJO 数据。
+    细节：使用 mapstruct 提供的 `@Mappings` 等注解，将 POJO 对象，转换成正规化的响应对象。
     
 
 
@@ -56,7 +56,7 @@ Some worth noting implementations:
 
 3. Utilize [mapstruct](https://mapstruct.org/) that transform POJO to response object:
    
-   Details: Using `@Mappings` provided by mapstruct, transforming POJO to response object.
+   Details: Using `@Mappings` provided by mapstruct, transforming POJO to normalized response object.
 
 
 
