@@ -17,7 +17,7 @@ public class Employee {
   }
 
   public long getId() {
-    return id;
+    return this.id;
   }
 
   public void setId(long id) {
@@ -25,7 +25,7 @@ public class Employee {
   }
 
   public String getFirstName() {
-    return firstName;
+    return this.firstName;
   }
 
   public void setFirstName(String firstName) {
@@ -33,7 +33,7 @@ public class Employee {
   }
 
   public String getLastName() {
-    return lastName;
+    return this.lastName;
   }
 
   public void setLastName(String lastName) {
@@ -41,10 +41,50 @@ public class Employee {
   }
 
   public String getEmailId() {
-    return emailId;
+    return this.emailId;
   }
 
   public void setEmailId(String emailId) {
     this.emailId = emailId;
+  }
+
+  public Employee id(long id) {
+    setId(id);
+    return this;
+  }
+
+  public Employee firstName(String firstName) {
+    setFirstName(firstName);
+    return this;
+  }
+
+  public Employee lastName(String lastName) {
+    setLastName(lastName);
+    return this;
+  }
+
+  public Employee emailId(String emailId) {
+    setEmailId(emailId);
+    return this;
+  }
+
+  @Override
+  public String toString() {
+    return (
+      "{" +
+      " id='" +
+      getId() +
+      "'" +
+      ", firstName='" +
+      getFirstName() +
+      "'" +
+      ", lastName='" +
+      getLastName() +
+      "'" +
+      ", emailId='" +
+      getEmailId() +
+      "'" +
+      "}"
+    );
   }
 }
