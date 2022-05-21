@@ -5,7 +5,7 @@ import java.util.List;
 public interface CustomizedRepository {
   public List<Employees> mybatisFindAll();
 
-  public Employees mybatisfindById(long id);
+  public Employees mybatisFindById(long id);
 
   public int mybatisDeleteById(long id);
 

@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class CustomizedRepositoryImpl implements CustomizedRepository {
 
-  MyBatisMapper employeeMapper;
+  private MyBatisMapper employeeMapper;
 
   @Autowired
   CustomizedRepositoryImpl(MyBatisMapper employeeMapper) {
@@ -18,8 +18,8 @@ public class CustomizedRepositoryImpl implements CustomizedRepository {
   }
 
   @Override
-  public Employees mybatisfindById(long id) {
-    return employeeMapper.mybatisfindById(id);
+  public Employees mybatisFindById(long id) {
+    return employeeMapper.mybatisFindById(id);
   }
 
   @Override

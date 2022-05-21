@@ -27,7 +27,7 @@ public class RedditApplication {
     // Employees jpaRes = employeeRepository.findById(1L).orElse(null);
     // if (jpaRes != null) System.out.println(jpaRes.toString());
 
-    Employees jpaRes = employeeRepository.mybatisfindById(1L);
+    Employees jpaRes = employeeRepository.mybatisFindById(1L);
     if (jpaRes != null) System.out.println(jpaRes.toString());
   }
 }

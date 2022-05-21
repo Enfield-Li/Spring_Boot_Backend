@@ -14,7 +14,7 @@ public interface MyBatisMapper {
   public List<Employees> mybatisFindAll();
 
   @Select("SELECT * FROM employees WHERE id = #{id}")
-  public Employees mybatisfindById(long id);
+  public Employees mybatisFindById(long id);
 
   @Delete("DELETE FROM employees WHERE id = #{id}")
   public int mybatisDeleteById(long id);
