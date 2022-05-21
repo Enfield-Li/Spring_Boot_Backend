@@ -389,6 +389,7 @@ public class PostService {
     Post post = postRepo.findById(1L).orElse(null);
     System.out.println(post.getInteractions().toString());
 
+    throw new IllegalStateException("uncaught expection...");
     // PostInEdit postInEdit = postRepo.getPostInEditByid(1L).orElse(null);
     // System.out.println(postInEdit.getTitle());
   }

@@ -56,16 +56,9 @@ class UserController {
     @Valid @RequestBody CreateUserDto createUserDto,
     HttpSession session
   ) {
-    try {
-      UserRO userRo = userService.createUser(createUserDto, session);
+    UserRO userRo = userService.createUser(createUserDto, session);
 
-      return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
   }
 
   @GetMapping("profile/{id}")
@@ -78,17 +71,10 @@ class UserController {
     ) @DateTimeFormat Instant cursor,
     @RequestParam(name = "take", required = false) Integer take
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      UserProfileRO res = userService.fetchUserProfile(id, meId, cursor, take);
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    UserProfileRO res = userService.fetchUserProfile(id, meId, cursor, take);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
   }
 
   @GetMapping("userInfo/{id}")
@@ -96,17 +82,10 @@ class UserController {
     @PathVariable("id") Long id,
     HttpSession session
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      User user = userService.getUserInfo(id, meId);
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    User user = userService.getUserInfo(id, meId);
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(user);
   }
 
   @PutMapping("login")
@@ -114,31 +93,17 @@ class UserController {
     @Valid @RequestBody LoginUserDto loginUserDto,
     HttpSession session
   ) {
-    try {
-      UserRO userRo = userService.login(loginUserDto, session);
-      return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    UserRO userRo = userService.login(loginUserDto, session);
+    return ResponseEntity.status(HttpStatus.CREATED).body(userRo);
   }
 
   @GetMapping("me")
   public ResponseEntity<?> loginUser(HttpSession session) {
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      if (userId == null) return null;
+    Long userId = (Long) session.getAttribute("userId");
+    if (userId == null) return null;
 
-      ResUser resUser = userService.me(userId);
-      return ResponseEntity.status(HttpStatus.CREATED).body(resUser);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    ResUser resUser = userService.me(userId);
+    return ResponseEntity.status(HttpStatus.CREATED).body(resUser);
   }
 
   @PatchMapping("update-user/{id}")
@@ -146,39 +111,18 @@ class UserController {
     @PathVariable("id") Long id,
     HttpSession session
   ) {
-    try {
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @GetMapping("logout")
   public ResponseEntity<?> logoutUser(HttpSession session) {
-    try {
-      session.removeAttribute("userId");
+    session.removeAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(true);
   }
 
   @DeleteMapping("{id}")
   public ResponseEntity<?> delete(@PathVariable("id") Long id) {
-    try {
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }

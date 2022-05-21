@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
-import java.util.Date;
 import javax.persistence.NoResultException;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
@@ -68,11 +67,6 @@ class PostController {
       return ResponseEntity
         .status(HttpStatus.NOT_FOUND)
         .body("Post does not exist no more...");
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
     }
   }
 
@@ -96,11 +90,6 @@ class PostController {
       return ResponseEntity
         .status(HttpStatus.UNAUTHORIZED)
         .body("Oops, post title already taken!");
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
     }
   }
 
@@ -110,23 +99,16 @@ class PostController {
     @RequestBody UpdatePostDto dto,
     HttpSession session
   ) {
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      if (userId == null) {
-        return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body("You'll have to login first :)");
-      }
-
-      Post post = postService.editPost(id, dto, userId);
-
-      return ResponseEntity.status(HttpStatus.CREATED).body(post);
-    } catch (Exception e) {
-      log.error("error: ", e);
+    Long userId = (Long) session.getAttribute("userId");
+    if (userId == null) {
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
+        .status(HttpStatus.UNAUTHORIZED)
+        .body("You'll have to login first :)");
     }
+
+    Post post = postService.editPost(id, dto, userId);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(post);
   }
 
   @DeleteMapping("delete/{id}")
@@ -134,35 +116,21 @@ class PostController {
     @PathVariable("id") Long id,
     HttpSession session
   ) {
-    try {
-      Long userId = (Long) session.getAttribute("userId");
-      if (userId == null) {
-        return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body("You'll have to login first :)");
-      }
-
-      Boolean deleted = postService.deletePost(id, userId);
-
-      return ResponseEntity.status(HttpStatus.CREATED).body(deleted);
-    } catch (Exception e) {
-      log.error("error: ", e);
+    Long userId = (Long) session.getAttribute("userId");
+    if (userId == null) {
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
+        .status(HttpStatus.UNAUTHORIZED)
+        .body("You'll have to login first :)");
     }
+
+    Boolean deleted = postService.deletePost(id, userId);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(deleted);
   }
 
   @GetMapping("search-post")
   public ResponseEntity<?> searchPosts(@PathVariable("id") Long id) {
-    try {
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(null);
   }
 
   @GetMapping("paginated-posts")
@@ -183,22 +151,15 @@ class PostController {
     @RequestParam(name = "take", required = false) Integer take,
     String sortBy
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      PaginatedPostsRO res = postService.fetchPaginatedPost(
-        meId,
-        cursor,
-        take,
-        sortBy
-      );
-      return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    PaginatedPostsRO res = postService.fetchPaginatedPost(
+      meId,
+      cursor,
+      take,
+      sortBy
+    );
+    return ResponseEntity.status(HttpStatus.ACCEPTED).body(res);
   }
 
   @GetMapping("paginated-posts/top")
@@ -210,16 +171,9 @@ class PostController {
     ) @DateTimeFormat Instant cursor,
     @RequestParam(name = "take", required = false) Integer take
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-      // PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
+    // PaginatedPostsRO res = postService.fetchPaginatedPost(meId, cursor, take);
   }
 }

@@ -38,44 +38,23 @@ class InteractionsController {
 
   @PatchMapping("setNotificationChecked")
   public ResponseEntity<?> setNotificationChecked(HttpSession session) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PatchMapping("setInteractionRead")
   public ResponseEntity<?> setInteractionRead(HttpSession session) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @PatchMapping("setAllInteractionRead")
   public ResponseEntity<?> setAllInteractionRead(HttpSession session) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @GetMapping("interact/post/{id}")
@@ -97,37 +76,23 @@ class InteractionsController {
     String field,
     HttpSession session
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
-      if (meId == null) {
-        return ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body("You'll have to login first :)");
-      }
-
-      Boolean res = interactionService.interact(postId, meId, field, value);
-
-      return ResponseEntity.status(HttpStatus.CREATED).body(res);
-    } catch (Exception e) {
-      log.error("error: ", e);
+    Long meId = (Long) session.getAttribute("userId");
+    if (meId == null) {
       return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
+        .status(HttpStatus.UNAUTHORIZED)
+        .body("You'll have to login first :)");
     }
+
+    Boolean res = interactionService.interact(postId, meId, field, value);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(res);
   }
 
   @GetMapping("interactives")
   public ResponseEntity<?> create(HttpSession session) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 
   @GetMapping("interact/comment/{id}")
@@ -136,15 +101,8 @@ class InteractionsController {
     HttpSession session,
     @RequestParam(name = "value", required = true) Boolean value
   ) {
-    try {
-      Long meId = (Long) session.getAttribute("userId");
+    Long meId = (Long) session.getAttribute("userId");
 
-      return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
-    } catch (Exception e) {
-      log.error("error: ", e);
-      return ResponseEntity
-        .status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("Something's gone wrong...");
-    }
+    return ResponseEntity.status(HttpStatus.NOT_IMPLEMENTED).body(null);
   }
 }
