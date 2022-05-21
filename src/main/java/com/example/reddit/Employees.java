@@ -1,15 +1,25 @@
 package com.example.reddit;
 
-public class Employee {
+import static javax.persistence.GenerationType.IDENTITY;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Employees {
+
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
   private long id;
+
   private String firstName;
   private String lastName;
   private String emailId;
 
-  public Employee() {}
+  public Employees() {}
 
-  public Employee(long id, String firstName, String lastName, String emailId) {
+  public Employees(long id, String firstName, String lastName, String emailId) {
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -48,22 +58,22 @@ public class Employee {
     this.emailId = emailId;
   }
 
-  public Employee id(long id) {
+  public Employees id(long id) {
     setId(id);
     return this;
   }
 
-  public Employee firstName(String firstName) {
+  public Employees firstName(String firstName) {
     setFirstName(firstName);
     return this;
   }
 
-  public Employee lastName(String lastName) {
+  public Employees lastName(String lastName) {
     setLastName(lastName);
     return this;
   }
 
-  public Employee emailId(String emailId) {
+  public Employees emailId(String emailId) {
     setEmailId(emailId);
     return this;
   }
