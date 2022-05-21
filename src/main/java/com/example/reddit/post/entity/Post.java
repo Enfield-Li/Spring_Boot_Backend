@@ -156,7 +156,7 @@ public class Post {
   private Long userId;
 
   @ToString.Exclude
-  @ManyToOne
+  @ManyToOne(fetch = LAZY)
   @JoinColumn(name = "user_id")
   @JsonIgnoreProperties("post")
   private User user;
@@ -166,7 +166,7 @@ public class Post {
     cascade = ALL,
     orphanRemoval = true,
     targetEntity = Interactions.class,
-    fetch = EAGER
+    fetch = LAZY
   )
   @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();

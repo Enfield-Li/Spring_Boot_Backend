@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
 import java.util.Date;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +64,10 @@ class PostController {
       PostAndInteractions res = postService.fetchSinglePost(id, meId);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(res);
+    } catch (NoResultException e) {
+      return ResponseEntity
+        .status(HttpStatus.NOT_FOUND)
+        .body("Post does not exist no more...");
     } catch (Exception e) {
       log.error("error: ", e);
       return ResponseEntity

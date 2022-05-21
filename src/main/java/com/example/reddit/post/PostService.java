@@ -9,6 +9,7 @@ import com.example.reddit.mapper.target.homePost.HomePost;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.AuthorInfo;
 import com.example.reddit.post.dto.dbProjection.PostAuthorInfo;
+import com.example.reddit.post.dto.dbProjection.PostInEdit;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -106,10 +107,10 @@ public class PostService {
     );
     // class重名 / Repeated class naming
     com.example.reddit.mapper.target.Interactions inRes = new com.example.reddit.mapper.target.Interactions(
-      createdPost.getInteractions().get(0).getVoteStatus(),
-      createdPost.getInteractions().get(0).getLikeStatus(),
-      createdPost.getInteractions().get(0).getLaughStatus(),
-      createdPost.getInteractions().get(0).getConfusedStatus()
+      interactions.getVoteStatus(),
+      interactions.getLikeStatus(),
+      interactions.getLaughStatus(),
+      interactions.getConfusedStatus()
     );
 
     return new PostAndInteractions(postRes, inRes);
@@ -120,6 +121,8 @@ public class PostService {
     Post post = postRepo
       .findById(postId)
       .orElseThrow(NoSuchElementException::new);
+
+    if (!post.getUserId().equals(userId)) return null;
 
     if (dto.getContent() != null) post.setContent(dto.getContent());
     if (dto.getTitle() != null) post.setTitle(dto.getTitle());
@@ -381,12 +384,12 @@ public class PostService {
     .format(Date.from(Instant.now().minus(Duration.ofDays(days))));
   }
 
+  @Transactional
   public void test() {
-    String id = "1";
-    Query q = em
-      .createNativeQuery("select title from post where id = :id")
-      .setParameter("id", id);
+    Post post = postRepo.findById(1L).orElse(null);
+    System.out.println(post.getInteractions().toString());
 
-    System.out.println(q.getSingleResult());
+    // PostInEdit postInEdit = postRepo.getPostInEditByid(1L).orElse(null);
+    // System.out.println(postInEdit.getTitle());
   }
 }

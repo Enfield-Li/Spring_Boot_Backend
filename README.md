@@ -58,9 +58,3 @@ Some worth noting implementations:
    
    Details: Using `@Mappings` provided by mapstruct, transforming POJO to normalized response object.
 
-
-
-
-
-
-
