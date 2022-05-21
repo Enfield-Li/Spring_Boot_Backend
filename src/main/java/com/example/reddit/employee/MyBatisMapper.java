@@ -1,4 +1,4 @@
-package com.example.reddit;
+package com.example.reddit.employee;
 
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;

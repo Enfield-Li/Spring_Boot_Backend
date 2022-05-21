@@ -1,4 +1,4 @@
-package com.example.reddit;
+package com.example.reddit.employee;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
