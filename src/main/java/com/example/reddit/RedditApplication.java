@@ -1,8 +1,9 @@
 package com.example.reddit;
 
 import com.example.reddit.employee.Employees;
-import com.example.reddit.employee.EmployeesRepository;
-import com.example.reddit.employee.MyBatisMapper;
+import com.example.reddit.employee.dto.EmployeeName;
+import com.example.reddit.employee.repository.EmployeesRepository;
+import com.example.reddit.employee.repository.MyBatisMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -27,7 +28,7 @@ public class RedditApplication {
     // Employees jpaRes = employeeRepository.findById(1L).orElse(null);
     // if (jpaRes != null) System.out.println(jpaRes.toString());
 
-    Employees jpaRes = employeeRepository.mybatisFindById(1L);
+    EmployeeName jpaRes = employeeRepository.mybatisFindById(1L);
     if (jpaRes != null) System.out.println(jpaRes.toString());
   }
 }

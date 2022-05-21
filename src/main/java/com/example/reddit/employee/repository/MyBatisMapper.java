@@ -1,5 +1,7 @@
-package com.example.reddit.employee;
+package com.example.reddit.employee.repository;
 
+import com.example.reddit.employee.Employees;
+import com.example.reddit.employee.dto.EmployeeName;
 import java.util.List;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -13,8 +15,8 @@ public interface MyBatisMapper {
   @Select("select * from employees")
   public List<Employees> mybatisFindAll();
 
-  @Select("SELECT * FROM employees WHERE id = #{id}")
-  public Employees mybatisFindById(long id);
+  @Select("SELECT first_name, last_name FROM employees WHERE id = #{id}")
+  public EmployeeName mybatisFindById(long id);
 
   @Delete("DELETE FROM employees WHERE id = #{id}")
   public int mybatisDeleteById(long id);
