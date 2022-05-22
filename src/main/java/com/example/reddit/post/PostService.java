@@ -14,8 +14,10 @@ import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
-import com.example.reddit.user.UserRepository;
+import com.example.reddit.post.repository.PostRepository;
 import com.example.reddit.user.entity.User;
+import com.example.reddit.user.repository.UserRepository;
+
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;

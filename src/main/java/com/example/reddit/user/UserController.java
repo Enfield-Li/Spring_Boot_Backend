@@ -6,6 +6,8 @@ import com.example.reddit.user.dto.response.ResUser;
 import com.example.reddit.user.dto.response.UserProfileRO;
 import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.User;
+import com.example.reddit.user.repository.UserRepository;
+
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.Instant;
 import javax.servlet.http.HttpSession;

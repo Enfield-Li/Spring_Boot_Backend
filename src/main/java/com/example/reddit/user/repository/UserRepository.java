@@ -1,4 +1,4 @@
-package com.example.reddit.user;
+package com.example.reddit.user.repository;
 
 import com.example.reddit.user.dto.dbProjection.UserInfo;
 import com.example.reddit.user.entity.User;

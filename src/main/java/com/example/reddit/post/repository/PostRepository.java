@@ -1,4 +1,4 @@
-package com.example.reddit.post;
+package com.example.reddit.post.repository;
 
 import com.example.reddit.post.dto.dbProjection.PostAuthorInfo;
 import com.example.reddit.post.dto.dbProjection.PostInEdit;
