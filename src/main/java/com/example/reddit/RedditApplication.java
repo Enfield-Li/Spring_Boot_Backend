@@ -9,13 +9,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class RedditApplication {
 
   public static void main(String[] args) {
-    ConfigurableApplicationContext configContext = SpringApplication.run(
+    ConfigurableApplicationContext ctx = SpringApplication.run(
       RedditApplication.class,
       args
     );
 
-    HotelMapper hotelMapper = configContext.getBean(HotelMapper.class);
+    HotelMapper mapper = ctx.getBean(HotelMapper.class);
 
-    System.out.println(hotelMapper.selectByCityId(1));
+    System.out.println(mapper.selectByCityId(1));
+    System.out.println(mapper.selectAll().size());
   }
 }

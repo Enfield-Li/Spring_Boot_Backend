@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="sample.mybatis.xml.mapper.HotelMapper">
+<mapper namespace="com.example.reddit.mapper.HotelMapper">
     <select id="selectByCityId" resultType="Hotel">
         select city, name, address, zip from hotel where city = #{id}
+    </select>
+
+    <select id="selectAll" resultType="Hotel">
+        select * from hotel
     </select>
 </mapper>
