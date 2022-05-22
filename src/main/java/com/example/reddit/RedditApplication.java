@@ -5,6 +5,7 @@ import com.example.reddit.employee.dto.EmployeeName;
 import com.example.reddit.employee.repository.EmployeesRepository;
 import com.example.reddit.employee.repository.MyBatisMapper;
 import com.example.reddit.post.dto.PostWithUserInfo;
+import com.example.reddit.post.repository.PostDao;
 import com.example.reddit.post.repository.PostMapper;
 import com.example.reddit.user.User;
 import com.example.reddit.user.dto.UserInfo;
@@ -33,8 +34,12 @@ public class RedditApplication {
     UserDao userDao = configContext.getBean(UserDao.class);
 
     PostMapper postMapper = configContext.getBean(PostMapper.class);
-    
-    PostWithUserInfo postRes1 = postMapper.getPostWithUserInfoById(1L);
-    System.out.println(postRes1.toString());
+    PostDao postDao = configContext.getBean(PostDao.class);
+
+    PostWithUserInfo postRes2 = postDao.getPostWithUserInfoById(1L);
+    System.out.println("from dao: " + postRes2.toString());
+
+    // PostWithUserInfo postRes1 = postMapper.getPostWithUserInfoById(1L);
+    // System.out.println(postRes1.toString());
   }
 }

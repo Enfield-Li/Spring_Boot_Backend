@@ -1,5 +1,6 @@
 package com.example.reddit.post.repository;
 
+import com.example.reddit.post.dto.PostWithUserInfo;
 import com.example.reddit.user.User;
 import com.example.reddit.user.dto.UserInfo;
 import org.apache.ibatis.session.SqlSession;
@@ -14,5 +15,9 @@ public class PostDao {
   @Autowired
   public PostDao(SqlSession sqlSession) {
     this.sqlSession = sqlSession;
+  }
+
+  public PostWithUserInfo getPostWithUserInfoById(Long postId) {
+    return this.sqlSession.selectOne("getPostWithUserInfoById", postId);
   }
 }

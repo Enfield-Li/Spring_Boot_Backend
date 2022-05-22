@@ -17,7 +17,7 @@ import org.apache.ibatis.annotations.Update;
 public interface PostMapper {
   @Select(
     "SELECT p.id, p.title, p.content, u.id as userId, u.username FROM post p" +
-    " JOIN user u ON p.user_id = u.id WHERE p.id = #{postId};"
+    " LEFT JOIN user u ON p.user_id = u.id WHERE p.id = #{postId};"
   )
   @Results(
     value = {
