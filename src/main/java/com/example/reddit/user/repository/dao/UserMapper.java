@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 @Mapper
@@ -18,7 +17,7 @@ public interface UserMapper {
     " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
     " p.confused_points, p.laugh_points, p.comment_amounts" +
     " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-    " WHERE p.user_id = #{userId} AND p.created_at < #{timeFrame}" + // userId & curso
+    " WHERE p.user_id = #{userId} AND p.created_at < #{timeFrame}" + // userId & timeFrame
     " ORDER BY p.created_at DESC LIMIT #{fetchCountPlusOne} OFFSET #{offset}" // fetchCountPlusOne & offset
   )
   public List<UserPostInfoWithoutInteractions> getUserPostWithoutInteractions(
@@ -36,7 +35,7 @@ public interface UserMapper {
     " i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
     " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
     " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = #{meId}" + // meId
-    " WHERE p.user_id = #{userId} AND p.created_at < #{timeFrame}" + // userId & curs
+    " WHERE p.user_id = #{userId} AND p.created_at < #{timeFrame}" + // userId & timeFrame
     " ORDER BY p.created_at DESC LIMIT #{fetchCountPlusOne} OFFSET #{offset}" // fetchCountPlusOne & offset)
   )
   public List<UserPostInfoWithInteractions> getUserPostWithInteractions(

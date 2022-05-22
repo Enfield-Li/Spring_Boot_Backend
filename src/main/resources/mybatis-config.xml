@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <typeAliases>
-        <!-- <package name="sample.mybatis.xml.domain"/> -->
-    </typeAliases>
+    <!-- <typeAliases>
+        <package name="sample.mybatis.xml.domain"/>
+    </typeAliases> -->
     <mappers>
         <mapper resource="sample/mybatis/xml/mapper/HotelMapper.xml"/>
     </mappers>

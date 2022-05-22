@@ -15,9 +15,9 @@ import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
 import com.example.reddit.post.repository.PostRepository;
+import com.example.reddit.post.repository.dao.PostMapper;
 import com.example.reddit.user.entity.User;
 import com.example.reddit.user.repository.UserRepository;
-
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -38,16 +38,19 @@ public class PostService {
 
   private final PostRepository postRepo;
   private final UserRepository userRepo;
+  private final PostMapper postMapper;
   private final EntityManager em;
 
   @Autowired
   PostService(
     PostRepository postRepository,
     UserRepository userRepository,
+    PostMapper postMapper,
     EntityManager em
   ) {
     this.postRepo = postRepository;
     this.userRepo = userRepository;
+    this.postMapper = postMapper;
     this.em = em;
   }
 
@@ -271,24 +274,11 @@ public class PostService {
       User not loged in, therefore fetch post without interactions
      */
     if (meId == null) {
-      Query queryRes = em
-        .createNativeQuery(
-          "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," + // postId
-          " p.updated_at AS postUpdatedAt, p.title, p.content," +
-          " p.view_count, p.vote_points, p.like_points," +
-          " p.confused_points, p.laugh_points, p.comment_amounts" +
-          " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-          " WHERE p.id = :postId",
-          "HomePostWithoutInteractions" // SQL to POJO
-        )
-        .setParameter("postId", postId);
+      PostInfoWithoutInteractions postList = postMapper.getPostInfoWithoutInteractions(
+        postId
+      );
 
-      PostInfoWithoutInteractions postList = (PostInfoWithoutInteractions) queryRes.getSingleResult();
-
-      /* 
-        将POJO map 到响应对象
-        Map POJO to response object
-       */
+      // 将 POJO 转换成响应对象（Map POJO to response object）
       HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
       return mapper.toPostAndInteractions(postList);
     }
@@ -297,26 +287,12 @@ public class PostService {
       用户已登录，获取帖子时，获取互动状态
       User loged in, therefore fetch post with interactions
      */
-    Query queryRes = em
-      .createNativeQuery(
-        "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," + // postId
-        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
-        " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
-        " p.comment_amounts, i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
-        " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" + // meId
-        " WHERE p.id = :postId",
-        "HomePostWithInteractions" // SQL to POJO
-      )
-      .setParameter("meId", meId)
-      .setParameter("postId", postId);
+    PostInfoWithInteractions postList = postMapper.getPostInfoWithInteractions(
+      postId,
+      meId
+    );
 
-    PostInfoWithInteractions postList = (PostInfoWithInteractions) queryRes.getSingleResult();
-
-    /* 
-      将POJO map 到响应对象
-      Map POJO to response object
-     */
+    // 将 POJO 转换成响应对象（Map POJO to response object）
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
     return mapper.toPostAndInteractions(postList);
   }

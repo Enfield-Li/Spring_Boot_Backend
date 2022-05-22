@@ -153,7 +153,6 @@ public class UserService {
 
   public void fetchOneUserProfile() {}
 
-  @SuppressWarnings("unchecked")
   public UserProfileRO fetchUserProfile(
     Long userId,
     Long meId,
