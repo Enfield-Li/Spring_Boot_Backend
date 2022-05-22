@@ -32,8 +32,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /* 
-帖子实体：
-Post Entity:
+帖子实体（Post Entity）：
 +-----------------+--------------+------+-----+---------+----------------+
 | Field           | Type         | Null | Key | Default | Extra          |
 +-----------------+--------------+------+-----+---------+----------------+
@@ -51,8 +50,7 @@ Post Entity:
 | vote_points     | int          | YES  |     | 0       |                |
 +-----------------+--------------+------+-----+---------+----------------+
 
-例子：
-Example: 
+例子（Example）：
 +----+-----------------+-----------------+-------------+----------------------------+--------------+-------------+----------+----------------------------+---------+------------+-------------+
 | id | comment_amounts | confused_points | content     | created_at                 | laugh_points | like_points | title    | updated_at                 | user_id | view_count | vote_points |
 +----+-----------------+-----------------+-------------+----------------------------+--------------+-------------+----------+----------------------------+---------+------------+-------------+
@@ -64,10 +62,10 @@ Example:
 @Entity
 @DynamicInsert
 @SqlResultSetMapping(
-  name = "HomePostWithoutInteractions", // EntityManager creation name
+  name = "HomePostWithoutInteractions", // 对应EM名称 / EntityManager creation name
   classes = {
     @ConstructorResult(
-      targetClass = PostInfoWithoutInteractions.class, // Target class
+      targetClass = PostInfoWithoutInteractions.class, // 目标类 / Target class
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "username"),

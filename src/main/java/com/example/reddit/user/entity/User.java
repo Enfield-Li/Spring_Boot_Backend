@@ -29,8 +29,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 /* 
-用户实体：
-User Entity:
+用户实体（User Entity）：
 +--------------+--------------+------+-----+---------+----------------+
 | Field        | Type         | Null | Key | Default | Extra          |
 +--------------+--------------+------+-----+---------+----------------+
@@ -42,8 +41,7 @@ User Entity:
 | username     | varchar(255) | NO   | UNI | NULL    |                |
 +--------------+--------------+------+-----+---------+----------------+
 
-例子：
-Example: 
+例子（Example）：
 +----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
 | id | created_at                 | email           | password                                                     | post_amounts | username |
 +----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
@@ -56,10 +54,10 @@ Example:
 @JsonSerialize
 @DynamicInsert
 @SqlResultSetMapping(
-  name = "UserProfileWithoutInteractions", // em creation name
+  name = "UserProfileWithoutInteractions", // 对应EM名称 / EntityManager creation name
   classes = {
     @ConstructorResult(
-      targetClass = UserPostInfoWithoutInteractions.class,
+      targetClass = UserPostInfoWithoutInteractions.class, // 目标类 / Target class
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
@@ -82,10 +80,10 @@ Example:
   }
 )
 @SqlResultSetMapping(
-  name = "UserProfileWithInteractions", // em creation name
+  name = "UserProfileWithInteractions", // 对应EM名称 / EntityManager creation name
   classes = {
     @ConstructorResult(
-      targetClass = UserPostInfoWithInteractions.class,
+      targetClass = UserPostInfoWithInteractions.class, // 目标类 / Target class
       columns = {
         @ColumnResult(name = "id", type = Long.class),
         @ColumnResult(name = "userCreatedAt", type = Instant.class),
