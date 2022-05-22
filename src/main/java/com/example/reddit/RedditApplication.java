@@ -1,5 +1,8 @@
 package com.example.reddit;
 
+import com.example.reddit.post.dto.dbProjection.SamplePost;
+import com.example.reddit.post.repository.PostMapper;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -9,9 +12,14 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class RedditApplication {
 
   public static void main(String[] args) {
-    ConfigurableApplicationContext configContext = SpringApplication.run(
+    ConfigurableApplicationContext ctx = SpringApplication.run(
       RedditApplication.class,
       args
     );
+
+    PostMapper postMapper = ctx.getBean(PostMapper.class);
+
+    SamplePost sample = postMapper.getSample();
+    System.out.println(sample.toString());
   }
 }

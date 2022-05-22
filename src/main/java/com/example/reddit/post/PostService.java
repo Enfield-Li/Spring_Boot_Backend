@@ -14,8 +14,8 @@ import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
+import com.example.reddit.post.repository.PostMapper;
 import com.example.reddit.post.repository.PostRepository;
-import com.example.reddit.post.repository.dao.PostMapper;
 import com.example.reddit.user.entity.User;
 import com.example.reddit.user.repository.UserRepository;
 import java.text.SimpleDateFormat;
@@ -168,6 +168,7 @@ public class PostService {
     Integer take,
     String sortBy
   ) {
+    System.out.println(sortBy);
     /* 
       设置基础参数
       Setting up default params
@@ -183,56 +184,55 @@ public class PostService {
       根据 sortBy 设置筛选项
       Set up filter criteria according to sortBy
      */
-    String dateBeforeCondition, votePointsCondition, laughPointsCondition, likePointsCondition;
-    String dateBefore = null;
-    Integer votePoints = null;
-    Integer laughPoints = null;
-    Integer likePoints = null;
+    String dateClause, voteClause, laughClause, likeClause;
+    String dateSpec = null;
+    Integer votePointsLowest = null;
+    Integer laughPointsLowest = null;
+    Integer likePointsLowest = null;
 
     if (sortBy.equals("best")) {
-      dateBefore = this.daysBefore(60);
-      votePoints = 30;
-      laughPoints = 20;
+      dateSpec = this.daysBefore(60);
+      votePointsLowest = 30;
+      laughPointsLowest = 20;
     }
     if (sortBy.equals("hot")) {
-      dateBefore = this.daysBefore(30);
-      likePoints = 20;
+      dateSpec = this.daysBefore(30);
+      likePointsLowest = 20;
     }
 
-    dateBeforeCondition =
-      dateBefore == null ? "" : " AND p.created_at > '" + dateBefore + "'";
-    votePointsCondition =
-      votePoints == null ? "" : " AND p.vote_points >" + votePoints;
-    likePointsCondition =
-      likePoints == null ? "" : " AND p.like_points >" + likePoints;
-    laughPointsCondition =
-      laughPoints == null ? "" : " AND p.laugh_points >" + laughPoints;
+    dateClause =
+      dateSpec == null ? null : " AND p.created_at > '" + dateSpec + "'";
+    voteClause =
+      votePointsLowest == null
+        ? null
+        : " AND p.vote_points > " + votePointsLowest;
+    likeClause =
+      likePointsLowest == null
+        ? null
+        : " AND p.like_points > " + likePointsLowest;
+    laughClause =
+      laughPointsLowest == null
+        ? null
+        : " AND p.laugh_points > " + laughPointsLowest;
+    System.out.println(dateClause);
+    System.out.println(voteClause);
+    System.out.println(likeClause);
+    System.out.println(laughClause);
 
     /* 
       用户未登录，获取帖子时，不获取互动状态
       User not loged in, therefore fetch posts without interactions
      */
     if (meId == null) {
-      Query queryRes = em
-        .createNativeQuery(
-          "SELECT u.id, u.username, p.id AS postId," +
-          " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
-          " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
-          " p.confused_points, p.laugh_points, p.comment_amounts" +
-          " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-          " WHERE p.created_at < :cursor" + // cursor
-          dateBeforeCondition +
-          votePointsCondition +
-          laughPointsCondition +
-          likePointsCondition +
-          " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
-          "HomePostWithoutInteractions" // SQL to POJO
-        )
-        .setParameter("offset", offset)
-        .setParameter("cursor", timeFrame)
-        .setParameter("fetchCountPlusOne", fetchAmountPlusOne);
-
-      List<PostInfoWithoutInteractions> postList = (List<PostInfoWithoutInteractions>) queryRes.getResultList();
+      List<PostInfoWithoutInteractions> postList = postMapper.getPatinatedPostsWithoutInteractions(
+        offset,
+        timeFrame,
+        fetchAmountPlusOne,
+        dateClause,
+        voteClause,
+        laughClause,
+        likeClause
+      );
 
       return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
     }
@@ -250,10 +250,10 @@ public class PostService {
         " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
         " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" + // meId
         " WHERE p.created_at < :cursor " + // cursor
-        dateBeforeCondition +
-        votePointsCondition +
-        laughPointsCondition +
-        likePointsCondition +
+        dateClause +
+        voteClause +
+        laughClause +
+        likeClause +
         " ORDER BY p.created_at DESC" +
         " LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
         "HomePostWithInteractions" // SQL to POJO

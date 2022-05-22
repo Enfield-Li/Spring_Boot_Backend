@@ -1,4 +1,4 @@
-package com.example.reddit.user.repository.dao;
+package com.example.reddit.user.repository;
 
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithInteractions;
 import com.example.reddit.mapper.source.userPost.UserPostInfoWithoutInteractions;

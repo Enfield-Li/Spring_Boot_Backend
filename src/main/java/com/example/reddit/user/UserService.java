@@ -14,8 +14,9 @@ import com.example.reddit.user.dto.response.UserProfileRO;
 import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
+import com.example.reddit.user.repository.UserMapper;
 import com.example.reddit.user.repository.UserRepository;
-import com.example.reddit.user.repository.dao.UserMapper;
+
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
