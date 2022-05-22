@@ -1,5 +1,6 @@
 package com.example.reddit.post.repository;
 
+import com.example.reddit.post.Post;
 import com.example.reddit.post.dto.PostWithUserInfo;
 import com.example.reddit.user.User;
 import com.example.reddit.user.dto.UserInfo;
@@ -29,4 +30,7 @@ public interface PostMapper {
     }
   )
   public PostWithUserInfo getPostWithUserInfoById(Long postId);
+
+  @Select("SELECT * FROM post")
+  public List<Post> getAllPosts();
 }
