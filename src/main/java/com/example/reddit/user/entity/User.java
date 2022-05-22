@@ -29,8 +29,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 
 /* 
-用户实体：
-User Entity:
+用户实体（User Entity）：
 +--------------+--------------+------+-----+---------+----------------+
 | Field        | Type         | Null | Key | Default | Extra          |
 +--------------+--------------+------+-----+---------+----------------+
@@ -42,8 +41,7 @@ User Entity:
 | username     | varchar(255) | NO   | UNI | NULL    |                |
 +--------------+--------------+------+-----+---------+----------------+
 
-例子：
-Example: 
+例子（Example）：
 +----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
 | id | created_at                 | email           | password                                                     | post_amounts | username |
 +----+----------------------------+-----------------+--------------------------------------------------------------+--------------+----------+
@@ -55,62 +53,6 @@ Example:
 @Entity
 @JsonSerialize
 @DynamicInsert
-@SqlResultSetMapping(
-  name = "UserProfileWithoutInteractions", // em creation name
-  classes = {
-    @ConstructorResult(
-      targetClass = UserPostInfoWithoutInteractions.class,
-      columns = {
-        @ColumnResult(name = "id", type = Long.class),
-        @ColumnResult(name = "userCreatedAt", type = Instant.class),
-        @ColumnResult(name = "email"),
-        @ColumnResult(name = "post_amounts"),
-        @ColumnResult(name = "username"),
-        @ColumnResult(name = "postId", type = Long.class),
-        @ColumnResult(name = "postCreatedAt", type = Instant.class),
-        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
-        @ColumnResult(name = "title"),
-        @ColumnResult(name = "content"),
-        @ColumnResult(name = "view_Count"),
-        @ColumnResult(name = "vote_points"),
-        @ColumnResult(name = "like_points"),
-        @ColumnResult(name = "confused_points"),
-        @ColumnResult(name = "laugh_points"),
-        @ColumnResult(name = "comment_amounts"),
-      }
-    ),
-  }
-)
-@SqlResultSetMapping(
-  name = "UserProfileWithInteractions", // em creation name
-  classes = {
-    @ConstructorResult(
-      targetClass = UserPostInfoWithInteractions.class,
-      columns = {
-        @ColumnResult(name = "id", type = Long.class),
-        @ColumnResult(name = "userCreatedAt", type = Instant.class),
-        @ColumnResult(name = "email"),
-        @ColumnResult(name = "post_amounts"),
-        @ColumnResult(name = "username"),
-        @ColumnResult(name = "postId", type = Long.class),
-        @ColumnResult(name = "postCreatedAt", type = Instant.class),
-        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
-        @ColumnResult(name = "title"),
-        @ColumnResult(name = "content"),
-        @ColumnResult(name = "view_Count"),
-        @ColumnResult(name = "vote_points"),
-        @ColumnResult(name = "like_points"),
-        @ColumnResult(name = "confused_points"),
-        @ColumnResult(name = "laugh_points"),
-        @ColumnResult(name = "comment_amounts"),
-        @ColumnResult(name = "vote_status"),
-        @ColumnResult(name = "like_status"),
-        @ColumnResult(name = "laugh_status"),
-        @ColumnResult(name = "confused_status"),
-      }
-    ),
-  }
-)
 public class User {
 
   @Id

@@ -15,7 +15,7 @@ import com.example.reddit.user.dto.response.UserRO;
 import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
 import com.example.reddit.user.repository.UserRepository;
-
+import com.example.reddit.user.repository.dao.UserMapper;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,16 +34,19 @@ public class UserService {
 
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
+  private final UserMapper userMapper;
   private final EntityManager em;
 
   @Autowired
   UserService(
     UserRepository userRepository,
     PasswordEncoder passwordEncoder,
+    UserMapper userMapper,
     EntityManager em
   ) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.userMapper = userMapper;
     this.em = em;
   }
 
@@ -173,24 +176,12 @@ public class UserService {
       User has no previous interactions, therefore create
      */
     if (meId == null) {
-      Query queryRes = em
-        .createNativeQuery(
-          "SELECT u.id, u.created_at AS userCreatedAt," +
-          " u.username, u.email, u.post_amounts, p.id AS postId," +
-          " p.created_at AS postCreatedAt, p.updated_at AS postUpdatedAt," +
-          " p.title, p.content, p.view_count, p.vote_points, p.like_points," +
-          " p.confused_points, p.laugh_points, p.comment_amounts" +
-          " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-          " WHERE p.user_id = :userId AND p.created_at < :cursor" + // userId & cursor
-          " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
-          "UserProfileWithoutInteractions" // SQL to POJO
-        )
-        .setParameter("offset", offset)
-        .setParameter("cursor", timeFrame)
-        .setParameter("fetchCountPlusOne", fetchCountPlusOne)
-        .setParameter("userId", userId);
-
-      List<UserPostInfoWithoutInteractions> userProfileList = (List<UserPostInfoWithoutInteractions>) queryRes.getResultList();
+      List<UserPostInfoWithoutInteractions> userProfileList = userMapper.getUserPostWithoutInteractions(
+        offset,
+        timeFrame,
+        fetchCountPlusOne,
+        userId
+      );
 
       return this.buildUserProfileRO(
           userProfileList,
@@ -204,26 +195,13 @@ public class UserService {
       用户先前有互动，更新互动状态
       User has previous interactions, therefore update
      */
-    Query queryRes = em
-      .createNativeQuery(
-        "SELECT u.id, u.created_at AS userCreatedAt, u.username, u.email," +
-        " u.post_amounts, p.id AS postId, p.created_at AS postCreatedAt," +
-        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count, p.vote_points," +
-        " p.like_points, p.confused_points, p.laugh_points, p.comment_amounts," +
-        " i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
-        " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" + // meId
-        " WHERE p.user_id = :userId AND p.created_at < :cursor" + // userId & cursor
-        " ORDER BY p.created_at DESC LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
-        "UserProfileWithInteractions" // SQL to POJO
-      )
-      .setParameter("meId", meId)
-      .setParameter("userId", userId)
-      .setParameter("offset", offset)
-      .setParameter("cursor", timeFrame)
-      .setParameter("fetchCountPlusOne", fetchCountPlusOne);
-
-    List<UserPostInfoWithInteractions> userProfileList = (List<UserPostInfoWithInteractions>) queryRes.getResultList();
+    List<UserPostInfoWithInteractions> userProfileList = userMapper.getUserPostWithInteractions(
+      offset,
+      timeFrame,
+      fetchCountPlusOne,
+      userId,
+      meId
+    );
 
     return buildUserProfileROWithInteractions(
       userProfileList,
