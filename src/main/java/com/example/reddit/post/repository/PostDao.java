@@ -1,4 +1,4 @@
-package com.example.reddit.user.repository;
+package com.example.reddit.post.repository;
 
 import com.example.reddit.user.User;
 import com.example.reddit.user.dto.UserInfo;
@@ -7,20 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserDao {
+public class PostDao {
 
   private final SqlSession sqlSession;
 
   @Autowired
-  public UserDao(SqlSession sqlSession) {
+  public PostDao(SqlSession sqlSession) {
     this.sqlSession = sqlSession;
-  }
-
-  public User findUserByIdWM(String useranme) {
-    return this.sqlSession.selectOne("findUserByIdWM", useranme);
-  }
-
-  public UserInfo findUserInfoByIdWM(Long id) {
-    return this.sqlSession.selectOne("findUserInfoByIdWM", id);
   }
 }
