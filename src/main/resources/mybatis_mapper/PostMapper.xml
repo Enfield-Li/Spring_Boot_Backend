@@ -2,6 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.reddit.post.repository.dao.PostMapper">
     <select id="getPostInfoWithoutInteractions" resultType="PostInfoWithoutInteractions">
-        select id, name, state, country from city where id = #{id}
+        SELECT
+            u.id, u.username, 
+            p.id AS postId, 
+            p.created_at AS postCreatedAt, 
+            p.updated_at AS postUpdatedAt, 
+            p.title, p.content, p.view_count, 
+            p.vote_points, p.like_points, 
+            p.confused_points, p.laugh_points, p.comment_amounts 
+        FROM post p 
+        LEFT JOIN user u ON p.user_id = u.id 
+        WHERE p.created_at <![CDATA[ < ]]> #{cursor}
+        ORDER BY p.created_at DESC LIMIT #{fetchCountPlusOne} OFFSET #{offset}
     </select>
 </mapper>
