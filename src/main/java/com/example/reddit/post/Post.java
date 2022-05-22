@@ -19,7 +19,6 @@ import javax.persistence.OneToMany;
 import lombok.Data;
 import lombok.ToString;
 
-//To use the @Data annotation you should add the Lombok dependency.
 @Data
 @Entity
 public class Post {
