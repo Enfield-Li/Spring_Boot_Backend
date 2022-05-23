@@ -32,7 +32,7 @@
 
 4. 使用 [mapstruct](https://mapstruct.org/) 将 POJO 对象，转换成响应对象：
     
-    使用 mapstruct 提供的 `@Mappings` 等注解，将 POJO 对象，转换成正规化的响应对象。
+    1) 使用 mapstruct 提供的 `@Mappings` 等注解，将 POJO 对象，转换成正规化的响应对象。
     
 5. （整合 Mybatis 之前）使用 [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) 注解：
 
