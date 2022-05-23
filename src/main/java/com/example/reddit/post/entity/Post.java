@@ -61,56 +61,6 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Data
 @Entity
 @DynamicInsert
-@SqlResultSetMapping(
-  name = "HomePostWithoutInteractions", // EntityManager creation name
-  classes = {
-    @ConstructorResult(
-      targetClass = PostInfoWithoutInteractions.class, // Target class
-      columns = {
-        @ColumnResult(name = "id", type = Long.class),
-        @ColumnResult(name = "username"),
-        @ColumnResult(name = "postId", type = Long.class),
-        @ColumnResult(name = "postCreatedAt", type = Instant.class),
-        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
-        @ColumnResult(name = "title"),
-        @ColumnResult(name = "content"),
-        @ColumnResult(name = "view_Count"),
-        @ColumnResult(name = "vote_points"),
-        @ColumnResult(name = "like_points"),
-        @ColumnResult(name = "confused_points"),
-        @ColumnResult(name = "laugh_points"),
-        @ColumnResult(name = "comment_amounts"),
-      }
-    ),
-  }
-)
-@SqlResultSetMapping(
-  name = "HomePostWithInteractions", // EntityManager creation name
-  classes = {
-    @ConstructorResult(
-      targetClass = PostInfoWithInteractions.class, // Target class
-      columns = {
-        @ColumnResult(name = "id", type = Long.class),
-        @ColumnResult(name = "username"),
-        @ColumnResult(name = "postId", type = Long.class),
-        @ColumnResult(name = "postCreatedAt", type = Instant.class),
-        @ColumnResult(name = "postUpdatedAt", type = Instant.class),
-        @ColumnResult(name = "title"),
-        @ColumnResult(name = "content"),
-        @ColumnResult(name = "view_Count"),
-        @ColumnResult(name = "vote_points"),
-        @ColumnResult(name = "like_points"),
-        @ColumnResult(name = "confused_points"),
-        @ColumnResult(name = "laugh_points"),
-        @ColumnResult(name = "comment_amounts"),
-        @ColumnResult(name = "vote_status"),
-        @ColumnResult(name = "like_status"),
-        @ColumnResult(name = "laugh_status"),
-        @ColumnResult(name = "confused_status"),
-      }
-    ),
-  }
-)
 public class Post {
 
   @Id

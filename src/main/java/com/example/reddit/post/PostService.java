@@ -195,7 +195,7 @@ public class PostService {
     }
     if (sortBy.equals("hot")) {
       dateSpec = this.daysBefore(30);
-      likePointsLowest = 30;
+      likePointsLowest = 20;
     }
 
     /* 
