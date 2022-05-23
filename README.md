@@ -75,6 +75,6 @@ Some worth noting implementation details:
    
     1) Using `@Mappings` provided by mapstruct, transforming POJO to normalized response object.
 
-5. Utilize [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) annotation：
+5. (Before Integrating Mybatis) Utilize [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) annotation：
    
     1) Since Spring Data JPA does not supprot relatively complex/custom query, `EntityManager.createNativeQuery();` is used to create native queries, and with the help of @SqlResultSetMapping annotation that transform the raw data to POJO;
