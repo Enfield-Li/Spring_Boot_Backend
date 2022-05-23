@@ -2,18 +2,18 @@
 
     ⏬⏬⏬ English Description Below ⏬⏬⏬
 
-作品描述：
+#### 作品描述：
 
     实现一些主要功能，如用户登录注册，帖子 CRUD，用户与帖子的投票等互动行为，向前端应用提供同样的 REST api 路径及数据。
 
-技术栈：
+#### 技术栈：
 
     Spring Boot 项目
     ORM 相关: Spring Data JPA(Hibernate) + Mybatis
     数据库: Mysql
     额外依赖项：Lombok, mapstruct
       
-值得注意的实施细节：
+#### 值得注意的实施细节：
 
 1. 使用 [@Transactional](https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html) 注解：
  
@@ -42,19 +42,19 @@
 
 # An attempt to rewrite the backend from [Mock-Reddit app](https://github.com/Enfield-Li/PERN_Stack_REST_api) With Java Spring
 
-Description:
+#### Description:
 
     Implement some major features like user register/login, post CRUD, user's interaction with post, 
     provideing the same REST api end point and data to frontend.
 
-Stacks:
+#### Stacks:
     
     A Spring Boot project
     ORM provider: Spring Data JPA(Hibernate) + Mybatis
     Database: Mysql
     Additional dependency: Lombok, mapstruct
     
-Some worth noting implementation details:
+#### Some worth noting implementation details:
 
 1. Utilize [@Transactional](https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html) annotation:
 
