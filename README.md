@@ -22,7 +22,7 @@
 
 2. 运用 Spring Data JPA [Projections](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections) (数据映射)：
 
-    使用基于 Interface 的映射，获取指定的字段，简化 Hibernate 生成的 SQL 语句，指定返还的数据；
+    1) 使用基于 Interface 的映射，获取指定的字段，简化 Hibernate 生成的 SQL 语句，指定返还的数据；
       
 3. 整合 [Mybatis](https://mybatis.org/mybatis-3/index.html)：
 
@@ -36,7 +36,7 @@
     
 5. （整合 Mybatis 之前）使用 [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) 注解：
 
-    细节: 因 Spring Data JPA 不支持包含 join 的相对复杂 Query，所以使用 `EntityManager.createNativeQuery();` 创建 SQL 查询语句，将 NativeQuery 返还的值，转换成 POJO。
+    1) 因 Spring Data JPA 不支持包含 join 的相对复杂 Query，所以使用 `EntityManager.createNativeQuery();` 创建 SQL 查询语句，将 NativeQuery 返还的值，转换成 POJO。
 
 
 
@@ -63,7 +63,7 @@ Some worth noting implementation details:
 
 2. Utilize Spring Data JPA [Projections](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#projections):
 
-   Using interface-based projections, by specifying certain columns that limited the result of the queries, and therefore minimized SQL produced by Hibernate;
+    1) Using interface-based projections, by specifying certain columns that limited the result of the queries, and therefore minimized SQL produced by Hibernate;
 
 3. Integrate [Mybatis](https://mybatis.org/mybatis-3/index.html):
 
@@ -73,8 +73,8 @@ Some worth noting implementation details:
 
 4. Utilize [mapstruct](https://mapstruct.org/) that transform POJO to response object:
    
-    Using `@Mappings` provided by mapstruct, transforming POJO to normalized response object.
+    1) Using `@Mappings` provided by mapstruct, transforming POJO to normalized response object.
 
 5. Utilize [@SqlResultSetMapping](https://docs.oracle.com/javaee/7/api/javax/persistence/SqlResultSetMapping.html) annotation：
    
-    Since Spring Data JPA does not supprot relatively complex/custom query, `EntityManager.createNativeQuery();` is used to create native queries, and with the help of @SqlResultSetMapping annotation that transform the raw data to POJO;
+    1) Since Spring Data JPA does not supprot relatively complex/custom query, `EntityManager.createNativeQuery();` is used to create native queries, and with the help of @SqlResultSetMapping annotation that transform the raw data to POJO;
