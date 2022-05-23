@@ -40,7 +40,7 @@
 
 
 
-# An attempt to rewrite the backend from [Mock-Reddit app](https://github.com/Enfield-Li/PERN_Stack_REST_api) With Java Spring
+# An attempt to rewrite the backend from the original [Mock-Reddit app](https://github.com/Enfield-Li/PERN_Stack_REST_api) With Java Spring
 
 #### Description:
 
