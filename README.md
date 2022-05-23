@@ -13,7 +13,7 @@
     数据库: Mysql
     额外依赖项：Lombok, mapstruct
       
-值得注意的实施与细节：
+值得注意的实施细节：
 
 1. 使用 [@Transactional](https://docs.oracle.com/javaee/7/api/javax/transaction/Transactional.html) 注解：
  
