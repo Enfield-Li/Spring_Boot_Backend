@@ -8,7 +8,7 @@
 
 技术栈：
 
-    Java + Spring
+    Spring Boot 项目
     ORM 相关: Spring Data JPA(Hibernate) + Mybatis
     数据库: Mysql
     额外依赖项：Lombok, mapstruct
@@ -49,7 +49,7 @@ Description:
 
 Stacks:
     
-    Java + Spring
+    A Spring Boot project
     ORM provider: Spring Data JPA(Hibernate) + Mybatis
     Database: Mysql
     Additional dependency: Lombok, mapstruct
