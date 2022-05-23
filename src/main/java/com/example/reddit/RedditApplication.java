@@ -1,8 +1,6 @@
 package com.example.reddit;
 
-import com.example.reddit.post.dto.dbProjection.SamplePost;
 import com.example.reddit.post.repository.PostMapper;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -18,8 +16,5 @@ public class RedditApplication {
     );
 
     PostMapper postMapper = ctx.getBean(PostMapper.class);
-
-    SamplePost sample = postMapper.getSample();
-    System.out.println(sample.toString());
   }
 }

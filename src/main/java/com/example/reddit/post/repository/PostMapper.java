@@ -2,7 +2,6 @@ package com.example.reddit.post.repository;
 
 import com.example.reddit.mapper.source.homePost.PostInfoWithInteractions;
 import com.example.reddit.mapper.source.homePost.PostInfoWithoutInteractions;
-import com.example.reddit.post.dto.dbProjection.SamplePost;
 import java.time.Instant;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -41,22 +40,20 @@ public interface PostMapper {
     @Param("offset") Integer offset,
     @Param("timeFrame") Instant timeFrame,
     @Param("fetchAmountPlusOne") Integer fetchAmountPlusOne,
-    @Param("dateClause") String dateClause,
-    @Param("voteClause") String voteClause,
-    @Param("laughClause") String laughClause,
-    @Param("likeClause") String likeClause
+    @Param("dateSpec") String dateSpec,
+    @Param("votePointsLowest") Integer votePointsLowest,
+    @Param("laughPointsLowest") Integer laughPointsLowest,
+    @Param("likePointsLowest") Integer likePointsLowest
   );
 
   public List<PostInfoWithInteractions> getPatinatedPostsWithInteractions(
+    @Param("meId") Long meId,
     @Param("offset") Integer offset,
-    @Param("meId") Integer meId,
     @Param("timeFrame") Instant timeFrame,
     @Param("fetchAmountPlusOne") Integer fetchAmountPlusOne,
-    @Param("dateClause") String dateClause,
-    @Param("voteClause") String voteClause,
-    @Param("laughClause") String laughClause,
-    @Param("likeClause") String likeClause
+    @Param("dateSpec") String dateSpec,
+    @Param("votePointsLowest") Integer votePointsLowest,
+    @Param("laughPointsLowest") Integer laughPointsLowest,
+    @Param("likePointsLowest") Integer likePointsLowest
   );
-
-  public SamplePost getSample();
 }

@@ -168,7 +168,6 @@ public class PostService {
     Integer take,
     String sortBy
   ) {
-    System.out.println(sortBy);
     /* 
       设置基础参数
       Setting up default params
@@ -184,7 +183,6 @@ public class PostService {
       根据 sortBy 设置筛选项
       Set up filter criteria according to sortBy
      */
-    String dateClause, voteClause, laughClause, likeClause;
     String dateSpec = null;
     Integer votePointsLowest = null;
     Integer laughPointsLowest = null;
@@ -197,27 +195,8 @@ public class PostService {
     }
     if (sortBy.equals("hot")) {
       dateSpec = this.daysBefore(30);
-      likePointsLowest = 20;
+      likePointsLowest = 30;
     }
-
-    dateClause =
-      dateSpec == null ? null : " AND p.created_at > '" + dateSpec + "'";
-    voteClause =
-      votePointsLowest == null
-        ? null
-        : " AND p.vote_points > " + votePointsLowest;
-    likeClause =
-      likePointsLowest == null
-        ? null
-        : " AND p.like_points > " + likePointsLowest;
-    laughClause =
-      laughPointsLowest == null
-        ? null
-        : " AND p.laugh_points > " + laughPointsLowest;
-    System.out.println(dateClause);
-    System.out.println(voteClause);
-    System.out.println(likeClause);
-    System.out.println(laughClause);
 
     /* 
       用户未登录，获取帖子时，不获取互动状态
@@ -228,10 +207,10 @@ public class PostService {
         offset,
         timeFrame,
         fetchAmountPlusOne,
-        dateClause,
-        voteClause,
-        laughClause,
-        likeClause
+        dateSpec,
+        votePointsLowest,
+        laughPointsLowest,
+        likePointsLowest
       );
 
       return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
@@ -241,29 +220,17 @@ public class PostService {
       用户已登录，获取帖子时，获取互动状态
       User loged in, therefore fetch posts with interactions
      */
-    Query queryRes = em
-      .createNativeQuery(
-        "SELECT u.id, u.username, p.id AS postId, p.created_at AS postCreatedAt," +
-        " p.updated_at AS postUpdatedAt, p.title, p.content, p.view_count," +
-        " p.vote_points, p.like_points, p.confused_points, p.laugh_points," +
-        " p.comment_amounts, i.vote_status, i.like_status, i.laugh_status, i.confused_status" +
-        " FROM post p LEFT JOIN user u ON p.user_id = u.id" +
-        " LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = :meId" + // meId
-        " WHERE p.created_at < :cursor " + // cursor
-        dateClause +
-        voteClause +
-        laughClause +
-        likeClause +
-        " ORDER BY p.created_at DESC" +
-        " LIMIT :fetchCountPlusOne OFFSET :offset", // fetchCountPlusOne & offset
-        "HomePostWithInteractions" // SQL to POJO
-      )
-      .setParameter("meId", meId)
-      .setParameter("offset", offset)
-      .setParameter("cursor", timeFrame)
-      .setParameter("fetchCountPlusOne", fetchAmountPlusOne);
 
-    List<PostInfoWithInteractions> postList = (List<PostInfoWithInteractions>) queryRes.getResultList();
+    List<PostInfoWithInteractions> postList = postMapper.getPatinatedPostsWithInteractions(
+      meId,
+      offset,
+      timeFrame,
+      fetchAmountPlusOne,
+      dateSpec,
+      votePointsLowest,
+      laughPointsLowest,
+      likePointsLowest
+    );
 
     return buildPaginatedPostsROWithInteractions(postList, fetchAmountPlusOne);
   }
