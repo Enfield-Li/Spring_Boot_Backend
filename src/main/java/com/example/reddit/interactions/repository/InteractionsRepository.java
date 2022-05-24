@@ -1,4 +1,4 @@
-package com.example.reddit.interactions;
+package com.example.reddit.interactions.repository;
 
 import com.example.reddit.interactions.entity.CompositeKeys;
 import com.example.reddit.interactions.entity.Interactions;

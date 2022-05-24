@@ -14,7 +14,5 @@ public class RedditApplication {
       RedditApplication.class,
       args
     );
-
-    PostMapper postMapper = ctx.getBean(PostMapper.class);
   }
 }

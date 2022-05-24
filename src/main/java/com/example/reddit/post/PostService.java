@@ -16,6 +16,7 @@ import com.example.reddit.post.dto.response.PaginatedPostsRO;
 import com.example.reddit.post.entity.Post;
 import com.example.reddit.post.repository.PostMapper;
 import com.example.reddit.post.repository.PostRepository;
+import com.example.reddit.user.UserService;
 import com.example.reddit.user.entity.User;
 import com.example.reddit.user.repository.UserRepository;
 import java.text.SimpleDateFormat;
@@ -36,22 +37,26 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
+  /**
+   *
+   */
+  private static final Integer defaultAmount = 10;
   private final PostRepository postRepo;
   private final UserRepository userRepo;
   private final PostMapper postMapper;
-  private final EntityManager em;
+  private final UserService userService;
 
   @Autowired
   PostService(
     PostRepository postRepository,
     UserRepository userRepository,
     PostMapper postMapper,
-    EntityManager em
+    UserService userService
   ) {
     this.postRepo = postRepository;
     this.userRepo = userRepository;
     this.postMapper = postMapper;
-    this.em = em;
+    this.userService = userService;
   }
 
   @Transactional
@@ -172,7 +177,7 @@ public class PostService {
       设置基础参数
       Setting up default params
      */
-    Integer takeAmount = take == null ? 10 : take; // 默认获取10条 Default fetch amount: 10
+    Integer takeAmount = take == null ? defaultAmount : take; // 默认获取10条 Default fetch amount: 10
     Integer fetchAmount = Math.min(takeAmount, 25);
     Integer fetchAmountPlusOne = fetchAmount + 1;
 
@@ -281,10 +286,7 @@ public class PostService {
         Slice post content and only send 50 char
        */
       String postContent = sourceItem.getContent();
-      if (postContent != null && postContent.length() > 50) {
-        String contentSnippet = postContent.substring(0, 50);
-        sourceItem.setContent(contentSnippet);
-      }
+      sourceItem.setContent(userService.sliceContent(postContent));
 
       PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
 
@@ -311,10 +313,8 @@ public class PostService {
         Slice post content and only send 50 char
        */
       String postContent = sourceItem.getContent();
-      if (postContent != null && postContent.length() > 50) {
-        String contentSnippet = postContent.substring(0, 50);
-        sourceItem.setContent(contentSnippet);
-      }
+
+      sourceItem.setContent(userService.sliceContent(postContent));
 
       PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
 

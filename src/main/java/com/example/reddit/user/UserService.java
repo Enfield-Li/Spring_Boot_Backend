@@ -16,7 +16,6 @@ import com.example.reddit.user.entity.Password;
 import com.example.reddit.user.entity.User;
 import com.example.reddit.user.repository.UserMapper;
 import com.example.reddit.user.repository.UserRepository;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +59,8 @@ public class UserService {
       用户邮箱只对自己可见
       User can only see their own email
      */
-    if (user.getId() != meId) user.setEmail(null);
+    Boolean isNotOneSelf = user.getId() != meId;
+    if (isNotOneSelf) user.setEmail(null);
 
     return user;
   }
@@ -81,7 +81,9 @@ public class UserService {
         检查用户是否存在 
         Check if user exist
        */
-      if (usernameOrEmail.contains("@")) {
+      Boolean isEmail = usernameOrEmail.contains("@");
+
+      if (isEmail) {
         user =
           userRepository
             .findByEmail(usernameOrEmail)
@@ -97,11 +99,11 @@ public class UserService {
         核对密码 
         Check password
        */
-      if (
-        !user
-          .getPassword()
-          .matchPassword(dto.getPassword(), this.passwordEncoder)
-      ) {
+      Boolean passwordIsCorrect = !user
+        .getPassword()
+        .matchPassword(dto.getPassword(), this.passwordEncoder);
+
+      if (passwordIsCorrect) {
         return new UserRO(ResUserError.of("password"));
       }
 
@@ -175,7 +177,8 @@ public class UserService {
       用户先前无互动状态，创建新的互动
       User has no previous interactions, therefore create
      */
-    if (meId == null) {
+    Boolean isLogedIn = meId == null;
+    if (!isLogedIn) {
       List<UserPostInfoWithoutInteractions> userProfileList = userMapper.getUserPostWithoutInteractions(
         offset,
         timeFrame,
@@ -240,10 +243,8 @@ public class UserService {
         Slice post content and only send 50 char
        */
       String postContent = sourceItem.getContent();
-      if (postContent != null && postContent.length() > 50) {
-        String contentSnippet = postContent.substring(0, 50);
-        sourceItem.setContent(contentSnippet);
-      }
+
+      sourceItem.setContent(sliceContent(postContent));
 
       UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
         sourceItem
@@ -279,11 +280,10 @@ public class UserService {
         截取帖子内容到50个字符 
         Slice post content and only send 50 char
        */
+
       String postContent = sourceItem.getContent();
-      if (postContent != null && postContent.length() > 50) {
-        String contentSnippet = postContent.substring(0, 50);
-        sourceItem.setContent(contentSnippet);
-      }
+
+      sourceItem.setContent(sliceContent(postContent));
 
       UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
         sourceItem
@@ -299,6 +299,17 @@ public class UserService {
     UserInfo userInfo = buildUserInfo(userProfileList, meId);
 
     return new UserProfileRO(userInfo, userPaginatedPost);
+  }
+
+  public String sliceContent(String postContent) {
+    Boolean contentNotNullAndLongerThan50 =
+      postContent != null && postContent.length() > 50;
+
+    if (contentNotNullAndLongerThan50) {
+      postContent = postContent.substring(0, 50);
+    }
+
+    return postContent;
   }
 
   private <T extends UserPostInfoWithoutInteractions> UserInfo buildUserInfo(

@@ -2,6 +2,8 @@ package com.example.reddit.interactions;
 
 import com.example.reddit.interactions.entity.CompositeKeys;
 import com.example.reddit.interactions.entity.Interactions;
+import com.example.reddit.interactions.repository.InteractionsMapper;
+import com.example.reddit.interactions.repository.InteractionsRepository;
 import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -13,14 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class InteractionService {
 
   private final InteractionsRepository interactionsRepo;
+  private final InteractionsMapper interactionsMapper;
   private final EntityManager em;
 
   @Autowired
   InteractionService(
     InteractionsRepository interactionsRepository,
+    InteractionsMapper interactionMapper,
     EntityManager em
   ) {
     this.interactionsRepo = interactionsRepository;
+    this.interactionsMapper = interactionMapper;
     this.em = em;
   }
 
@@ -35,8 +40,8 @@ public class InteractionService {
       设置需要插入/更新的初始值 
       Set up initial values to be inserted/updated
      */
-    String fieldStatus = field + "_status";
-    String fieldPoints = field + "_points";
+    String fieldStatStr = field + "_status";
+    String fieldPointsStr = field + "_points";
     Integer intValue = boolValue ? 1 : -1;
 
     Optional<Interactions> interactionOptional = interactionsRepo.findById(
@@ -48,107 +53,93 @@ public class InteractionService {
       User has no previous interactions, therefore create
      */
     if (!interactionOptional.isPresent()) {
-      int insertRes = em
-        .createNativeQuery(
-          "INSERT INTO interactions (post_id, user_id, " +
-          fieldStatus +
-          ")" +
-          " VALUES (:postId, :userId, :value)"
-        )
-        .setParameter("postId", postId)
-        .setParameter("userId", meId)
-        .setParameter("value", boolValue)
-        .executeUpdate();
+      Integer insertRes = interactionsMapper.createInteractions(
+        fieldStatStr,
+        meId,
+        postId,
+        boolValue
+      );
 
-      int updatePointRes = em
-        .createNativeQuery(
-          "UPDATE post SET " +
-          fieldPoints +
-          " = IFNULL(" +
-          fieldPoints +
-          ", 0) + :intValue WHERE id = :postId"
-        )
-        .setParameter("postId", postId)
-        .setParameter("intValue", intValue)
-        .executeUpdate();
+      Integer updatePointRes = interactionsMapper.updateFieldPoints(
+        fieldPointsStr,
+        postId,
+        intValue
+      );
 
-      return insertRes == 1 && updatePointRes == 1 ? true : false;
+      return insertRes == 1 && updatePointRes > 0 ? true : false;
     }
 
     /*
       用户先前有互动，更新互动状态
       User has previous interactions, therefore update
      */
-    Interactions interactions = interactionOptional.get();
+    Interactions previousInteractions = interactionOptional.get();
 
     /* 
-      修改用于更新字段vote相关的值
+      修改字段vote相关的值
       Modify values to be updated on vote
      */
     if (field.equals("vote")) {
-      if (
-        interactions.getVoteStatus() != boolValue &&
-        interactions.getVoteStatus() != null
-      ) {
+      Boolean changeVote =
+        previousInteractions.getVoteStatus() != boolValue &&
+        previousInteractions.getVoteStatus() != null;
+      Boolean cancelVote = previousInteractions.getVoteStatus() == boolValue;
+
+      if (changeVote) {
         intValue = intValue * 2;
       }
 
-      if (interactions.getVoteStatus() == boolValue) {
+      if (cancelVote) {
         boolValue = null;
         intValue = -intValue;
       }
     }
 
     /* 
-      修改用于更新其他字段相关的值
+      修改其他字段相关的值
       Modify values to be updated on other fields
      */
+    Boolean cancelPrevious = null;
+
     if (field.equals("like")) {
-      intValue = interactions.getLikeStatus() == boolValue ? -1 : 1;
-      if (interactions.getLikeStatus() == boolValue) boolValue = false;
+      cancelPrevious = previousInteractions.getLikeStatus() == boolValue;
     }
+
     if (field.equals("laugh")) {
-      intValue = interactions.getLaughStatus() == boolValue ? -1 : 1;
-      if (interactions.getLaughStatus() == boolValue) boolValue = false;
+      cancelPrevious = previousInteractions.getLaughStatus() == boolValue;
     }
+
     if (field.equals("confused")) {
-      intValue = interactions.getConfusedStatus() == boolValue ? -1 : 1;
-      if (interactions.getConfusedStatus() == boolValue) boolValue = false;
+      cancelPrevious = previousInteractions.getConfusedStatus() == boolValue;
+    }
+
+    if (cancelPrevious != null) {
+      intValue = cancelPrevious ? -1 : 1;
+      boolValue = cancelPrevious ? false : boolValue;
     }
 
     /* 
       更新互动状态
       Update interactions fields status
      */
-    int updateStatusRes = em
-      .createNativeQuery(
-        "UPDATE interactions SET " +
-        fieldStatus + // Couldn't use parameter
-        " = :value" +
-        " WHERE post_id = :postId AND user_id = :userId"
-      )
-      .setParameter("postId", postId)
-      .setParameter("userId", meId)
-      .setParameter("value", boolValue)
-      .executeUpdate();
+    Integer updateStatusRes = interactionsMapper.updateFieldStatus(
+      fieldStatStr,
+      meId,
+      postId,
+      boolValue
+    );
 
     /* 
       更新帖子点数
       Update post field points
      */
-    int updatePointRes = em
-      .createNativeQuery(
-        "UPDATE post SET " +
-        fieldPoints +
-        " = IFNULL(" +
-        fieldPoints +
-        ", 0) + :intValue WHERE id = :postId"
-      )
-      .setParameter("postId", postId)
-      .setParameter("intValue", intValue)
-      .executeUpdate();
+    Integer updatePointRes = interactionsMapper.updateFieldPoints(
+      fieldPointsStr,
+      postId,
+      intValue
+    );
 
-    return updatePointRes == 1 && updateStatusRes == 1 ? true : false;
+    return updatePointRes == 1 && updateStatusRes > 0 ? true : false;
   }
 
   // Test wierd case
