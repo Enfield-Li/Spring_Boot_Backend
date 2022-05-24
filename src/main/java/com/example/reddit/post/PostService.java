@@ -9,7 +9,6 @@ import com.example.reddit.mapper.target.homePost.HomePost;
 import com.example.reddit.mapper.target.homePost.PostAndInteractions;
 import com.example.reddit.mapper.target.userPost.AuthorInfo;
 import com.example.reddit.post.dto.dbProjection.PostAuthorInfo;
-import com.example.reddit.post.dto.dbProjection.PostInEdit;
 import com.example.reddit.post.dto.request.CreatePostDto;
 import com.example.reddit.post.dto.request.UpdatePostDto;
 import com.example.reddit.post.dto.response.PaginatedPostsRO;
@@ -27,8 +26,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -166,7 +163,6 @@ public class PostService {
     基于游标的分页
     Cursor based pagination
    */
-  @SuppressWarnings("unchecked")
   public PaginatedPostsRO fetchPaginatedPost(
     Long meId,
     Instant cursor,

@@ -5,8 +5,6 @@ import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.interactions.repository.InteractionsMapper;
 import com.example.reddit.interactions.repository.InteractionsRepository;
 import java.util.Optional;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,17 +14,14 @@ public class InteractionService {
 
   private final InteractionsRepository interactionsRepo;
   private final InteractionsMapper interactionsMapper;
-  private final EntityManager em;
 
   @Autowired
   InteractionService(
     InteractionsRepository interactionsRepository,
-    InteractionsMapper interactionMapper,
-    EntityManager em
+    InteractionsMapper interactionMapper
   ) {
     this.interactionsRepo = interactionsRepository;
     this.interactionsMapper = interactionMapper;
-    this.em = em;
   }
 
   @Transactional
@@ -145,12 +140,6 @@ public class InteractionService {
   // Test wierd case
   @Transactional
   public Object testCase() {
-    String fieldStatus = "vote_points";
-    Query q = em
-      .createNativeQuery("select " + fieldStatus + " from post where id = :id")
-      .setParameter("id", 1);
-
-    System.out.println(q.getSingleResult());
-    return q.getSingleResult();
+    return null;
   }
 }

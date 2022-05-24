@@ -20,8 +20,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.servlet.http.HttpSession;
 import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,19 +33,16 @@ public class UserService {
   private final PasswordEncoder passwordEncoder;
   private final UserRepository userRepository;
   private final UserMapper userMapper;
-  private final EntityManager em;
 
   @Autowired
   UserService(
     UserRepository userRepository,
     PasswordEncoder passwordEncoder,
-    UserMapper userMapper,
-    EntityManager em
+    UserMapper userMapper
   ) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
     this.userMapper = userMapper;
-    this.em = em;
   }
 
   public User getUserInfo(Long id, Long meId) {
@@ -149,12 +144,6 @@ public class UserService {
 
     return this.buildResUser(user);
   }
-
-  public ResUser fetchUserInfo(Long id, Long meId) {
-    return null;
-  }
-
-  public void fetchOneUserProfile() {}
 
   public UserProfileRO fetchUserProfile(
     Long userId,
