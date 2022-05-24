@@ -278,20 +278,21 @@ public class PostService {
     if (hasMore) postList.remove(postList.size() - 1);
 
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
+
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (PostInfoWithoutInteractions sourceItem : postList) {
-      /* 
-        截取帖子内容到50个字符 
-        Slice post content and only send 50 char
-       */
-      String postContent = sourceItem.getContent();
-      sourceItem.setContent(userService.sliceContent(postContent));
+    postList.forEach(
+      sourceItem -> {
+        String postContent = sourceItem.getContent();
 
-      PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+        // 截取帖子内容到50个字符(Slice post content and only send 50 char)
+        sourceItem.setContent(userService.sliceContent(postContent));
 
-      postAndInteractionsList.add(dtoItem);
-    }
+        PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+
+        postAndInteractionsList.add(dtoItem);
+      }
+    );
 
     return new PaginatedPostsRO(hasMore, postAndInteractionsList);
   }
@@ -305,21 +306,21 @@ public class PostService {
     if (hasMore) postList.remove(postList.size() - 1);
 
     HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
+
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (PostInfoWithInteractions sourceItem : postList) {
-      /* 
-        截取帖子内容到50个字符 
-        Slice post content and only send 50 char
-       */
-      String postContent = sourceItem.getContent();
+    postList.forEach(
+      sourceItem -> {
+        String postContent = sourceItem.getContent();
 
-      sourceItem.setContent(userService.sliceContent(postContent));
+        // 截取帖子内容到50个字符(Slice post content and only send 50 char)
+        sourceItem.setContent(userService.sliceContent(postContent));
 
-      PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+        PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
 
-      postAndInteractionsList.add(dtoItem);
-    }
+        postAndInteractionsList.add(dtoItem);
+      }
+    );
 
     return new PaginatedPostsRO(hasMore, postAndInteractionsList);
   }

@@ -235,22 +235,22 @@ public class UserService {
     if (hasMore) userProfileList.remove(userProfileList.size() - 1);
 
     UserPostMapper mapper = Mappers.getMapper(UserPostMapper.class);
+
     List<UserPostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
-    for (UserPostInfoWithoutInteractions sourceItem : userProfileList) {
-      /* 
-        截取帖子内容到50个字符 
-        Slice post content and only send 50 char
-       */
-      String postContent = sourceItem.getContent();
+    userProfileList.forEach(
+      sourceItem -> {
+        String postContent = sourceItem.getContent();
 
-      sourceItem.setContent(sliceContent(postContent));
+        // 截取帖子内容到50个字符(Slice post content and only send 50 char)
+        sourceItem.setContent(sliceContent(postContent));
 
-      UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
-        sourceItem
-      );
-      postAndInteractionsList.add(dtoItem);
-    }
+        UserPostAndInteractions dtoItem = mapper.toPostAndInteractions(
+          sourceItem
+        );
+        postAndInteractionsList.add(dtoItem);
+      }
+    );
 
     UserPaginatedPosts userPaginatedPost = new UserPaginatedPosts(
       hasMore,
