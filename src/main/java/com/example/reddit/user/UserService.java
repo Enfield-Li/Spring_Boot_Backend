@@ -163,8 +163,8 @@ public class UserService {
     Instant timeFrame = cursor == null ? Instant.now() : cursor;
 
     /*
-      用户先前无互动状态，创建新的互动
-      User has no previous interactions, therefore create
+      用户未登录，不获取互动状态
+      User not loged in, so no interactions
      */
     Boolean isLogedIn = meId == null;
     if (!isLogedIn) {
@@ -184,8 +184,8 @@ public class UserService {
     }
 
     /*
-      用户先前有互动，更新互动状态
-      User has previous interactions, therefore update
+      用户登录，获取互动状态
+      User loged in, so fetch interactions
      */
     List<UserPostInfoWithInteractions> userProfileList = userMapper.getUserPostWithInteractions(
       offset,
@@ -269,7 +269,6 @@ public class UserService {
         截取帖子内容到50个字符 
         Slice post content and only send 50 char
        */
-
       String postContent = sourceItem.getContent();
 
       sourceItem.setContent(sliceContent(postContent));
