@@ -34,9 +34,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PostService {
 
-  /**
-   *
-   */
   private static final Integer defaultAmount = 10;
   private final PostRepository postRepo;
   private final UserRepository userRepo;
@@ -214,7 +211,39 @@ public class PostService {
         likePointsLowest
       );
 
-      return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
+      // 添加 null field
+      List<PostInfoWithInteractions> postListWithInteractions = new ArrayList<>();
+
+      postList.forEach(
+        post -> {
+          PostInfoWithInteractions newPost = new PostInfoWithInteractions(
+            post.getId(),
+            post.getUsername(),
+            post.getPostId(),
+            post.getPostCreatedAt(),
+            post.getPostUpdatedAt(),
+            post.getTitle(),
+            post.getContent(),
+            post.getViewCount(),
+            post.getVotePoints(),
+            post.getLikePoints(),
+            post.getConfusedPoints(),
+            post.getLaughPoints(),
+            post.getCommentAmounts(),
+            null,
+            null,
+            null,
+            null
+          );
+
+          postListWithInteractions.add(newPost);
+        }
+      );
+
+      return buildPaginatedPostsRO(
+        postListWithInteractions,
+        fetchAmountPlusOne
+      );
     }
 
     /* 
@@ -233,7 +262,7 @@ public class PostService {
       likePointsLowest
     );
 
-    return buildPaginatedPostsROWithInteractions(postList, fetchAmountPlusOne);
+    return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
   }
 
   public PostAndInteractions fetchSinglePost(Long postId, Long meId) {
@@ -266,34 +295,6 @@ public class PostService {
   }
 
   private PaginatedPostsRO buildPaginatedPostsRO(
-    List<PostInfoWithoutInteractions> postList,
-    Integer fetchCountPlusOne
-  ) {
-    Boolean hasMore = postList.size() == fetchCountPlusOne;
-
-    if (hasMore) postList.remove(postList.size() - 1);
-
-    HomePostMapper mapper = Mappers.getMapper(HomePostMapper.class);
-
-    List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
-
-    postList.forEach(
-      sourceItem -> {
-        String postContent = sourceItem.getContent();
-
-        // 截取帖子内容到50个字符(Slice post content and only send 50 char)
-        sourceItem.setContent(userService.sliceContent(postContent));
-
-        PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
-
-        postAndInteractionsList.add(dtoItem);
-      }
-    );
-
-    return new PaginatedPostsRO(hasMore, postAndInteractionsList);
-  }
-
-  private PaginatedPostsRO buildPaginatedPostsROWithInteractions(
     List<PostInfoWithInteractions> postList,
     Integer fetchCountPlusOne
   ) {

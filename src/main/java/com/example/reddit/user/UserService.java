@@ -306,11 +306,14 @@ public class UserService {
     Long meId
   ) {
     T userProfile = userProfileList.get(0);
+    String showEmail = meId == userProfile.getId()
+      ? userProfile.getEmail()
+      : null;
 
     return new UserInfo(
       userProfile.getId(),
       userProfile.getUserCreatedAt(),
-      meId == userProfile.getId() ? userProfile.getEmail() : null,
+      showEmail,
       userProfile.getPostAmounts(),
       userProfile.getUsername()
     );
