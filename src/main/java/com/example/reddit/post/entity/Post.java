@@ -4,6 +4,7 @@ import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+import com.example.reddit.comments.entity.Comments;
 import com.example.reddit.interactions.entity.Interactions;
 import com.example.reddit.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -112,6 +113,15 @@ public class Post {
   )
   @JsonIgnoreProperties("post")
   private List<Interactions> interactions = new ArrayList<>();
+
+  @OneToMany(
+    mappedBy = "post",
+    cascade = ALL,
+    orphanRemoval = true,
+    targetEntity = Comments.class,
+    fetch = LAZY
+  )
+  private List<Comments> comments = new ArrayList<>();
 
   public Post() {}
 
