@@ -13,18 +13,10 @@
         FROM post p 
         LEFT JOIN user u ON p.user_id = u.id 
         WHERE p.created_at <![CDATA[ < ]]> #{timeFrame}
-        <if test="dateSpec != null">
-            AND p.created_at > #{dateSpec}
-        </if>
-        <if test="votePointsLowest != null">
-            AND p.vote_points > #{votePointsLowest}
-        </if>
-        <if test="laughPointsLowest != null">
-            AND p.laugh_points > #{laughPointsLowest}
-        </if>
-        <if test="likePointsLowest != null">
-            AND p.like_points > #{likePointsLowest}
-        </if>
+        <if test="dateSpec != null"> AND p.created_at > #{dateSpec} </if>
+        <if test="votePointsLowest != null"> AND p.vote_points > #{votePointsLowest} </if>
+        <if test="laughPointsLowest != null"> AND p.laugh_points > #{laughPointsLowest} </if>
+        <if test="likePointsLowest != null"> AND p.like_points > #{likePointsLowest} </if>
         ORDER BY p.created_at DESC LIMIT #{fetchAmountPlusOne} OFFSET #{offset}
     </select>
 
@@ -43,18 +35,10 @@
         LEFT JOIN user u ON p.user_id = u.id 
         LEFT JOIN interactions i ON i.post_id = p.id AND i.user_id = #{meId}
         WHERE p.created_at <![CDATA[ < ]]> #{timeFrame}
-        <if test="dateSpec != null">
-            AND p.created_at > #{dateSpec}
-        </if>
-        <if test="votePointsLowest != null">
-            AND p.vote_points > #{votePointsLowest}
-        </if>
-        <if test="laughPointsLowest != null">
-            AND p.laugh_points > #{laughPointsLowest}
-        </if>
-        <if test="likePointsLowest != null">
-            AND p.like_points > #{likePointsLowest}
-        </if>
+        <if test="dateSpec != null"> AND p.created_at > #{dateSpec} </if>
+        <if test="votePointsLowest != null"> AND p.vote_points > #{votePointsLowest} </if>
+        <if test="laughPointsLowest != null"> AND p.laugh_points > #{laughPointsLowest} </if>
+        <if test="likePointsLowest != null"> AND p.like_points > #{likePointsLowest} </if>
         ORDER BY p.created_at DESC LIMIT #{fetchAmountPlusOne} OFFSET #{offset}
     </select>
 </mapper>

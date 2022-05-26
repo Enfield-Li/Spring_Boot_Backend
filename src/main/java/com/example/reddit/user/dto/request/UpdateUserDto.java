@@ -7,12 +7,12 @@ import lombok.Data;
 @Data
 public class UpdateUserDto {
 
-  @Size(min = 5)
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String username;
 
-  @Size(min = 5)
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String password;
 
-  @Email
+  @Email(message = "Must be an email")
   private String email;
 }

@@ -121,7 +121,7 @@ public class Interactions {
     this.likeStatus = likeStatus;
   }
 
-  public static Interactions ofCreation(CompositeKeys compositeKeys) {
+  public static Interactions ofPostCreation(CompositeKeys compositeKeys) {
     return new Interactions(compositeKeys, true, true);
   }
 }

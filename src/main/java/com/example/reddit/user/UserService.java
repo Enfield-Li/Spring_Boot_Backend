@@ -166,8 +166,8 @@ public class UserService {
       用户未登录，不获取互动状态
       User not loged in, so no interactions
      */
-    Boolean isLogedIn = meId == null;
-    if (!isLogedIn) {
+    Boolean isNotLogedIn = meId == null;
+    if (isNotLogedIn) {
       List<UserPostInfoWithoutInteractions> userProfileList = userMapper.getUserPostWithoutInteractions(
         offset,
         timeFrame,

@@ -22,5 +22,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     " WHERE u.id = :userId",
     nativeQuery = true
   )
-  void userPostAmountMinusOne(@Param("userId") Long userId);
+  void authorPostAmountMinusOne(@Param("userId") Long userId);
 }

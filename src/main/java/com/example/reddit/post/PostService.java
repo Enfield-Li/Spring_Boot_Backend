@@ -75,49 +75,14 @@ public class PostService {
 
     /* 
       创建新的互动——即投票和点赞
-      Author casting upvote and like
+      Author new interactions with created post, casting upvote and like
      */
-    Interactions interactions = Interactions.ofCreation(
+    Interactions interactions = Interactions.ofPostCreation(
       CompositeKeys.of(userId, post.getId())
     );
     createdPost.setInteractions(Arrays.asList(interactions));
 
-    /* 
-      Mapper 未配置
-      Mapper unconfigured
-     */
-    // SinglePostMapper mapper = Mappers.getMapper(SinglePostMapper.class);
-    // return mapper.toPostAndInteractions(createdPost);
-
-    /* 
-      构筑响应对象
-      Build response object
-    */
-    AuthorInfo authorRes = new AuthorInfo(author.getId(), author.getUsername());
-    HomePost postRes = new HomePost(
-      createdPost.getId(),
-      createdPost.getCreatedAt(),
-      createdPost.getUpdatedAt(),
-      createdPost.getTitle(),
-      createdPost.getContent(),
-      createdPost.getViewCount(),
-      createdPost.getVotePoints(),
-      createdPost.getLikePoints(),
-      createdPost.getConfusedPoints(),
-      createdPost.getLaughPoints(),
-      createdPost.getCommentAmounts(),
-      userId,
-      authorRes
-    );
-    // class重名 / Repeated class naming
-    com.example.reddit.mapper.target.Interactions inRes = new com.example.reddit.mapper.target.Interactions(
-      interactions.getVoteStatus(),
-      interactions.getLikeStatus(),
-      interactions.getLaughStatus(),
-      interactions.getConfusedStatus()
-    );
-
-    return new PostAndInteractions(postRes, inRes);
+    return builPostAndInteractions(author, createdPost, userId, interactions);
   }
 
   @Transactional
@@ -144,14 +109,15 @@ public class PostService {
       如果不是作者，不作变化
       If it wasn't the author, do nothing
      */
-    if (!postAuthorInfo.getUserId().equals(userId)) return false;
+    Boolean isAuthor = postAuthorInfo.getUserId().equals(userId);
+    if (!isAuthor) return false;
 
     /* 
     删除成功后，作者帖子数量 - 1
     Author post amount - 1 after post been deleted
     */
     postRepo.deleteById(postId);
-    userRepo.userPostAmountMinusOne(userId);
+    userRepo.authorPostAmountMinusOne(userId);
 
     return true;
   }
@@ -211,33 +177,9 @@ public class PostService {
         likePointsLowest
       );
 
-      // 添加 null field
-      List<PostInfoWithInteractions> postListWithInteractions = new ArrayList<>();
-
-      postList.forEach(
-        post -> {
-          PostInfoWithInteractions newPost = new PostInfoWithInteractions(
-            post.getId(),
-            post.getUsername(),
-            post.getPostId(),
-            post.getPostCreatedAt(),
-            post.getPostUpdatedAt(),
-            post.getTitle(),
-            post.getContent(),
-            post.getViewCount(),
-            post.getVotePoints(),
-            post.getLikePoints(),
-            post.getConfusedPoints(),
-            post.getLaughPoints(),
-            post.getCommentAmounts(),
-            null,
-            null,
-            null,
-            null
-          );
-
-          postListWithInteractions.add(newPost);
-        }
+      // 添加 null value
+      List<PostInfoWithInteractions> postListWithInteractions = addNullVal(
+        postList
       );
 
       return buildPaginatedPostsRO(
@@ -250,7 +192,6 @@ public class PostService {
       用户已登录，获取帖子时，获取互动状态
       User loged in, therefore fetch posts with interactions
      */
-
     List<PostInfoWithInteractions> postList = postMapper.getPatinatedPostsWithInteractions(
       meId,
       offset,
@@ -325,6 +266,73 @@ public class PostService {
   private String daysBefore(Integer days) {
     return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
     .format(Date.from(Instant.now().minus(Duration.ofDays(days))));
+  }
+
+  private PostAndInteractions builPostAndInteractions(
+    User author,
+    Post createdPost,
+    Long userId,
+    Interactions interactions
+  ) {
+    AuthorInfo authorRes = new AuthorInfo(author.getId(), author.getUsername());
+    HomePost postRes = new HomePost(
+      createdPost.getId(),
+      createdPost.getCreatedAt(),
+      createdPost.getUpdatedAt(),
+      createdPost.getTitle(),
+      createdPost.getContent(),
+      createdPost.getViewCount(),
+      createdPost.getVotePoints(),
+      createdPost.getLikePoints(),
+      createdPost.getConfusedPoints(),
+      createdPost.getLaughPoints(),
+      createdPost.getCommentAmounts(),
+      userId,
+      authorRes
+    );
+    // class重名 / Repeated class naming
+    com.example.reddit.mapper.target.Interactions inRes = new com.example.reddit.mapper.target.Interactions(
+      interactions.getVoteStatus(),
+      interactions.getLikeStatus(),
+      interactions.getLaughStatus(),
+      interactions.getConfusedStatus()
+    );
+
+    return new PostAndInteractions(postRes, inRes);
+  }
+
+  private List<PostInfoWithInteractions> addNullVal(
+    List<PostInfoWithoutInteractions> postList
+  ) {
+    List<PostInfoWithInteractions> postListWithInteractions = new ArrayList<>();
+
+    postList.forEach(
+      post -> {
+        PostInfoWithInteractions newPost = new PostInfoWithInteractions(
+          post.getId(),
+          post.getUsername(),
+          post.getPostId(),
+          post.getPostCreatedAt(),
+          post.getPostUpdatedAt(),
+          post.getTitle(),
+          post.getContent(),
+          post.getViewCount(),
+          post.getVotePoints(),
+          post.getLikePoints(),
+          post.getConfusedPoints(),
+          post.getLaughPoints(),
+          post.getCommentAmounts(),
+          null,
+          null,
+          null,
+          null
+        );
+
+        postListWithInteractions.add(newPost);
+      }
+    );
+
+    return postListWithInteractions;
   }
 
   @Transactional

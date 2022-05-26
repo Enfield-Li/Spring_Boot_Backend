@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class LoginUserDto {
 
-  @NotNull
-  @Size(min = 5)
+  @NotNull(message = "Must be a username or an email")
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String usernameOrEmail;
 
-  @NotNull
-  @Size(min = 5)
+  @NotNull(message = "Must have a password")
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String password;
 }

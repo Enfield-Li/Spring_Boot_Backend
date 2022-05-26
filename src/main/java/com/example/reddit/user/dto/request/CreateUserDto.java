@@ -8,15 +8,15 @@ import lombok.Data;
 @Data
 public class CreateUserDto {
 
-  @NotNull
-  @Size(min = 5)
+  @NotNull(message = "Must have a username")
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String username;
 
-  @NotNull
-  @Size(min = 5)
+  @NotNull(message = "Must have a password")
+  @Size(min = 5, message = "Must loner than 5 characters")
   private String password;
 
-  @Email
-  @NotNull
+  @Email(message = "Must be an email")
+  @NotNull(message = "Must have a email")
   private String email;
 }
