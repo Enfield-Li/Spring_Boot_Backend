@@ -1,10 +1,12 @@
 package com.example.reddit.comments;
 
+import com.example.reddit.comments.dto.request.CreateCommentOrReplyDto;
 import com.example.reddit.comments.entity.Comments;
 import com.example.reddit.comments.repository.CommentsRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +48,15 @@ class CommentsController {
     return null;
   }
 
-  @PostMapping
-  public ResponseEntity<?> create(@RequestBody Comments item) {
+  @PostMapping("/createCommentOrReply/{id}")
+  public ResponseEntity<?> create(
+    @RequestBody CreateCommentOrReplyDto dto,
+    @PathVariable("id") Long postId,
+    HttpSession session
+  ) {
+    Long meId = (Long) session.getAttribute("userId");
+    commentsService.createCommentOrReply(dto, meId, postId);
+
     return null;
   }
 

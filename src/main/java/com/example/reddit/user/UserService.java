@@ -60,12 +60,6 @@ public class UserService {
     return user;
   }
 
-  public void newUser(String username, String password, String email) {
-    Password pass = Password.encode(password, this.passwordEncoder);
-    User user = User.of(username, email, pass);
-    userRepository.save(user);
-  }
-
   public UserRO login(LoginUserDto dto, HttpSession session) {
     try {
       User user;
