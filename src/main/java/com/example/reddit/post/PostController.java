@@ -33,7 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Post")
 @RestController
 @RequestMapping("post")
-@CrossOrigin(origins = "http://localhost:3118", maxAge = 3600)
+// @CrossOrigin(origins = "http://localhost:3118", maxAge = 3600)
 class PostController {
 
   private final PostService postService;
