@@ -48,11 +48,6 @@ class PostController {
     this.postRepository = postRepository;
   }
 
-  @GetMapping("test")
-  public void test() {
-    postService.test();
-  }
-
   @GetMapping("single-post/{id}")
   public ResponseEntity<?> getById(
     @PathVariable("id") Long id,

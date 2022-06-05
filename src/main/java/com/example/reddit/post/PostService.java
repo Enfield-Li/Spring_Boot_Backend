@@ -177,15 +177,7 @@ public class PostService {
         likePointsLowest
       );
 
-      // 添加 null value
-      List<PostInfoWithInteractions> postListWithInteractions = addNullVal(
-        postList
-      );
-
-      return buildPaginatedPostsRO(
-        postListWithInteractions,
-        fetchAmountPlusOne
-      );
+      return buildPaginatedPostsRO(postList, fetchAmountPlusOne);
     }
 
     /* 
@@ -235,8 +227,8 @@ public class PostService {
     return mapper.toPostAndInteractions(postList);
   }
 
-  private PaginatedPostsRO buildPaginatedPostsRO(
-    List<PostInfoWithInteractions> postList,
+  private <T extends PostInfoWithoutInteractions> PaginatedPostsRO buildPaginatedPostsRO(
+    List<T> postList,
     Integer fetchCountPlusOne
   ) {
     Boolean hasMore = postList.size() == fetchCountPlusOne;
@@ -248,15 +240,24 @@ public class PostService {
     List<PostAndInteractions> postAndInteractionsList = new ArrayList<>();
 
     postList.forEach(
-      sourceItem -> {
-        String postContent = sourceItem.getContent();
+      post -> {
+        String postContent = post.getContent();
 
         // 截取帖子内容到50个字符(Slice post content and only send 50 char)
-        sourceItem.setContent(userService.sliceContent(postContent));
+        post.setContent(userService.sliceContent(postContent));
 
-        PostAndInteractions dtoItem = mapper.toPostAndInteractions(sourceItem);
+        if (post.getClass().equals(PostInfoWithInteractions.class)) {
+          PostAndInteractions postDto = mapper.toPostAndInteractions(
+            (PostInfoWithInteractions) post
+          );
 
-        postAndInteractionsList.add(dtoItem);
+          postAndInteractionsList.add(postDto);
+          return;
+        }
+
+        PostAndInteractions postDto = mapper.toPostAndInteractions(post);
+
+        postAndInteractionsList.add(postDto);
       }
     );
 
@@ -299,49 +300,5 @@ public class PostService {
     );
 
     return new PostAndInteractions(postRes, inRes);
-  }
-
-  private List<PostInfoWithInteractions> addNullVal(
-    List<PostInfoWithoutInteractions> postList
-  ) {
-    List<PostInfoWithInteractions> postListWithInteractions = new ArrayList<>();
-
-    postList.forEach(
-      post -> {
-        PostInfoWithInteractions newPost = new PostInfoWithInteractions(
-          post.getId(),
-          post.getUsername(),
-          post.getPostId(),
-          post.getPostCreatedAt(),
-          post.getPostUpdatedAt(),
-          post.getTitle(),
-          post.getContent(),
-          post.getViewCount(),
-          post.getVotePoints(),
-          post.getLikePoints(),
-          post.getConfusedPoints(),
-          post.getLaughPoints(),
-          post.getCommentAmounts(),
-          null,
-          null,
-          null,
-          null
-        );
-
-        postListWithInteractions.add(newPost);
-      }
-    );
-
-    return postListWithInteractions;
-  }
-
-  @Transactional
-  public void test() {
-    Post post = postRepo.findById(1L).orElse(null);
-    System.out.println(post.getInteractions().toString());
-
-    throw new IllegalStateException("uncaught expection...");
-    // PostInEdit postInEdit = postRepo.getPostInEditByid(1L).orElse(null);
-    // System.out.println(postInEdit.getTitle());
   }
 }
